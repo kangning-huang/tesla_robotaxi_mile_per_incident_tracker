@@ -190,10 +190,14 @@ function initMPIChart() {
                         callback: function(value) {
                             if (value === 10000) return '10K';
                             if (value === 20000) return '20K';
+                            if (value === 30000) return '30K';
                             if (value === 50000) return '50K';
+                            if (value === 70000) return '70K';
                             if (value === 100000) return '100K';
                             if (value === 200000) return '200K';
+                            if (value === 300000) return '300K';
                             if (value === 500000) return '500K';
+                            if (value === 700000) return '700K';
                             if (value === 1000000) return '1M';
                             return '';
                         }
