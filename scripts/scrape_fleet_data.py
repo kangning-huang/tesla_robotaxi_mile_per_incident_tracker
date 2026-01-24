@@ -188,44 +188,157 @@ async def extract_fleet_numbers(page) -> dict:
 
 
 async def extract_historical_data(page) -> list:
-    """Try to extract historical fleet data from charts or tables."""
+    """Extract historical fleet data by hovering over chart bars to get tooltips."""
     historical = []
 
     try:
-        # Look for chart data in script tags or data attributes
-        scripts = await page.query_selector_all("script")
-        for script in scripts:
-            content = await script.text_content()
-            if content and ("chartData" in content or "fleetHistory" in content or "dates" in content):
-                # Try to parse JSON data from chart configs
-                json_matches = re.findall(r'\{[^{}]*"dates?"[^{}]*\}', content)
-                for match in json_matches:
-                    try:
-                        data = json.loads(match)
-                        if "date" in data or "dates" in data:
-                            historical.append(data)
-                    except json.JSONDecodeError:
-                        pass
+        # First, scroll to the Fleet Growth section
+        fleet_section = await page.query_selector("text=Fleet Growth")
+        if fleet_section:
+            await fleet_section.scroll_into_view_if_needed()
+            await asyncio.sleep(1)
 
-        # Look for data tables
-        tables = await page.query_selector_all("table")
-        for table in tables:
-            rows = await table.query_selector_all("tr")
-            for row in rows:
-                cells = await row.query_selector_all("td, th")
-                if len(cells) >= 2:
-                    cell_texts = [await c.text_content() for c in cells]
-                    # Check if first cell looks like a date
-                    if cell_texts[0] and re.match(r'\d{4}-\d{2}-\d{2}|\d{1,2}/\d{1,2}/\d{2,4}', cell_texts[0].strip()):
-                        historical.append({
-                            "date": cell_texts[0].strip(),
-                            "value": cell_texts[1].strip() if len(cell_texts) > 1 else None
-                        })
+        # Find the chart container - look for canvas or SVG within Fleet Growth section
+        # The chart is likely a canvas element or SVG
+        chart_selectors = [
+            "canvas",
+            "svg.recharts-surface",
+            ".recharts-wrapper",
+            "[class*='chart']",
+            ".apexcharts-canvas",
+        ]
+
+        chart_element = None
+        for selector in chart_selectors:
+            chart_element = await page.query_selector(selector)
+            if chart_element:
+                print(f"  Found chart element with selector: {selector}")
+                break
+
+        if not chart_element:
+            print("  Could not find chart element for tooltip extraction")
+            return historical
+
+        # Get the chart's bounding box
+        bbox = await chart_element.bounding_box()
+        if not bbox:
+            print("  Could not get chart bounding box")
+            return historical
+
+        print(f"  Chart bounding box: x={bbox['x']:.0f}, y={bbox['y']:.0f}, w={bbox['width']:.0f}, h={bbox['height']:.0f}")
+
+        # Calculate hover positions across the chart
+        # We'll hover at multiple x positions to capture different dates
+        chart_left = bbox['x'] + 50  # Add padding to skip y-axis labels
+        chart_right = bbox['x'] + bbox['width'] - 20
+        chart_center_y = bbox['y'] + bbox['height'] / 2
+
+        # Number of positions to sample (more = more data points but slower)
+        num_samples = 50
+        step = (chart_right - chart_left) / num_samples
+
+        seen_dates = set()  # Track dates we've already captured
+
+        print(f"  Scanning chart with {num_samples} hover positions...")
+
+        for i in range(num_samples + 1):
+            x = chart_left + (i * step)
+            y = chart_center_y
+
+            # Move mouse to position
+            await page.mouse.move(x, y)
+            await asyncio.sleep(0.15)  # Wait for tooltip to appear
+
+            # Try to find and extract tooltip content
+            tooltip_selectors = [
+                "[role='tooltip']",
+                ".recharts-tooltip-wrapper",
+                ".apexcharts-tooltip",
+                "[class*='tooltip']",
+                ".chart-tooltip",
+            ]
+
+            for tooltip_selector in tooltip_selectors:
+                tooltip = await page.query_selector(tooltip_selector)
+                if tooltip:
+                    tooltip_text = await tooltip.text_content()
+                    if tooltip_text and tooltip_text.strip():
+                        # Parse the tooltip text
+                        data_point = parse_tooltip_text(tooltip_text)
+                        if data_point and data_point.get("date") not in seen_dates:
+                            seen_dates.add(data_point["date"])
+                            historical.append(data_point)
+                            print(f"    Found: {data_point['date']} - Bay Area: {data_point.get('bayarea')}, Austin: {data_point.get('austin')}")
+                        break
+
+        # Sort by date
+        historical.sort(key=lambda x: x.get("date", ""))
+        print(f"  Extracted {len(historical)} historical data points")
 
     except Exception as e:
         print(f"Warning: Could not extract historical data: {e}")
+        import traceback
+        traceback.print_exc()
 
     return historical
+
+
+def parse_tooltip_text(text: str) -> dict:
+    """Parse tooltip text to extract date and fleet numbers."""
+    if not text:
+        return None
+
+    result = {}
+
+    # Clean up the text
+    text = text.strip()
+
+    # Try to extract date - various formats
+    # Format: "2026年1月24日" (Chinese) or "Jan 24, 2026" or "2026-01-24"
+    date_patterns = [
+        r'(\d{4})年(\d{1,2})月(\d{1,2})日',  # Chinese format
+        r'(\d{4})-(\d{2})-(\d{2})',  # ISO format
+        r'(\w{3})\s+(\d{1,2}),?\s+(\d{4})',  # "Jan 24, 2026"
+        r'(\d{1,2})/(\d{1,2})/(\d{4})',  # MM/DD/YYYY
+    ]
+
+    for pattern in date_patterns:
+        match = re.search(pattern, text)
+        if match:
+            groups = match.groups()
+            if pattern == date_patterns[0]:  # Chinese format
+                result["date"] = f"{groups[0]}-{int(groups[1]):02d}-{int(groups[2]):02d}"
+            elif pattern == date_patterns[1]:  # ISO
+                result["date"] = f"{groups[0]}-{groups[1]}-{groups[2]}"
+            elif pattern == date_patterns[2]:  # Month name format
+                month_map = {"Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04",
+                            "May": "05", "Jun": "06", "Jul": "07", "Aug": "08",
+                            "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12"}
+                month = month_map.get(groups[0], "01")
+                result["date"] = f"{groups[2]}-{month}-{int(groups[1]):02d}"
+            elif pattern == date_patterns[3]:  # MM/DD/YYYY
+                result["date"] = f"{groups[2]}-{int(groups[0]):02d}-{int(groups[1]):02d}"
+            break
+
+    if not result.get("date"):
+        return None
+
+    # Extract Bay Area number
+    bay_match = re.search(r'Bay\s*Area[:\s]*(\d+)', text, re.IGNORECASE)
+    if bay_match:
+        result["bayarea"] = int(bay_match.group(1))
+
+    # Extract Austin number
+    austin_match = re.search(r'Austin[:\s]*(\d+)', text, re.IGNORECASE)
+    if austin_match:
+        result["austin"] = int(austin_match.group(1))
+
+    # Extract total (总车队 in Chinese or "Total")
+    total_match = re.search(r'(?:总车队|Total)[:\s]*(\d+)', text, re.IGNORECASE)
+    if total_match:
+        result["total"] = int(total_match.group(1))
+
+    return result
 
 
 async def extract_nhtsa_incidents(page) -> list:
