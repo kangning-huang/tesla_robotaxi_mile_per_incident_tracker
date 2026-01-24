@@ -657,7 +657,7 @@ def main():
     print("MPI BETWEEN CONSECUTIVE INCIDENTS")
     print("=" * 75)
 
-    daily_miles = 100  # Moderate scenario
+    daily_miles = 115  # Moderate scenario (based on Tesla's 250K miles / 97 days / ~20 vehicles)
     results = calculate_mpi_between_incidents(all_tesla, fleet_interpolator, daily_miles, service_start)
 
     print_mpi_analysis(results, "Moderate", daily_miles)

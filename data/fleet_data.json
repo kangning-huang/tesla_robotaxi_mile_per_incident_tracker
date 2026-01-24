@@ -127,14 +127,21 @@
   ],
   "assumptions": {
     "daily_miles_per_vehicle": {
-      "conservative": 50,
-      "moderate": 100,
+      "conservative": 80,
+      "moderate": 115,
       "aggressive": 150
     },
     "operating_hours": {
-      "austin": "Limited hours, ~8-10 hrs/day",
-      "bayarea": "More hours with human drivers"
+      "austin": "6 AM - 2 AM CT (20 hours/day)",
+      "bayarea": "Similar hours with human drivers"
     },
-    "notes": "Waymo vehicles drive ~150-200 miles/day. Tesla robotaxis likely operate fewer hours during ramp-up phase. Only Austin vehicles count as true 'robotaxis' - Bay Area has human safety drivers."
+    "validation": {
+      "tesla_reported_miles": 250000,
+      "tesla_reported_period": "June 25 - Sept 30, 2025 (97 days)",
+      "calculated_miles_per_vehicle_day": 129,
+      "waymo_miles_per_vehicle_day": 80,
+      "source": "Tesla Q3 2025 earnings, ARK Invest research"
+    },
+    "notes": "Tesla reported 250,000 miles by end of Q3 2025 with ~20 avg vehicles = ~129 mi/vehicle/day. Waymo averages ~80 mi/vehicle/day (200K miles/day ÷ 2,500 vehicles). Tesla higher due to Austin's spread-out geography. Using 115 as moderate (accounting for weather/maintenance downtime)."
   }
 }

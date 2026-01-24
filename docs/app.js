@@ -1,15 +1,16 @@
 // ===== Data =====
+// Updated with 115 mi/day/vehicle (validated from Tesla's 250K miles Q3 2025 report)
 const incidentData = [
-    { date: '2025-07-05', days: 10, fleet: 11, miles: 12300, mpi: 12300 },
-    { date: '2025-07-18', days: 13, fleet: 14, miles: 19300, mpi: 19300 },
-    { date: '2025-08-02', days: 15, fleet: 16, miles: 26200, mpi: 26200 },
-    { date: '2025-08-20', days: 18, fleet: 19, miles: 36100, mpi: 36100 },
-    { date: '2025-09-05', days: 16, fleet: 21, miles: 35800, mpi: 35800 },
-    { date: '2025-09-22', days: 17, fleet: 24, miles: 43500, mpi: 43500 },
-    { date: '2025-10-08', days: 16, fleet: 27, miles: 46400, mpi: 46400 },
-    { date: '2025-10-25', days: 17, fleet: 30, miles: 53300, mpi: 53300 },
-    { date: '2025-11-12', days: 18, fleet: 31, miles: 58200, mpi: 58200 },
-    { date: '2025-12-10', days: 28, fleet: 32, miles: 93500, mpi: 93500 },
+    { date: '2025-07-05', days: 10, fleet: 11, miles: 14100, mpi: 14100 },
+    { date: '2025-07-18', days: 13, fleet: 14, miles: 22200, mpi: 22200 },
+    { date: '2025-08-02', days: 15, fleet: 16, miles: 30100, mpi: 30100 },
+    { date: '2025-08-20', days: 18, fleet: 19, miles: 41500, mpi: 41500 },
+    { date: '2025-09-05', days: 16, fleet: 21, miles: 41200, mpi: 41200 },
+    { date: '2025-09-22', days: 17, fleet: 24, miles: 50000, mpi: 50000 },
+    { date: '2025-10-08', days: 16, fleet: 27, miles: 53400, mpi: 53400 },
+    { date: '2025-10-25', days: 17, fleet: 30, miles: 61300, mpi: 61300 },
+    { date: '2025-11-12', days: 18, fleet: 31, miles: 66900, mpi: 66900 },
+    { date: '2025-12-10', days: 28, fleet: 32, miles: 107500, mpi: 107500 },
 ];
 
 const fleetData = [
@@ -23,13 +24,13 @@ const fleetData = [
     { date: '2026-01-15', size: 42 },
 ];
 
-// Trend analysis parameters (from Python analysis)
+// Trend analysis parameters (from Python analysis, updated for 115 mi/day)
 const trendParams = {
-    exponential: { a: 18235, b: 0.009998 },
+    exponential: { a: 20970, b: 0.009998 },
     rSquared: 0.955,
     doublingTime: 69,
     dailyGrowth: 0.01,
-    forecast30Day: 119460
+    forecast30Day: 137400
 };
 
 // ===== Chart Configuration =====
