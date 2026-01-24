@@ -1,21 +1,20 @@
 {
   "metadata": {
-    "description": "Tesla Robotaxi fleet size data collected from news sources and robotaxitracker.com",
+    "description": "Tesla Robotaxi fleet size data from robotaxitracker.com (scraped) and news sources",
     "last_updated": "2026-01-24",
     "sources": [
-      "robotaxitracker.com",
+      "robotaxitracker.com (primary - automated scraping)",
+      "Tesla official announcements",
       "Electrek",
-      "Teslarati",
-      "Jalopnik",
-      "Tesla official announcements"
+      "Teslarati"
     ],
-    "notes": "Austin vehicles are true robotaxis (unsupervised ADS). Bay Area vehicles have human safety drivers."
+    "notes": "Austin vehicles are true robotaxis (unsupervised ADS). Bay Area vehicles have human safety drivers. Data from Aug 2025 onwards is scraped from robotaxitracker.com chart tooltips."
   },
   "snapshots": [
     {
       "date": "2025-06-25",
       "austin_vehicles": 10,
-      "bayarea_vehicles": 50,
+      "bayarea_vehicles": 0,
       "total_robotaxi": 10,
       "source": "Tesla Robotaxi launch announcement",
       "notes": "Initial Austin launch with ~10 vehicles"
@@ -23,106 +22,506 @@
     {
       "date": "2025-07-01",
       "austin_vehicles": 12,
-      "bayarea_vehicles": 55,
+      "bayarea_vehicles": 0,
       "total_robotaxi": 12,
       "source": "Estimated (interpolation)",
       "notes": "Early ramp phase"
     },
     {
       "date": "2025-07-15",
-      "austin_vehicles": 15,
-      "bayarea_vehicles": 60,
-      "total_robotaxi": 15,
-      "source": "Electrek report",
+      "austin_vehicles": 14,
+      "bayarea_vehicles": 0,
+      "total_robotaxi": 14,
+      "source": "Estimated (interpolation)",
       "notes": "Fleet expansion in Austin"
     },
     {
-      "date": "2025-08-01",
+      "date": "2025-08-14",
+      "austin_vehicles": 15,
+      "bayarea_vehicles": 0,
+      "total_robotaxi": 15,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-08-21",
+      "austin_vehicles": 15,
+      "bayarea_vehicles": 1,
+      "total_robotaxi": 15,
+      "source": "robotaxitracker.com",
+      "notes": "Bay Area tracking begins"
+    },
+    {
+      "date": "2025-08-31",
+      "austin_vehicles": 15,
+      "bayarea_vehicles": 3,
+      "total_robotaxi": 15,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-09-03",
+      "austin_vehicles": 15,
+      "bayarea_vehicles": 4,
+      "total_robotaxi": 15,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-09-04",
+      "austin_vehicles": 15,
+      "bayarea_vehicles": 5,
+      "total_robotaxi": 15,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-09-05",
+      "austin_vehicles": 16,
+      "bayarea_vehicles": 7,
+      "total_robotaxi": 16,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-09-06",
       "austin_vehicles": 18,
-      "bayarea_vehicles": 70,
+      "bayarea_vehicles": 7,
       "total_robotaxi": 18,
-      "source": "Estimated (interpolation)",
-      "notes": "Continued expansion"
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
     },
     {
-      "date": "2025-08-15",
-      "austin_vehicles": 20,
-      "bayarea_vehicles": 80,
-      "total_robotaxi": 20,
-      "source": "News aggregation",
-      "notes": "Continued ramp"
+      "date": "2025-09-13",
+      "austin_vehicles": 18,
+      "bayarea_vehicles": 8,
+      "total_robotaxi": 18,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
     },
     {
-      "date": "2025-09-01",
-      "austin_vehicles": 22,
-      "bayarea_vehicles": 90,
-      "total_robotaxi": 22,
-      "source": "Estimated (interpolation)",
-      "notes": "Steady growth"
-    },
-    {
-      "date": "2025-09-15",
-      "austin_vehicles": 25,
-      "bayarea_vehicles": 100,
-      "total_robotaxi": 25,
-      "source": "News aggregation",
-      "notes": "Fleet approaching target"
+      "date": "2025-09-19",
+      "austin_vehicles": 18,
+      "bayarea_vehicles": 10,
+      "total_robotaxi": 18,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
     },
     {
       "date": "2025-10-01",
+      "austin_vehicles": 18,
+      "bayarea_vehicles": 12,
+      "total_robotaxi": 18,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-10-02",
+      "austin_vehicles": 18,
+      "bayarea_vehicles": 13,
+      "total_robotaxi": 18,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-10-05",
+      "austin_vehicles": 18,
+      "bayarea_vehicles": 18,
+      "total_robotaxi": 18,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-10-07",
+      "austin_vehicles": 18,
+      "bayarea_vehicles": 22,
+      "total_robotaxi": 18,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-10-09",
+      "austin_vehicles": 18,
+      "bayarea_vehicles": 24,
+      "total_robotaxi": 18,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-10-18",
+      "austin_vehicles": 18,
+      "bayarea_vehicles": 26,
+      "total_robotaxi": 18,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-10-26",
+      "austin_vehicles": 18,
+      "bayarea_vehicles": 29,
+      "total_robotaxi": 18,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-10-30",
+      "austin_vehicles": 19,
+      "bayarea_vehicles": 29,
+      "total_robotaxi": 19,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-11-04",
+      "austin_vehicles": 20,
+      "bayarea_vehicles": 29,
+      "total_robotaxi": 20,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-11-08",
+      "austin_vehicles": 21,
+      "bayarea_vehicles": 29,
+      "total_robotaxi": 21,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-11-09",
+      "austin_vehicles": 21,
+      "bayarea_vehicles": 30,
+      "total_robotaxi": 21,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-11-11",
+      "austin_vehicles": 22,
+      "bayarea_vehicles": 30,
+      "total_robotaxi": 22,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-11-17",
+      "austin_vehicles": 25,
+      "bayarea_vehicles": 30,
+      "total_robotaxi": 25,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-11-20",
       "austin_vehicles": 28,
-      "bayarea_vehicles": 105,
+      "bayarea_vehicles": 31,
       "total_robotaxi": 28,
-      "source": "Estimated (interpolation)",
-      "notes": "Growth continues"
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
     },
     {
-      "date": "2025-10-15",
-      "austin_vehicles": 30,
-      "bayarea_vehicles": 110,
-      "total_robotaxi": 30,
-      "source": "NHTSA filing analysis",
-      "notes": "Based on incident reports mentioning fleet"
+      "date": "2025-11-22",
+      "austin_vehicles": 29,
+      "bayarea_vehicles": 33,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Pre Bay Area expansion"
     },
     {
-      "date": "2025-11-01",
-      "austin_vehicles": 31,
-      "bayarea_vehicles": 115,
-      "total_robotaxi": 31,
-      "source": "Estimated (interpolation)",
-      "notes": "Slowing growth"
+      "date": "2025-11-23",
+      "austin_vehicles": 29,
+      "bayarea_vehicles": 77,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Bay Area massive expansion +44 vehicles"
     },
     {
-      "date": "2025-11-15",
-      "austin_vehicles": 32,
-      "bayarea_vehicles": 120,
-      "total_robotaxi": 32,
-      "source": "Jalopnik/Electrek",
-      "notes": "Fleet stabilizing"
+      "date": "2025-11-24",
+      "austin_vehicles": 29,
+      "bayarea_vehicles": 106,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Bay Area expansion continues +29 vehicles"
+    },
+    {
+      "date": "2025-11-25",
+      "austin_vehicles": 29,
+      "bayarea_vehicles": 113,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-11-26",
+      "austin_vehicles": 29,
+      "bayarea_vehicles": 114,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-11-27",
+      "austin_vehicles": 29,
+      "bayarea_vehicles": 116,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-11-29",
+      "austin_vehicles": 29,
+      "bayarea_vehicles": 119,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
     },
     {
       "date": "2025-12-01",
-      "austin_vehicles": 33,
-      "bayarea_vehicles": 125,
-      "total_robotaxi": 33,
-      "source": "Estimated (interpolation)",
-      "notes": "Near plateau"
+      "austin_vehicles": 29,
+      "bayarea_vehicles": 124,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
     },
     {
-      "date": "2025-12-22",
-      "austin_vehicles": 34,
+      "date": "2025-12-02",
+      "austin_vehicles": 29,
+      "bayarea_vehicles": 127,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-12-08",
+      "austin_vehicles": 29,
       "bayarea_vehicles": 128,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-12-10",
+      "austin_vehicles": 29,
+      "bayarea_vehicles": 129,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-12-12",
+      "austin_vehicles": 29,
+      "bayarea_vehicles": 130,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-12-15",
+      "austin_vehicles": 29,
+      "bayarea_vehicles": 131,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-12-16",
+      "austin_vehicles": 29,
+      "bayarea_vehicles": 132,
+      "total_robotaxi": 29,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-12-25",
+      "austin_vehicles": 31,
+      "bayarea_vehicles": 133,
+      "total_robotaxi": 31,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-12-28",
+      "austin_vehicles": 31,
+      "bayarea_vehicles": 134,
+      "total_robotaxi": 31,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-12-29",
+      "austin_vehicles": 32,
+      "bayarea_vehicles": 134,
+      "total_robotaxi": 32,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-12-30",
+      "austin_vehicles": 32,
+      "bayarea_vehicles": 135,
+      "total_robotaxi": 32,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2025-12-31",
+      "austin_vehicles": 33,
+      "bayarea_vehicles": 135,
+      "total_robotaxi": 33,
+      "source": "robotaxitracker.com",
+      "notes": "Year end"
+    },
+    {
+      "date": "2026-01-01",
+      "austin_vehicles": 34,
+      "bayarea_vehicles": 136,
       "total_robotaxi": 34,
-      "source": "Jalopnik report",
-      "notes": "Confirmed fleet size"
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-02",
+      "austin_vehicles": 34,
+      "bayarea_vehicles": 138,
+      "total_robotaxi": 34,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-03",
+      "austin_vehicles": 34,
+      "bayarea_vehicles": 141,
+      "total_robotaxi": 34,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-05",
+      "austin_vehicles": 35,
+      "bayarea_vehicles": 147,
+      "total_robotaxi": 35,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-06",
+      "austin_vehicles": 36,
+      "bayarea_vehicles": 148,
+      "total_robotaxi": 36,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-07",
+      "austin_vehicles": 36,
+      "bayarea_vehicles": 150,
+      "total_robotaxi": 36,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-08",
+      "austin_vehicles": 37,
+      "bayarea_vehicles": 151,
+      "total_robotaxi": 37,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-09",
+      "austin_vehicles": 37,
+      "bayarea_vehicles": 151,
+      "total_robotaxi": 37,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-10",
+      "austin_vehicles": 38,
+      "bayarea_vehicles": 153,
+      "total_robotaxi": 38,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-11",
+      "austin_vehicles": 38,
+      "bayarea_vehicles": 154,
+      "total_robotaxi": 38,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-13",
+      "austin_vehicles": 38,
+      "bayarea_vehicles": 156,
+      "total_robotaxi": 38,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
     },
     {
       "date": "2026-01-15",
+      "austin_vehicles": 39,
+      "bayarea_vehicles": 156,
+      "total_robotaxi": 39,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-16",
       "austin_vehicles": 42,
-      "bayarea_vehicles": 158,
+      "bayarea_vehicles": 159,
       "total_robotaxi": 42,
       "source": "robotaxitracker.com",
-      "notes": "Fleet reaches 200 total (42 Austin + 158 Bay Area)"
+      "notes": "Austin expansion begins"
+    },
+    {
+      "date": "2026-01-17",
+      "austin_vehicles": 43,
+      "bayarea_vehicles": 159,
+      "total_robotaxi": 43,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-18",
+      "austin_vehicles": 46,
+      "bayarea_vehicles": 159,
+      "total_robotaxi": 46,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-19",
+      "austin_vehicles": 48,
+      "bayarea_vehicles": 159,
+      "total_robotaxi": 48,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-20",
+      "austin_vehicles": 49,
+      "bayarea_vehicles": 159,
+      "total_robotaxi": 49,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-01-22",
+      "austin_vehicles": 60,
+      "bayarea_vehicles": 164,
+      "total_robotaxi": 60,
+      "source": "robotaxitracker.com",
+      "notes": "Major Austin expansion +11 vehicles"
+    },
+    {
+      "date": "2026-01-23",
+      "austin_vehicles": 68,
+      "bayarea_vehicles": 164,
+      "total_robotaxi": 68,
+      "source": "robotaxitracker.com",
+      "notes": "Current fleet: 68 Austin + 164 Bay Area = 232 total"
     }
   ],
   "assumptions": {
