@@ -192,34 +192,32 @@ async def extract_historical_data(page) -> list:
     historical = []
 
     try:
-        # First, scroll to the Fleet Growth section
+        # First, scroll to the Fleet Growth section and ensure it's visible
         fleet_section = await page.query_selector("text=Fleet Growth")
         if fleet_section:
             await fleet_section.scroll_into_view_if_needed()
-            await asyncio.sleep(1)
+            await asyncio.sleep(2)
 
-        # Find the chart container - look for canvas or SVG within Fleet Growth section
-        # The chart is likely a canvas element or SVG
-        chart_selectors = [
-            "canvas",
-            "svg.recharts-surface",
-            ".recharts-wrapper",
-            "[class*='chart']",
-            ".apexcharts-canvas",
-        ]
-
-        chart_element = None
-        for selector in chart_selectors:
-            chart_element = await page.query_selector(selector)
-            if chart_element:
-                print(f"  Found chart element with selector: {selector}")
-                break
+        # Find the chart container - Recharts uses svg.recharts-surface
+        chart_element = await page.query_selector("svg.recharts-surface")
+        if not chart_element:
+            # Try alternative selectors
+            for selector in ["canvas", ".recharts-wrapper", "[class*='chart']"]:
+                chart_element = await page.query_selector(selector)
+                if chart_element:
+                    print(f"  Found chart element with selector: {selector}")
+                    break
+        else:
+            print("  Found chart element with selector: svg.recharts-surface")
 
         if not chart_element:
             print("  Could not find chart element for tooltip extraction")
             return historical
 
-        # Get the chart's bounding box
+        # Scroll chart into view and get bounding box
+        await chart_element.scroll_into_view_if_needed()
+        await asyncio.sleep(1)
+
         bbox = await chart_element.bounding_box()
         if not bbox:
             print("  Could not get chart bounding box")
@@ -227,49 +225,92 @@ async def extract_historical_data(page) -> list:
 
         print(f"  Chart bounding box: x={bbox['x']:.0f}, y={bbox['y']:.0f}, w={bbox['width']:.0f}, h={bbox['height']:.0f}")
 
+        # For Recharts, we need to find the actual bar elements and hover on them
+        # Look for rect elements (bars) within the chart
+        bars = await page.query_selector_all("svg.recharts-surface rect.recharts-bar-rectangle")
+        if not bars:
+            bars = await page.query_selector_all("svg.recharts-surface rect")
+
+        print(f"  Found {len(bars)} bar elements in chart")
+
         # Calculate hover positions across the chart
-        # We'll hover at multiple x positions to capture different dates
-        chart_left = bbox['x'] + 50  # Add padding to skip y-axis labels
+        chart_left = bbox['x'] + 60  # Skip y-axis
         chart_right = bbox['x'] + bbox['width'] - 20
-        chart_center_y = bbox['y'] + bbox['height'] / 2
+        # Hover at multiple y positions to ensure we hit the bars
+        chart_y_positions = [
+            bbox['y'] + bbox['height'] * 0.3,  # Upper third
+            bbox['y'] + bbox['height'] * 0.5,  # Middle
+            bbox['y'] + bbox['height'] * 0.7,  # Lower third
+        ]
 
-        # Number of positions to sample (more = more data points but slower)
-        num_samples = 50
+        num_samples = 60
         step = (chart_right - chart_left) / num_samples
-
-        seen_dates = set()  # Track dates we've already captured
+        seen_dates = set()
 
         print(f"  Scanning chart with {num_samples} hover positions...")
 
         for i in range(num_samples + 1):
             x = chart_left + (i * step)
-            y = chart_center_y
 
-            # Move mouse to position
-            await page.mouse.move(x, y)
-            await asyncio.sleep(0.15)  # Wait for tooltip to appear
+            # Try multiple y positions
+            for y in chart_y_positions:
+                # Use JavaScript to dispatch proper mouse events
+                await page.evaluate(f"""
+                    (coords) => {{
+                        const element = document.elementFromPoint(coords.x, coords.y);
+                        if (element) {{
+                            const mouseEnter = new MouseEvent('mouseenter', {{
+                                bubbles: true, clientX: coords.x, clientY: coords.y
+                            }});
+                            const mouseMove = new MouseEvent('mousemove', {{
+                                bubbles: true, clientX: coords.x, clientY: coords.y
+                            }});
+                            const mouseOver = new MouseEvent('mouseover', {{
+                                bubbles: true, clientX: coords.x, clientY: coords.y
+                            }});
+                            element.dispatchEvent(mouseEnter);
+                            element.dispatchEvent(mouseOver);
+                            element.dispatchEvent(mouseMove);
+                        }}
+                    }}
+                """, {"x": x, "y": y})
 
-            # Try to find and extract tooltip content
-            tooltip_selectors = [
-                "[role='tooltip']",
-                ".recharts-tooltip-wrapper",
-                ".apexcharts-tooltip",
-                "[class*='tooltip']",
-                ".chart-tooltip",
-            ]
+                await asyncio.sleep(0.1)
 
-            for tooltip_selector in tooltip_selectors:
-                tooltip = await page.query_selector(tooltip_selector)
-                if tooltip:
-                    tooltip_text = await tooltip.text_content()
-                    if tooltip_text and tooltip_text.strip():
-                        # Parse the tooltip text
-                        data_point = parse_tooltip_text(tooltip_text)
-                        if data_point and data_point.get("date") not in seen_dates:
-                            seen_dates.add(data_point["date"])
-                            historical.append(data_point)
-                            print(f"    Found: {data_point['date']} - Bay Area: {data_point.get('bayarea')}, Austin: {data_point.get('austin')}")
-                        break
+                # Try to find tooltip - Recharts uses various tooltip containers
+                tooltip_selectors = [
+                    ".recharts-tooltip-wrapper:not([style*='visibility: hidden'])",
+                    ".recharts-tooltip-wrapper",
+                    ".recharts-default-tooltip",
+                    "[class*='tooltip']",
+                    "[role='tooltip']",
+                ]
+
+                for tooltip_selector in tooltip_selectors:
+                    try:
+                        tooltip = await page.query_selector(tooltip_selector)
+                        if tooltip:
+                            # Check if tooltip is visible
+                            is_visible = await tooltip.is_visible()
+                            if not is_visible:
+                                continue
+
+                            tooltip_text = await tooltip.text_content()
+                            if tooltip_text and tooltip_text.strip():
+                                # Parse the tooltip text
+                                data_point = parse_tooltip_text(tooltip_text)
+                                if data_point and data_point.get("date") and data_point.get("date") not in seen_dates:
+                                    seen_dates.add(data_point["date"])
+                                    historical.append(data_point)
+                                    print(f"    Found: {data_point['date']} - Bay Area: {data_point.get('bayarea')}, Austin: {data_point.get('austin')}")
+                                break
+                    except Exception:
+                        pass
+
+        # If still no data, try to extract from the page's JavaScript data
+        if not historical:
+            print("  No tooltips found, trying to extract chart data from page scripts...")
+            historical = await extract_chart_data_from_scripts(page)
 
         # Sort by date
         historical.sort(key=lambda x: x.get("date", ""))
@@ -279,6 +320,73 @@ async def extract_historical_data(page) -> list:
         print(f"Warning: Could not extract historical data: {e}")
         import traceback
         traceback.print_exc()
+
+    return historical
+
+
+async def extract_chart_data_from_scripts(page) -> list:
+    """Try to extract chart data directly from page scripts or React state."""
+    historical = []
+
+    try:
+        # Try to access React component state or chart data
+        chart_data = await page.evaluate("""
+            () => {
+                // Try to find chart data in window or React state
+                const results = [];
+
+                // Method 1: Look for data in window object
+                for (const key of Object.keys(window)) {
+                    if (key.includes('chart') || key.includes('fleet') || key.includes('data')) {
+                        const val = window[key];
+                        if (Array.isArray(val) && val.length > 0 && val[0].date) {
+                            return val;
+                        }
+                    }
+                }
+
+                // Method 2: Try to find Recharts internal data
+                const rechartsWrapper = document.querySelector('.recharts-wrapper');
+                if (rechartsWrapper && rechartsWrapper.__reactFiber$) {
+                    // React fiber might have props with data
+                    let fiber = rechartsWrapper.__reactFiber$;
+                    while (fiber) {
+                        if (fiber.memoizedProps && fiber.memoizedProps.data) {
+                            return fiber.memoizedProps.data;
+                        }
+                        fiber = fiber.return;
+                    }
+                }
+
+                // Method 3: Parse script tags for data
+                const scripts = document.querySelectorAll('script');
+                for (const script of scripts) {
+                    const text = script.textContent || '';
+                    // Look for array patterns with dates
+                    const match = text.match(/\\[\\s*\\{[^\\]]*"date"[^\\]]*\\}\\s*\\]/);
+                    if (match) {
+                        try {
+                            return JSON.parse(match[0]);
+                        } catch(e) {}
+                    }
+                }
+
+                return results;
+            }
+        """)
+
+        if chart_data and isinstance(chart_data, list):
+            for item in chart_data:
+                if isinstance(item, dict) and item.get("date"):
+                    historical.append({
+                        "date": item.get("date"),
+                        "bayarea": item.get("bayArea") or item.get("bayarea") or item.get("Bay Area"),
+                        "austin": item.get("austin") or item.get("Austin"),
+                        "total": item.get("total") or item.get("Total"),
+                    })
+            print(f"  Found {len(historical)} data points from scripts")
+    except Exception as e:
+        print(f"  Could not extract chart data from scripts: {e}")
 
     return historical
 
