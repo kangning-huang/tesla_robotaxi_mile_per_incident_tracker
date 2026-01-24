@@ -115,20 +115,52 @@ const commonOptions = {
 function initMPIChart() {
     const ctx = document.getElementById('mpiChart').getContext('2d');
 
-    // Prepare data
-    const labels = incidentData.map(d => d.date);
-    const mpiValues = incidentData.map(d => d.mpi);
-
-    // Calculate exponential trend line
+    // Prepare base data from incidents
     const startDate = new Date(incidentData[0].date);
-    const trendData = incidentData.map(d => {
+    const lastIncidentDate = new Date(incidentData[incidentData.length - 1].date);
+    const today = new Date();
+
+    // Generate labels from first incident to today
+    const labels = [];
+    const mpiValues = [];
+    const trendData = [];
+    const humanBenchmark = [];
+
+    // Add all incident data points
+    incidentData.forEach(d => {
+        labels.push(d.date);
+        mpiValues.push(d.mpi);
         const currentDate = new Date(d.date);
         const daysSinceStart = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
-        return Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart));
+        trendData.push(Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)));
+        humanBenchmark.push(500000);
     });
 
-    // Human driver benchmark
-    const humanBenchmark = new Array(incidentData.length).fill(500000);
+    // Extend projection to today (add monthly points after last incident)
+    let projectionDate = new Date(lastIncidentDate);
+    projectionDate.setDate(projectionDate.getDate() + 30); // Start 30 days after last incident
+
+    while (projectionDate <= today) {
+        const dateStr = projectionDate.toISOString().split('T')[0];
+        labels.push(dateStr);
+        mpiValues.push(null); // No actual incident data
+        const daysSinceStart = Math.floor((projectionDate - startDate) / (1000 * 60 * 60 * 24));
+        trendData.push(Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)));
+        humanBenchmark.push(500000);
+        projectionDate.setDate(projectionDate.getDate() + 30); // Monthly intervals
+    }
+
+    // Add today as final point
+    if (today > lastIncidentDate) {
+        const todayStr = today.toISOString().split('T')[0];
+        if (!labels.includes(todayStr)) {
+            labels.push(todayStr);
+            mpiValues.push(null);
+            const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+            trendData.push(Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)));
+            humanBenchmark.push(500000);
+        }
+    }
 
     new Chart(ctx, {
         type: 'line',
@@ -147,10 +179,11 @@ function initMPIChart() {
                     pointBorderColor: '#0a0a0a',
                     pointBorderWidth: 2,
                     tension: 0,
+                    spanGaps: false,
                     order: 1
                 },
                 {
-                    label: 'Exponential Trend',
+                    label: 'Exponential Trend (Projected)',
                     data: trendData,
                     borderColor: chartColors.primary,
                     backgroundColor: 'transparent',
