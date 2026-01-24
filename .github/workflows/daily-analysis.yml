@@ -144,4 +144,6 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git add data/fleet_data_scraped.json
           git commit -m "Update fleet data from robotaxitracker.com - $(date +'%Y-%m-%d')"
+          # Pull any changes from other jobs before pushing
+          git pull --rebase origin main
           git push
