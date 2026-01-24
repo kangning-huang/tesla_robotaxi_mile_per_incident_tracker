@@ -6,8 +6,9 @@ This script:
 1. Loads NHTSA ADS/ADAS CSV data
 2. Filters for Tesla incidents
 3. Combines with fleet size data (day-by-day interpolation)
-4. Calculates estimated miles between each incident
-5. Tracks the metric over time
+4. Calculates miles between EACH consecutive incident
+5. Runs nonlinear trend analysis to detect safety improvements
+6. Visualizes the MPI trend over time
 """
 
 import json
@@ -22,6 +23,26 @@ except ImportError:
     print("Error: pandas is required. Install with: pip install pandas")
     sys.exit(1)
 
+try:
+    import numpy as np
+    HAS_NUMPY = True
+except ImportError:
+    HAS_NUMPY = False
+
+try:
+    from scipy import optimize
+    from scipy import stats
+    HAS_SCIPY = True
+except ImportError:
+    HAS_SCIPY = False
+
+try:
+    import matplotlib.pyplot as plt
+    import matplotlib.dates as mdates
+    HAS_MATPLOTLIB = True
+except ImportError:
+    HAS_MATPLOTLIB = False
+
 
 class FleetInterpolator:
     """Interpolate fleet size for any given date based on snapshots."""
@@ -31,7 +52,6 @@ class FleetInterpolator:
         self.snapshots = []
         for s in snapshots:
             dt = datetime.strptime(s["date"], "%Y-%m-%d")
-            # Use Austin vehicles as true robotaxi count (unsupervised)
             count = s.get("total_robotaxi", s.get("austin_vehicles", 0))
             self.snapshots.append((dt, count))
         self.snapshots.sort(key=lambda x: x[0])
@@ -39,9 +59,8 @@ class FleetInterpolator:
     def get_fleet_size(self, target_date: datetime) -> int:
         """Get interpolated fleet size for a specific date."""
         if not self.snapshots:
-            return 25  # Default estimate
+            return 25
 
-        # Find surrounding snapshots
         before = None
         after = None
 
@@ -51,7 +70,6 @@ class FleetInterpolator:
             if dt >= target_date and after is None:
                 after = (dt, count)
 
-        # Handle edge cases
         if before is None:
             return self.snapshots[0][1]
         if after is None:
@@ -59,7 +77,6 @@ class FleetInterpolator:
         if before[0] == after[0]:
             return before[1]
 
-        # Linear interpolation
         total_days = (after[0] - before[0]).days
         elapsed_days = (target_date - before[0]).days
         ratio = elapsed_days / total_days if total_days > 0 else 0
@@ -72,12 +89,7 @@ class FleetInterpolator:
         end_date: datetime,
         daily_miles_per_vehicle: int
     ) -> tuple[int, list[dict]]:
-        """
-        Calculate total miles driven in a period with day-by-day fleet tracking.
-
-        Returns:
-            tuple: (total_miles, daily_breakdown)
-        """
+        """Calculate total miles driven in a period with day-by-day fleet tracking."""
         total_miles = 0
         daily_breakdown = []
 
@@ -96,6 +108,191 @@ class FleetInterpolator:
             current_date += timedelta(days=1)
 
         return total_miles, daily_breakdown
+
+
+class MPITrendAnalyzer:
+    """Analyze MPI trends using nonlinear regression."""
+
+    def __init__(self, incident_data: list[dict]):
+        """Initialize with incident MPI data."""
+        self.data = incident_data
+        self.days_since_start = []
+        self.mpi_values = []
+        self.dates = []
+
+        if incident_data:
+            start_date = datetime.strptime(incident_data[0]['incident_date'], '%Y-%m-%d')
+            for d in incident_data:
+                incident_date = datetime.strptime(d['incident_date'], '%Y-%m-%d')
+                days = (incident_date - start_date).days
+                self.days_since_start.append(days)
+                self.mpi_values.append(d['mpi_since_previous'])
+                self.dates.append(incident_date)
+
+    def linear_trend(self) -> dict:
+        """Fit linear trend: MPI = a + b*t"""
+        if not HAS_NUMPY or len(self.mpi_values) < 2:
+            return {"error": "Insufficient data or numpy not available"}
+
+        x = np.array(self.days_since_start)
+        y = np.array(self.mpi_values)
+
+        # Linear regression
+        slope, intercept, r_value, p_value, std_err = stats.linregress(x, y) if HAS_SCIPY else (0, 0, 0, 1, 0)
+
+        if not HAS_SCIPY:
+            # Fallback to numpy polyfit
+            coeffs = np.polyfit(x, y, 1)
+            slope, intercept = coeffs[0], coeffs[1]
+            r_value = np.corrcoef(x, y)[0, 1]
+            p_value = None
+
+        return {
+            "type": "linear",
+            "slope": slope,
+            "intercept": intercept,
+            "r_squared": r_value ** 2,
+            "p_value": p_value,
+            "interpretation": "improving" if slope > 0 else "worsening",
+            "daily_change": slope,
+            "monthly_change": slope * 30
+        }
+
+    def exponential_trend(self) -> dict:
+        """Fit exponential trend: MPI = a * exp(b*t)"""
+        if not HAS_NUMPY or not HAS_SCIPY or len(self.mpi_values) < 3:
+            return {"error": "Insufficient data or scipy not available"}
+
+        x = np.array(self.days_since_start)
+        y = np.array(self.mpi_values)
+
+        # Exponential function
+        def exp_func(t, a, b):
+            return a * np.exp(b * t)
+
+        try:
+            # Initial guess
+            popt, pcov = optimize.curve_fit(
+                exp_func, x, y,
+                p0=[y[0], 0.01],
+                maxfev=5000,
+                bounds=([0, -0.1], [np.inf, 0.1])
+            )
+
+            # Calculate R-squared
+            y_pred = exp_func(x, *popt)
+            ss_res = np.sum((y - y_pred) ** 2)
+            ss_tot = np.sum((y - np.mean(y)) ** 2)
+            r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
+
+            # Doubling/halving time
+            if popt[1] != 0:
+                doubling_time = np.log(2) / abs(popt[1])
+            else:
+                doubling_time = float('inf')
+
+            return {
+                "type": "exponential",
+                "a": popt[0],
+                "b": popt[1],
+                "r_squared": r_squared,
+                "interpretation": "improving" if popt[1] > 0 else "worsening",
+                "growth_rate_per_day": popt[1],
+                "doubling_time_days": doubling_time if popt[1] > 0 else None,
+                "halving_time_days": doubling_time if popt[1] < 0 else None
+            }
+        except Exception as e:
+            return {"error": f"Exponential fit failed: {e}"}
+
+    def polynomial_trend(self, degree: int = 2) -> dict:
+        """Fit polynomial trend: MPI = a + b*t + c*t^2 + ..."""
+        if not HAS_NUMPY or len(self.mpi_values) < degree + 1:
+            return {"error": "Insufficient data or numpy not available"}
+
+        x = np.array(self.days_since_start)
+        y = np.array(self.mpi_values)
+
+        try:
+            coeffs = np.polyfit(x, y, degree)
+            poly = np.poly1d(coeffs)
+
+            # Calculate R-squared
+            y_pred = poly(x)
+            ss_res = np.sum((y - y_pred) ** 2)
+            ss_tot = np.sum((y - np.mean(y)) ** 2)
+            r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
+
+            # Determine if accelerating or decelerating improvement
+            if degree >= 2:
+                second_deriv = 2 * coeffs[-3] if len(coeffs) > 2 else 0
+                acceleration = "accelerating" if second_deriv > 0 else "decelerating"
+            else:
+                acceleration = "linear"
+
+            return {
+                "type": f"polynomial_deg{degree}",
+                "coefficients": coeffs.tolist(),
+                "r_squared": r_squared,
+                "interpretation": acceleration,
+                "current_trend": "improving" if coeffs[-2] > 0 else "worsening"
+            }
+        except Exception as e:
+            return {"error": f"Polynomial fit failed: {e}"}
+
+    def get_best_fit(self) -> dict:
+        """Determine which model fits best based on R-squared."""
+        models = {}
+
+        linear = self.linear_trend()
+        if "r_squared" in linear:
+            models["linear"] = linear
+
+        exp = self.exponential_trend()
+        if "r_squared" in exp:
+            models["exponential"] = exp
+
+        poly2 = self.polynomial_trend(degree=2)
+        if "r_squared" in poly2:
+            models["quadratic"] = poly2
+
+        if not models:
+            return {"error": "No models could be fitted"}
+
+        best = max(models.items(), key=lambda x: x[1].get("r_squared", 0))
+        return {
+            "best_model": best[0],
+            "best_fit": best[1],
+            "all_models": models
+        }
+
+    def forecast(self, days_ahead: int = 30) -> dict:
+        """Forecast future MPI based on best fit model."""
+        best = self.get_best_fit()
+        if "error" in best:
+            return best
+
+        if not HAS_NUMPY:
+            return {"error": "numpy required for forecasting"}
+
+        x_future = np.array(self.days_since_start[-1]) + np.arange(1, days_ahead + 1)
+
+        model = best["best_fit"]
+        if model["type"] == "linear":
+            y_future = model["intercept"] + model["slope"] * x_future
+        elif model["type"] == "exponential":
+            y_future = model["a"] * np.exp(model["b"] * x_future)
+        elif model["type"].startswith("polynomial"):
+            poly = np.poly1d(model["coefficients"])
+            y_future = poly(x_future)
+        else:
+            return {"error": "Unknown model type"}
+
+        return {
+            "forecast_days": days_ahead,
+            "model_used": model["type"],
+            "predicted_mpi_30_days": float(y_future[-1]) if len(y_future) > 0 else None,
+            "trend": "improving" if y_future[-1] > self.mpi_values[-1] else "worsening"
+        }
 
 
 def load_nhtsa_data(data_dir: Path) -> tuple[Optional[pd.DataFrame], Optional[pd.DataFrame]]:
@@ -128,9 +325,7 @@ def filter_tesla_incidents(df: pd.DataFrame, system_type: str) -> pd.DataFrame:
     if df is None or len(df) == 0:
         return pd.DataFrame()
 
-    # Common column names for manufacturer/make
     make_columns = ['Make', 'MAKE', 'Manufacturer', 'MANUFACTURER', 'Vehicle Make']
-
     make_col = None
     for col in make_columns:
         if col in df.columns:
@@ -141,7 +336,6 @@ def filter_tesla_incidents(df: pd.DataFrame, system_type: str) -> pd.DataFrame:
         print(f"  Warning: Could not find make column in {system_type} data")
         return pd.DataFrame()
 
-    # Filter for Tesla
     tesla_df = df[df[make_col].str.contains('Tesla', case=False, na=False)].copy()
     tesla_df['System_Type'] = system_type
 
@@ -155,7 +349,6 @@ def parse_incident_dates(df: pd.DataFrame) -> pd.DataFrame:
         return df
 
     date_columns = ['Incident Date', 'Date', 'INCIDENT_DATE', 'Report Date', 'Crash Date']
-
     for col in date_columns:
         if col in df.columns:
             df['parsed_date'] = pd.to_datetime(df[col], errors='coerce')
@@ -183,76 +376,69 @@ def load_fleet_data(data_dir: Path) -> list[dict]:
     return snapshots
 
 
-def calculate_miles_between_incidents(
+def calculate_mpi_between_incidents(
     incidents_df: pd.DataFrame,
     fleet_interpolator: FleetInterpolator,
     daily_miles: int,
     service_start: datetime
 ) -> list[dict]:
     """
-    Calculate miles driven between each consecutive incident.
+    Calculate miles driven between EACH consecutive pair of incidents.
 
-    This gives a dynamic view of the miles-per-incident metric over time,
-    accounting for changing fleet size.
+    Returns a list with MPI for each interval, not cumulative.
     """
     results = []
 
     if incidents_df is None or len(incidents_df) == 0 or 'parsed_date' not in incidents_df.columns:
         return results
 
-    # Sort incidents by date
     sorted_incidents = incidents_df.dropna(subset=['parsed_date']).sort_values('parsed_date')
 
     if len(sorted_incidents) == 0:
         return results
 
-    # First incident: calculate miles from service start
     prev_date = service_start
     incident_num = 0
+    cumulative_miles = 0
+    cumulative_incidents = 0
 
     for idx, row in sorted_incidents.iterrows():
         incident_num += 1
         incident_date = row['parsed_date'].to_pydatetime()
 
-        # Skip if incident is before service start
         if incident_date < service_start:
             continue
 
-        # Calculate miles between previous date and this incident
+        # Calculate miles between previous incident and this one
         miles, daily_breakdown = fleet_interpolator.calculate_miles_in_period(
             prev_date, incident_date, daily_miles
         )
 
         days_between = (incident_date - prev_date).days
+        avg_fleet = sum(d['fleet_size'] for d in daily_breakdown) / len(daily_breakdown) if daily_breakdown else 0
+
+        cumulative_miles += miles
+        cumulative_incidents += 1
 
         results.append({
             "incident_number": incident_num,
             "incident_date": incident_date.strftime("%Y-%m-%d"),
             "days_since_previous": days_between,
             "miles_since_previous": miles,
-            "avg_fleet_size": sum(d['fleet_size'] for d in daily_breakdown) / len(daily_breakdown) if daily_breakdown else 0,
-            "cumulative_miles": sum(r['miles_since_previous'] for r in results) + miles,
-            "cumulative_incidents": incident_num
+            "mpi_since_previous": miles,  # MPI for THIS interval only
+            "avg_fleet_size": avg_fleet,
+            "cumulative_miles": cumulative_miles,
+            "cumulative_incidents": cumulative_incidents,
+            "cumulative_mpi": cumulative_miles / cumulative_incidents
         })
 
         prev_date = incident_date
-
-    # Calculate running miles-per-incident
-    for r in results:
-        r['cumulative_miles_per_incident'] = r['cumulative_miles'] / r['cumulative_incidents']
 
     return results
 
 
 def get_sample_incidents() -> pd.DataFrame:
-    """
-    Return sample incident data based on known Tesla Robotaxi crashes.
-
-    Based on news reports:
-    - 7 collisions through Oct 15, 2025
-    - 8th crash in October 2025
-    - Additional incidents reported through Dec 2025
-    """
+    """Return sample incident data based on known Tesla Robotaxi crashes."""
     incidents = [
         {"date": "2025-07-05", "description": "Low-speed collision, Austin"},
         {"date": "2025-07-18", "description": "Minor fender-bender, Austin"},
@@ -271,23 +457,150 @@ def get_sample_incidents() -> pd.DataFrame:
     return df
 
 
-def print_incident_analysis(results: list[dict], scenario_name: str, daily_miles: int):
-    """Print detailed analysis of miles between incidents."""
+def print_mpi_analysis(results: list[dict], scenario_name: str, daily_miles: int):
+    """Print detailed MPI between each consecutive incident."""
     print(f"\n  {scenario_name} ({daily_miles} mi/day/vehicle):")
-    print(f"  {'─' * 70}")
-    print(f"  {'#':<3} {'Date':<12} {'Days':<6} {'Miles':>12} {'Avg Fleet':>10} {'Cumul MPI':>12}")
-    print(f"  {'─' * 70}")
+    print(f"  {'─' * 75}")
+    print(f"  {'#':<3} {'Date':<12} {'Days':<6} {'Fleet':>6} {'Miles Between':>14} {'MPI Interval':>12}")
+    print(f"  {'─' * 75}")
 
     for r in results:
         print(f"  {r['incident_number']:<3} {r['incident_date']:<12} {r['days_since_previous']:<6} "
-              f"{r['miles_since_previous']:>12,} {r['avg_fleet_size']:>10.1f} "
-              f"{r['cumulative_miles_per_incident']:>12,.0f}")
+              f"{r['avg_fleet_size']:>6.0f} {r['miles_since_previous']:>14,} {r['mpi_since_previous']:>12,}")
 
     if results:
         final = results[-1]
-        print(f"  {'─' * 70}")
-        print(f"  TOTAL: {final['cumulative_miles']:,} miles over {final['cumulative_incidents']} incidents")
-        print(f"  OVERALL MILES PER INCIDENT: {final['cumulative_miles_per_incident']:,.0f}")
+        avg_mpi = sum(r['mpi_since_previous'] for r in results) / len(results)
+        print(f"  {'─' * 75}")
+        print(f"  AVERAGE MPI (per interval): {avg_mpi:,.0f}")
+        print(f"  CUMULATIVE MPI: {final['cumulative_mpi']:,.0f}")
+
+
+def print_trend_analysis(analyzer: MPITrendAnalyzer):
+    """Print trend analysis results."""
+    print("\n" + "=" * 75)
+    print("MPI TREND ANALYSIS (Is Tesla Improving?)")
+    print("=" * 75)
+
+    if len(analyzer.mpi_values) < 3:
+        print("\n  Insufficient data points for trend analysis (need at least 3)")
+        return
+
+    # Linear trend
+    linear = analyzer.linear_trend()
+    if "error" not in linear:
+        print(f"\n  LINEAR TREND:")
+        print(f"    MPI = {linear['intercept']:,.0f} + {linear['slope']:,.1f} × days")
+        print(f"    R² = {linear['r_squared']:.3f}")
+        print(f"    Monthly change: {linear['monthly_change']:+,.0f} miles/incident")
+        print(f"    Interpretation: MPI is {linear['interpretation'].upper()}")
+
+    # Exponential trend
+    exp = analyzer.exponential_trend()
+    if "error" not in exp:
+        print(f"\n  EXPONENTIAL TREND:")
+        print(f"    MPI = {exp['a']:,.0f} × e^({exp['b']:.6f} × days)")
+        print(f"    R² = {exp['r_squared']:.3f}")
+        print(f"    Daily growth rate: {exp['growth_rate_per_day']*100:+.3f}%")
+        if exp.get('doubling_time_days'):
+            print(f"    Doubling time: {exp['doubling_time_days']:.0f} days")
+        if exp.get('halving_time_days'):
+            print(f"    Halving time: {exp['halving_time_days']:.0f} days")
+        print(f"    Interpretation: MPI is {exp['interpretation'].upper()}")
+
+    # Polynomial trend
+    poly = analyzer.polynomial_trend(degree=2)
+    if "error" not in poly:
+        coeffs = poly['coefficients']
+        print(f"\n  QUADRATIC TREND:")
+        print(f"    MPI = {coeffs[2]:,.0f} + {coeffs[1]:,.2f}×t + {coeffs[0]:.4f}×t²")
+        print(f"    R² = {poly['r_squared']:.3f}")
+        print(f"    Interpretation: {poly['interpretation'].upper()} {poly['current_trend']}")
+
+    # Best fit
+    best = analyzer.get_best_fit()
+    if "error" not in best:
+        print(f"\n  BEST FIT MODEL: {best['best_model'].upper()}")
+        print(f"    R² = {best['best_fit']['r_squared']:.3f}")
+
+    # Forecast
+    forecast = analyzer.forecast(days_ahead=30)
+    if "error" not in forecast:
+        print(f"\n  30-DAY FORECAST:")
+        print(f"    Model: {forecast['model_used']}")
+        print(f"    Predicted MPI: {forecast['predicted_mpi_30_days']:,.0f}")
+        print(f"    Trend: {forecast['trend'].upper()}")
+
+
+def plot_mpi_trend(results: list[dict], analyzer: MPITrendAnalyzer, output_path: Path):
+    """Generate MPI trend visualization."""
+    if not HAS_MATPLOTLIB or not HAS_NUMPY:
+        print("\n  [Matplotlib/NumPy not available - skipping chart generation]")
+        return
+
+    fig, axes = plt.subplots(2, 1, figsize=(12, 10))
+
+    dates = [datetime.strptime(r['incident_date'], '%Y-%m-%d') for r in results]
+    mpi_values = [r['mpi_since_previous'] for r in results]
+    cumulative_mpi = [r['cumulative_mpi'] for r in results]
+
+    # Top chart: MPI per interval with trend line
+    ax1 = axes[0]
+    ax1.scatter(dates, mpi_values, s=100, c='red', alpha=0.7, label='MPI per Interval', zorder=5)
+    ax1.plot(dates, mpi_values, 'r--', alpha=0.3, linewidth=1)
+
+    # Add trend line
+    if len(dates) >= 3:
+        best = analyzer.get_best_fit()
+        if "error" not in best:
+            x_days = np.array(analyzer.days_since_start)
+            x_smooth = np.linspace(x_days[0], x_days[-1], 100)
+
+            model = best['best_fit']
+            if model['type'] == 'linear':
+                y_smooth = model['intercept'] + model['slope'] * x_smooth
+            elif model['type'] == 'exponential':
+                y_smooth = model['a'] * np.exp(model['b'] * x_smooth)
+            elif model['type'].startswith('polynomial'):
+                poly = np.poly1d(model['coefficients'])
+                y_smooth = poly(x_smooth)
+            else:
+                y_smooth = None
+
+            if y_smooth is not None:
+                start_date = dates[0]
+                trend_dates = [start_date + timedelta(days=int(d)) for d in x_smooth]
+                ax1.plot(trend_dates, y_smooth, 'b-', linewidth=2,
+                        label=f'{best["best_model"].title()} Trend (R²={model["r_squared"]:.2f})')
+
+    ax1.axhline(y=500000, color='green', linestyle=':', linewidth=2, label='Human Driver Avg (500K)')
+    ax1.set_ylabel('Miles Per Incident (MPI)', fontsize=12)
+    ax1.set_title('Tesla Robotaxi: Miles Between Each Consecutive Incident', fontsize=14, fontweight='bold')
+    ax1.legend(loc='upper left')
+    ax1.grid(True, alpha=0.3)
+    ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    ax1.xaxis.set_major_locator(mdates.MonthLocator())
+    plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45)
+
+    # Bottom chart: Cumulative MPI
+    ax2 = axes[1]
+    ax2.fill_between(dates, cumulative_mpi, alpha=0.3, color='blue')
+    ax2.plot(dates, cumulative_mpi, 'b-', linewidth=2, marker='o', label='Cumulative MPI')
+    ax2.axhline(y=500000, color='green', linestyle=':', linewidth=2, label='Human Driver Avg')
+    ax2.set_xlabel('Incident Date', fontsize=12)
+    ax2.set_ylabel('Cumulative MPI', fontsize=12)
+    ax2.set_title('Cumulative Miles Per Incident Over Time', fontsize=14)
+    ax2.legend(loc='upper left')
+    ax2.grid(True, alpha=0.3)
+    ax2.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+    ax2.xaxis.set_major_locator(mdates.MonthLocator())
+    plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45)
+
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=150, bbox_inches='tight')
+    plt.close()
+
+    print(f"\n  Chart saved to: {output_path}")
 
 
 def main():
@@ -295,33 +608,36 @@ def main():
     script_dir = Path(__file__).parent
     data_dir = script_dir.parent / "data"
 
-    print("=" * 70)
+    print("=" * 75)
     print("TESLA ROBOTAXI MILES PER INCIDENT ANALYSIS")
-    print("Dynamic Day-by-Day Fleet Interpolation")
-    print("=" * 70)
+    print("With Nonlinear Trend Analysis")
+    print("=" * 75)
     print(f"\nData directory: {data_dir}")
     print(f"Analysis date: {datetime.now().isoformat()}")
 
+    # Check for optional dependencies
+    print(f"\nOptional dependencies:")
+    print(f"  NumPy: {'Available' if HAS_NUMPY else 'Not installed (pip install numpy)'}")
+    print(f"  SciPy: {'Available' if HAS_SCIPY else 'Not installed (pip install scipy)'}")
+    print(f"  Matplotlib: {'Available' if HAS_MATPLOTLIB else 'Not installed (pip install matplotlib)'}")
+
     # Load data
-    print("\n" + "─" * 70)
+    print("\n" + "─" * 75)
     print("LOADING DATA")
-    print("─" * 70)
+    print("─" * 75)
 
     ads_df, adas_df = load_nhtsa_data(data_dir)
     fleet_snapshots = load_fleet_data(data_dir)
-
-    # Create fleet interpolator
     fleet_interpolator = FleetInterpolator(fleet_snapshots)
 
     # Filter for Tesla
-    print("\n" + "─" * 70)
+    print("\n" + "─" * 75)
     print("FILTERING TESLA INCIDENTS")
-    print("─" * 70)
+    print("─" * 75)
 
     tesla_ads = filter_tesla_incidents(ads_df, "ADS")
     tesla_adas = filter_tesla_incidents(adas_df, "ADAS")
 
-    # Combine and parse dates
     if len(tesla_ads) > 0 or len(tesla_adas) > 0:
         all_tesla = pd.concat([tesla_ads, tesla_adas], ignore_index=True)
         all_tesla = parse_incident_dates(all_tesla)
@@ -333,66 +649,55 @@ def main():
 
     print(f"\nTotal Tesla incidents for analysis: {len(all_tesla)}")
 
-    # Service start date
     service_start = datetime(2025, 6, 25)
     print(f"Service start date: {service_start.strftime('%Y-%m-%d')}")
 
-    # Calculate for different scenarios
-    print("\n" + "=" * 70)
-    print("MILES BETWEEN INCIDENTS (Day-by-Day Calculation)")
-    print("=" * 70)
+    # Calculate MPI for moderate scenario (primary)
+    print("\n" + "=" * 75)
+    print("MPI BETWEEN CONSECUTIVE INCIDENTS")
+    print("=" * 75)
 
-    scenarios = [
-        ("Conservative", 50),
-        ("Moderate", 100),
-        ("Aggressive", 150)
-    ]
+    daily_miles = 100  # Moderate scenario
+    results = calculate_mpi_between_incidents(all_tesla, fleet_interpolator, daily_miles, service_start)
 
-    all_results = {}
+    print_mpi_analysis(results, "Moderate", daily_miles)
 
-    for scenario_name, daily_miles in scenarios:
-        results = calculate_miles_between_incidents(
-            all_tesla,
-            fleet_interpolator,
-            daily_miles,
-            service_start
-        )
-        all_results[scenario_name] = results
-        print_incident_analysis(results, scenario_name, daily_miles)
+    # Trend analysis
+    if results:
+        analyzer = MPITrendAnalyzer(results)
+        print_trend_analysis(analyzer)
 
-    # Summary comparison
-    print("\n" + "=" * 70)
+        # Generate chart
+        chart_path = data_dir / "mpi_trend_chart.png"
+        plot_mpi_trend(results, analyzer, chart_path)
+
+    # Comparison
+    print("\n" + "=" * 75)
     print("COMPARISON BENCHMARKS")
-    print("=" * 70)
+    print("=" * 75)
     print("\n  Human Drivers (US avg):     ~500,000 miles per accident")
     print("  Waymo (reported):           ~1,000,000+ miles per incident")
     print("  Tesla FSD (supervised):     ~3,400,000 miles per crash (Tesla claim)")
 
-    # Show Tesla's position
-    if all_results.get("Moderate"):
-        moderate = all_results["Moderate"]
-        if moderate:
-            final_mpi = moderate[-1]['cumulative_miles_per_incident']
-            human_mpi = 500000
-            ratio = human_mpi / final_mpi if final_mpi > 0 else 0
+    if results:
+        avg_mpi = sum(r['mpi_since_previous'] for r in results) / len(results)
+        latest_mpi = results[-1]['mpi_since_previous']
+        human_mpi = 500000
 
-            print(f"\n  Tesla Robotaxi (moderate):  ~{final_mpi:,.0f} miles per incident")
-            print(f"  → {ratio:.1f}x {'worse' if ratio > 1 else 'better'} than human drivers")
+        print(f"\n  Tesla Robotaxi (average):   ~{avg_mpi:,.0f} miles per incident")
+        print(f"  Tesla Robotaxi (latest):    ~{latest_mpi:,.0f} miles per incident")
+        print(f"  → {human_mpi / avg_mpi:.1f}x worse than human drivers (average)")
+        print(f"  → {human_mpi / latest_mpi:.1f}x worse than human drivers (latest)")
 
-    # Fleet growth visualization
-    print("\n" + "=" * 70)
+    # Fleet visualization
+    print("\n" + "=" * 75)
     print("FLEET SIZE OVER TIME")
-    print("=" * 70)
+    print("=" * 75)
 
     sample_dates = [
-        datetime(2025, 6, 25),
-        datetime(2025, 7, 15),
-        datetime(2025, 8, 15),
-        datetime(2025, 9, 15),
-        datetime(2025, 10, 15),
-        datetime(2025, 11, 15),
-        datetime(2025, 12, 15),
-        datetime(2026, 1, 15),
+        datetime(2025, 6, 25), datetime(2025, 7, 15), datetime(2025, 8, 15),
+        datetime(2025, 9, 15), datetime(2025, 10, 15), datetime(2025, 11, 15),
+        datetime(2025, 12, 15), datetime(2026, 1, 15),
     ]
 
     print(f"\n  {'Date':<12} {'Fleet Size':>12} {'Visual'}")
@@ -402,40 +707,51 @@ def main():
         bar = '█' * (size // 2)
         print(f"  {dt.strftime('%Y-%m-%d'):<12} {size:>12} {bar}")
 
-    # Data quality notes
-    print("\n" + "=" * 70)
-    print("NOTES & CAVEATS")
-    print("=" * 70)
+    # Notes
+    print("\n" + "=" * 75)
+    print("NOTES & METHODOLOGY")
+    print("=" * 75)
     print(f"""
   {'[SAMPLE DATA]' if use_sample else '[NHTSA DATA]'}
 
-  - Fleet sizes are {'interpolated from ' + str(len(fleet_snapshots)) + ' snapshots' if fleet_snapshots else 'estimated'}
-  - Only Austin vehicles counted as true "robotaxis" (unsupervised ADS)
-  - Bay Area vehicles have human safety drivers
-  - Tesla has been cited for delayed crash reporting
-  - Miles per vehicle per day is estimated (no official data)
+  MPI Calculation:
+  - Miles between incident N and N+1 = Σ(daily_fleet_size × miles_per_day)
+  - Fleet size interpolated daily from {len(fleet_snapshots)} snapshots
+  - Assumes {daily_miles} miles/vehicle/day (moderate estimate)
+
+  Trend Analysis:
+  - Linear: MPI = a + b×t (constant rate of change)
+  - Exponential: MPI = a×e^(bt) (percentage growth/decay)
+  - Quadratic: MPI = a + bt + ct² (accelerating/decelerating change)
+  - Best model selected by highest R² value
+
+  Caveats:
+  - Tesla cited for delayed crash reporting to NHTSA
+  - Fleet size estimates may differ from actual active vehicles
   - Not all incidents are equal in severity
-
-  To get real NHTSA data, run:
-    python scripts/download_nhtsa_data.py
-
-  To scrape latest fleet data from robotaxitracker.com:
-    python scripts/scrape_fleet_data.py
+  - Small sample size limits trend reliability
     """)
 
-    # Save results to JSON
+    # Save results
     output_file = data_dir / "analysis_results.json"
+    trend_data = {}
+    if results:
+        analyzer = MPITrendAnalyzer(results)
+        trend_data = analyzer.get_best_fit()
+
     output = {
         "analysis_date": datetime.now().isoformat(),
         "service_start": service_start.strftime("%Y-%m-%d"),
         "data_source": "sample" if use_sample else "nhtsa",
         "incident_count": len(all_tesla),
-        "scenarios": {
-            name: {
-                "daily_miles_per_vehicle": miles,
-                "incidents": results
-            }
-            for (name, miles), results in zip(scenarios, [all_results.get(s[0], []) for s in scenarios])
+        "daily_miles_assumption": daily_miles,
+        "incidents": results,
+        "trend_analysis": trend_data,
+        "summary": {
+            "average_mpi": sum(r['mpi_since_previous'] for r in results) / len(results) if results else 0,
+            "latest_mpi": results[-1]['mpi_since_previous'] if results else 0,
+            "cumulative_mpi": results[-1]['cumulative_mpi'] if results else 0,
+            "total_miles": results[-1]['cumulative_miles'] if results else 0
         }
     }
 

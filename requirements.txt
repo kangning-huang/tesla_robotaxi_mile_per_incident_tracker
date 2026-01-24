@@ -1,15 +1,19 @@
 # Core dependencies
 pandas>=2.0.0
 requests>=2.31.0
+numpy>=1.24.0
+
+# Trend analysis
+scipy>=1.11.0
 
 # Web scraping (for robotaxitracker.com fleet data)
 playwright>=1.40.0
 
+# Visualization
+matplotlib>=3.8.0
+
 # Optional: AI-powered scraping
 # crawl4ai>=0.3.0
-
-# Visualization (optional)
-matplotlib>=3.8.0
 # plotly>=5.18.0
 
 # Development
