@@ -13,15 +13,24 @@ const incidentData = [
     { date: '2025-12-10', days: 28, fleet: 32, miles: 107500, mpi: 107500 },
 ];
 
+// Fleet size data (Austin unsupervised robotaxis only) - sampled from fleet_data.json
 const fleetData = [
     { date: '2025-06-25', size: 10 },
-    { date: '2025-07-15', size: 15 },
-    { date: '2025-08-15', size: 20 },
-    { date: '2025-09-15', size: 25 },
-    { date: '2025-10-15', size: 30 },
-    { date: '2025-11-15', size: 32 },
-    { date: '2025-12-15', size: 33 },
-    { date: '2026-01-15', size: 42 },
+    { date: '2025-07-15', size: 14 },
+    { date: '2025-08-14', size: 15 },
+    { date: '2025-09-05', size: 16 },
+    { date: '2025-09-06', size: 18 },
+    { date: '2025-10-30', size: 19 },
+    { date: '2025-11-08', size: 21 },
+    { date: '2025-11-17', size: 25 },
+    { date: '2025-11-22', size: 29 },
+    { date: '2025-12-25', size: 31 },
+    { date: '2025-12-31', size: 33 },
+    { date: '2026-01-06', size: 36 },
+    { date: '2026-01-16', size: 42 },
+    { date: '2026-01-19', size: 48 },
+    { date: '2026-01-22', size: 60 },
+    { date: '2026-01-23', size: 68 },
 ];
 
 // Trend analysis parameters (from Python analysis, updated for 115 mi/day)
@@ -326,12 +335,28 @@ function initFleetChart() {
         },
         options: {
             ...commonOptions,
+            plugins: {
+                ...commonOptions.plugins,
+                tooltip: {
+                    ...commonOptions.plugins.tooltip,
+                    callbacks: {
+                        title: function() {
+                            return ''; // Hide title to save space
+                        },
+                        label: function(context) {
+                            const value = context.parsed.y;
+                            if (value === null) return null;
+                            return value.toLocaleString() + ' vehicles';
+                        }
+                    }
+                }
+            },
             scales: {
                 ...commonOptions.scales,
                 y: {
                     ...commonOptions.scales.y,
                     beginAtZero: true,
-                    max: 50
+                    max: 80
                 }
             }
         }
