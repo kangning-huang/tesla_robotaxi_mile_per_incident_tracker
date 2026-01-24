@@ -1,0 +1,147 @@
+{
+  "metadata": {
+    "description": "Tesla Robotaxi fleet size data collected from news sources and robotaxitracker.com",
+    "last_updated": "2026-01-24",
+    "sources": [
+      "robotaxitracker.com",
+      "Electrek",
+      "Teslarati",
+      "Jalopnik",
+      "Tesla official announcements"
+    ],
+    "notes": "Austin vehicles are true robotaxis (unsupervised ADS). Bay Area vehicles have human safety drivers."
+  },
+  "snapshots": [
+    {
+      "date": "2025-06-25",
+      "austin_vehicles": 10,
+      "bayarea_vehicles": 50,
+      "total_robotaxi": 10,
+      "source": "Tesla Robotaxi launch announcement",
+      "notes": "Initial Austin launch with ~10 vehicles"
+    },
+    {
+      "date": "2025-07-01",
+      "austin_vehicles": 12,
+      "bayarea_vehicles": 55,
+      "total_robotaxi": 12,
+      "source": "Estimated (interpolation)",
+      "notes": "Early ramp phase"
+    },
+    {
+      "date": "2025-07-15",
+      "austin_vehicles": 15,
+      "bayarea_vehicles": 60,
+      "total_robotaxi": 15,
+      "source": "Electrek report",
+      "notes": "Fleet expansion in Austin"
+    },
+    {
+      "date": "2025-08-01",
+      "austin_vehicles": 18,
+      "bayarea_vehicles": 70,
+      "total_robotaxi": 18,
+      "source": "Estimated (interpolation)",
+      "notes": "Continued expansion"
+    },
+    {
+      "date": "2025-08-15",
+      "austin_vehicles": 20,
+      "bayarea_vehicles": 80,
+      "total_robotaxi": 20,
+      "source": "News aggregation",
+      "notes": "Continued ramp"
+    },
+    {
+      "date": "2025-09-01",
+      "austin_vehicles": 22,
+      "bayarea_vehicles": 90,
+      "total_robotaxi": 22,
+      "source": "Estimated (interpolation)",
+      "notes": "Steady growth"
+    },
+    {
+      "date": "2025-09-15",
+      "austin_vehicles": 25,
+      "bayarea_vehicles": 100,
+      "total_robotaxi": 25,
+      "source": "News aggregation",
+      "notes": "Fleet approaching target"
+    },
+    {
+      "date": "2025-10-01",
+      "austin_vehicles": 28,
+      "bayarea_vehicles": 105,
+      "total_robotaxi": 28,
+      "source": "Estimated (interpolation)",
+      "notes": "Growth continues"
+    },
+    {
+      "date": "2025-10-15",
+      "austin_vehicles": 30,
+      "bayarea_vehicles": 110,
+      "total_robotaxi": 30,
+      "source": "NHTSA filing analysis",
+      "notes": "Based on incident reports mentioning fleet"
+    },
+    {
+      "date": "2025-11-01",
+      "austin_vehicles": 31,
+      "bayarea_vehicles": 115,
+      "total_robotaxi": 31,
+      "source": "Estimated (interpolation)",
+      "notes": "Slowing growth"
+    },
+    {
+      "date": "2025-11-15",
+      "austin_vehicles": 32,
+      "bayarea_vehicles": 120,
+      "total_robotaxi": 32,
+      "source": "Jalopnik/Electrek",
+      "notes": "Fleet stabilizing"
+    },
+    {
+      "date": "2025-12-01",
+      "austin_vehicles": 33,
+      "bayarea_vehicles": 125,
+      "total_robotaxi": 33,
+      "source": "Estimated (interpolation)",
+      "notes": "Near plateau"
+    },
+    {
+      "date": "2025-12-22",
+      "austin_vehicles": 34,
+      "bayarea_vehicles": 128,
+      "total_robotaxi": 34,
+      "source": "Jalopnik report",
+      "notes": "Confirmed fleet size"
+    },
+    {
+      "date": "2026-01-15",
+      "austin_vehicles": 42,
+      "bayarea_vehicles": 158,
+      "total_robotaxi": 42,
+      "source": "robotaxitracker.com",
+      "notes": "Fleet reaches 200 total (42 Austin + 158 Bay Area)"
+    }
+  ],
+  "assumptions": {
+    "daily_miles_per_vehicle": {
+      "conservative": 80,
+      "moderate": 115,
+      "aggressive": 150
+    },
+    "operating_hours": {
+      "austin": "6 AM - 2 AM CT (20 hours/day)",
+      "bayarea": "Similar hours with human drivers"
+    },
+    "validation": {
+      "tesla_reported_miles": 250000,
+      "tesla_reported_period": "June 25 - Sept 30, 2025 (97 days)",
+      "calculated_miles_per_vehicle_day": 129,
+      "waymo_miles_per_vehicle_day": 80,
+      "source": "Tesla Q3 2025 earnings, ARK Invest research"
+    },
+    "notes": "Tesla reported 250,000 miles by end of Q3 2025 with ~20 avg vehicles = ~129 mi/vehicle/day. Waymo averages ~80 mi/vehicle/day (200K miles/day ÷ 2,500 vehicles). Tesla higher due to Austin's spread-out geography. Using 115 as moderate (accounting for weather/maintenance downtime)."
+  }
+}
