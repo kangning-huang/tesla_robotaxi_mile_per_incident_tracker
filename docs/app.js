@@ -177,18 +177,25 @@ function initMPIChart() {
             scales: {
                 x: commonOptions.scales.x,
                 y: {
+                    type: 'logarithmic',
                     grid: {
                         color: chartColors.grid,
                         drawBorder: false
                     },
-                    min: 0,
-                    max: 600000,
+                    min: 10000,
+                    max: 1000000,
                     ticks: {
                         color: chartColors.muted,
                         font: { family: "'JetBrains Mono', monospace", size: 11 },
-                        stepSize: 100000,
                         callback: function(value) {
-                            return Math.round(value / 1000) + 'K';
+                            if (value === 10000) return '10K';
+                            if (value === 20000) return '20K';
+                            if (value === 50000) return '50K';
+                            if (value === 100000) return '100K';
+                            if (value === 200000) return '200K';
+                            if (value === 500000) return '500K';
+                            if (value === 1000000) return '1M';
+                            return '';
                         }
                     }
                 }
