@@ -1,5 +1,5 @@
 {
-  "analysis_date": "2026-01-24T12:48:22.807647",
+  "analysis_date": "2026-01-24T12:50:08.091786",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "incident_count": 580,
@@ -5312,12 +5312,12 @@
     "best_model": "exponential",
     "best_fit": {
       "type": "exponential",
-      "a": 1835.968864492131,
-      "b": 0.00831253133285542,
-      "r_squared": 0.023822718339375992,
+      "a": 1835.9686692926098,
+      "b": 0.008312532226343216,
+      "r_squared": 0.02382271833937799,
       "interpretation": "improving",
-      "growth_rate_per_day": 0.00831253133285542,
-      "doubling_time_days": 83.38581267300243,
+      "growth_rate_per_day": 0.008312532226343216,
+      "doubling_time_days": 83.38580371012519,
       "halving_time_days": null
     },
     "all_models": {
@@ -5333,20 +5333,20 @@
       },
       "exponential": {
         "type": "exponential",
-        "a": 1835.968864492131,
-        "b": 0.00831253133285542,
-        "r_squared": 0.023822718339375992,
+        "a": 1835.9686692926098,
+        "b": 0.008312532226343216,
+        "r_squared": 0.02382271833937799,
         "interpretation": "improving",
-        "growth_rate_per_day": 0.00831253133285542,
-        "doubling_time_days": 83.38581267300243,
+        "growth_rate_per_day": 0.008312532226343216,
+        "doubling_time_days": 83.38580371012519,
         "halving_time_days": null
       },
       "quadratic": {
         "type": "polynomial_deg2",
         "coefficients": [
-          0.07965922823662275,
-          17.640965452006842,
-          1738.4730397745857
+          0.0796592282366227,
+          17.640965452006853,
+          1738.473039774586
         ],
         "r_squared": 0.02364198136001605,
         "interpretation": "accelerating",
