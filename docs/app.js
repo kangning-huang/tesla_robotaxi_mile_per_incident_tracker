@@ -175,19 +175,20 @@ function initMPIChart() {
         options: {
             ...commonOptions,
             scales: {
-                ...commonOptions.scales,
+                x: commonOptions.scales.x,
                 y: {
-                    ...commonOptions.scales.y,
+                    grid: {
+                        color: chartColors.grid,
+                        drawBorder: false
+                    },
                     min: 0,
-                    max: 550000,
+                    max: 600000,
                     ticks: {
-                        ...commonOptions.scales.y.ticks,
+                        color: chartColors.muted,
+                        font: { family: "'JetBrains Mono', monospace", size: 11 },
                         stepSize: 100000,
                         callback: function(value) {
-                            if (value >= 1000) {
-                                return (value / 1000) + 'K';
-                            }
-                            return value;
+                            return Math.round(value / 1000) + 'K';
                         }
                     }
                 }
