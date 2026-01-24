@@ -57,40 +57,7 @@
         </div>
     </section>
 
-    <!-- Key Metrics Cards -->
-    <section id="metrics" class="metrics">
-        <div class="container">
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-label">Latest MPI</div>
-                    <div class="metric-value" id="latest-mpi">93,500</div>
-                    <div class="metric-change positive">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 15l-6-6-6 6"/>
-                        </svg>
-                        +37% from previous
-                    </div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Average MPI</div>
-                    <div class="metric-value" id="avg-mpi">42,460</div>
-                    <div class="metric-subtext">Across all intervals</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Total Incidents</div>
-                    <div class="metric-value" id="total-incidents">10</div>
-                    <div class="metric-subtext">Since June 2025</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">vs Human Drivers</div>
-                    <div class="metric-value negative" id="vs-human">5.3x</div>
-                    <div class="metric-subtext">worse (latest interval)</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main Chart Section -->
+    <!-- Main Chart Section (First for mobile users) -->
     <section id="trend" class="chart-section">
         <div class="container">
             <div class="section-header">
@@ -112,6 +79,39 @@
                 <div class="legend-item">
                     <span class="legend-line dashed" style="background: #22c55e;"></span>
                     Human Driver Avg (500K)
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Metrics Cards -->
+    <section id="metrics" class="metrics">
+        <div class="container">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Latest MPI</div>
+                    <div class="metric-value" id="latest-mpi">107,500</div>
+                    <div class="metric-change positive">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 15l-6-6-6 6"/>
+                        </svg>
+                        +61% from previous
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Average MPI</div>
+                    <div class="metric-value" id="avg-mpi">48,820</div>
+                    <div class="metric-subtext">Across all intervals</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Total Incidents</div>
+                    <div class="metric-value" id="total-incidents">10</div>
+                    <div class="metric-subtext">Since June 2025</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">vs Human Drivers</div>
+                    <div class="metric-value negative" id="vs-human">4.7x</div>
+                    <div class="metric-subtext">worse (latest interval)</div>
                 </div>
             </div>
         </div>
@@ -169,7 +169,7 @@
                     </div>
                     <div class="stat-content">
                         <div class="stat-label">30-Day Forecast</div>
-                        <div class="stat-value">119,460</div>
+                        <div class="stat-value">137,400</div>
                         <div class="stat-detail">Projected MPI</div>
                     </div>
                 </div>
@@ -228,10 +228,10 @@
                 <div class="comparison-item">
                     <div class="comparison-label">
                         <span class="company">Tesla Robotaxi (Latest)</span>
-                        <span class="value">93,500</span>
+                        <span class="value">107,500</span>
                     </div>
                     <div class="comparison-bar-bg">
-                        <div class="comparison-bar tesla" style="width: 9.35%;"></div>
+                        <div class="comparison-bar tesla" style="width: 10.75%;"></div>
                     </div>
                 </div>
                 <div class="comparison-item">
@@ -272,7 +272,7 @@
                 <div class="method-card">
                     <div class="method-number">02</div>
                     <h3>Miles Estimation</h3>
-                    <p>Daily miles = Fleet size × 100 mi/vehicle/day (moderate estimate). Waymo drives ~150-200 mi/day.</p>
+                    <p>Daily miles = Fleet size × 115 mi/vehicle/day (based on Tesla's 250K miles Q3 2025 report).</p>
                 </div>
                 <div class="method-card">
                     <div class="method-number">03</div>
