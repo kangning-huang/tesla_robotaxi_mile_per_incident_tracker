@@ -401,31 +401,42 @@ def parse_tooltip_text(text: str) -> dict:
     # Clean up the text
     text = text.strip()
 
+    # Debug: print first few tooltip texts to understand format
+    if not hasattr(parse_tooltip_text, '_debug_count'):
+        parse_tooltip_text._debug_count = 0
+    if parse_tooltip_text._debug_count < 5:
+        print(f"    [DEBUG] Tooltip text: {repr(text[:200])}")
+        parse_tooltip_text._debug_count += 1
+
     # Try to extract date - various formats
-    # Format: "2026年1月24日" (Chinese) or "Jan 24, 2026" or "2026-01-24"
+    # Format: "2025年6月22日" (Chinese) or "Jan 24, 2026" or "2026-01-24"
     date_patterns = [
-        r'(\d{4})年(\d{1,2})月(\d{1,2})日',  # Chinese format
-        r'(\d{4})-(\d{2})-(\d{2})',  # ISO format
-        r'(\w{3})\s+(\d{1,2}),?\s+(\d{4})',  # "Jan 24, 2026"
-        r'(\d{1,2})/(\d{1,2})/(\d{4})',  # MM/DD/YYYY
+        (r'(\d{4})年(\d{1,2})月(\d{1,2})日', 'chinese'),  # Chinese format
+        (r'(\d{4})-(\d{2})-(\d{2})', 'iso'),  # ISO format
+        (r'([A-Za-z]{3})\s+(\d{1,2}),?\s+(\d{4})', 'english'),  # "Jan 24, 2026"
+        (r'(\d{1,2})/(\d{1,2})/(\d{4})', 'slash'),  # MM/DD/YYYY
     ]
 
-    for pattern in date_patterns:
+    for pattern, fmt_name in date_patterns:
         match = re.search(pattern, text)
         if match:
             groups = match.groups()
-            if pattern == date_patterns[0]:  # Chinese format
+            if fmt_name == 'chinese':
                 result["date"] = f"{groups[0]}-{int(groups[1]):02d}-{int(groups[2]):02d}"
-            elif pattern == date_patterns[1]:  # ISO
+            elif fmt_name == 'iso':
                 result["date"] = f"{groups[0]}-{groups[1]}-{groups[2]}"
-            elif pattern == date_patterns[2]:  # Month name format
+            elif fmt_name == 'english':
                 month_map = {"Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04",
                             "May": "05", "Jun": "06", "Jul": "07", "Aug": "08",
                             "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12"}
                 month = month_map.get(groups[0], "01")
                 result["date"] = f"{groups[2]}-{month}-{int(groups[1]):02d}"
-            elif pattern == date_patterns[3]:  # MM/DD/YYYY
+            elif fmt_name == 'slash':
                 result["date"] = f"{groups[2]}-{int(groups[0]):02d}-{int(groups[1]):02d}"
+
+            # Debug: show which pattern matched
+            if parse_tooltip_text._debug_count <= 5:
+                print(f"    [DEBUG] Matched pattern '{fmt_name}': {groups} -> {result.get('date')}")
             break
 
     if not result.get("date"):
