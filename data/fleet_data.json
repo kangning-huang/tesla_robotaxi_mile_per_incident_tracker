@@ -1,13 +1,15 @@
 {
   "metadata": {
-    "description": "Tesla Robotaxi fleet size data collected from news sources",
+    "description": "Tesla Robotaxi fleet size data collected from news sources and robotaxitracker.com",
     "last_updated": "2026-01-24",
     "sources": [
       "robotaxitracker.com",
       "Electrek",
       "Teslarati",
+      "Jalopnik",
       "Tesla official announcements"
-    ]
+    ],
+    "notes": "Austin vehicles are true robotaxis (unsupervised ADS). Bay Area vehicles have human safety drivers."
   },
   "snapshots": [
     {
@@ -19,12 +21,28 @@
       "notes": "Initial Austin launch with ~10 vehicles"
     },
     {
+      "date": "2025-07-01",
+      "austin_vehicles": 12,
+      "bayarea_vehicles": 55,
+      "total_robotaxi": 12,
+      "source": "Estimated (interpolation)",
+      "notes": "Early ramp phase"
+    },
+    {
       "date": "2025-07-15",
       "austin_vehicles": 15,
       "bayarea_vehicles": 60,
       "total_robotaxi": 15,
       "source": "Electrek report",
       "notes": "Fleet expansion in Austin"
+    },
+    {
+      "date": "2025-08-01",
+      "austin_vehicles": 18,
+      "bayarea_vehicles": 70,
+      "total_robotaxi": 18,
+      "source": "Estimated (interpolation)",
+      "notes": "Continued expansion"
     },
     {
       "date": "2025-08-15",
@@ -35,12 +53,28 @@
       "notes": "Continued ramp"
     },
     {
+      "date": "2025-09-01",
+      "austin_vehicles": 22,
+      "bayarea_vehicles": 90,
+      "total_robotaxi": 22,
+      "source": "Estimated (interpolation)",
+      "notes": "Steady growth"
+    },
+    {
       "date": "2025-09-15",
       "austin_vehicles": 25,
       "bayarea_vehicles": 100,
       "total_robotaxi": 25,
       "source": "News aggregation",
       "notes": "Fleet approaching target"
+    },
+    {
+      "date": "2025-10-01",
+      "austin_vehicles": 28,
+      "bayarea_vehicles": 105,
+      "total_robotaxi": 28,
+      "source": "Estimated (interpolation)",
+      "notes": "Growth continues"
     },
     {
       "date": "2025-10-15",
@@ -51,6 +85,14 @@
       "notes": "Based on incident reports mentioning fleet"
     },
     {
+      "date": "2025-11-01",
+      "austin_vehicles": 31,
+      "bayarea_vehicles": 115,
+      "total_robotaxi": 31,
+      "source": "Estimated (interpolation)",
+      "notes": "Slowing growth"
+    },
+    {
       "date": "2025-11-15",
       "austin_vehicles": 32,
       "bayarea_vehicles": 120,
@@ -59,12 +101,28 @@
       "notes": "Fleet stabilizing"
     },
     {
+      "date": "2025-12-01",
+      "austin_vehicles": 33,
+      "bayarea_vehicles": 125,
+      "total_robotaxi": 33,
+      "source": "Estimated (interpolation)",
+      "notes": "Near plateau"
+    },
+    {
       "date": "2025-12-22",
       "austin_vehicles": 34,
       "bayarea_vehicles": 128,
       "total_robotaxi": 34,
       "source": "Jalopnik report",
-      "notes": "Current confirmed fleet size"
+      "notes": "Confirmed fleet size"
+    },
+    {
+      "date": "2026-01-15",
+      "austin_vehicles": 42,
+      "bayarea_vehicles": 158,
+      "total_robotaxi": 42,
+      "source": "robotaxitracker.com",
+      "notes": "Fleet reaches 200 total (42 Austin + 158 Bay Area)"
     }
   ],
   "assumptions": {
@@ -73,6 +131,10 @@
       "moderate": 100,
       "aggressive": 150
     },
-    "notes": "Waymo vehicles drive ~150-200 miles/day. Tesla robotaxis likely operate fewer hours during ramp-up phase."
+    "operating_hours": {
+      "austin": "Limited hours, ~8-10 hrs/day",
+      "bayarea": "More hours with human drivers"
+    },
+    "notes": "Waymo vehicles drive ~150-200 miles/day. Tesla robotaxis likely operate fewer hours during ramp-up phase. Only Austin vehicles count as true 'robotaxis' - Bay Area has human safety drivers."
   }
 }

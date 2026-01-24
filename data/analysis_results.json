@@ -1,0 +1,323 @@
+{
+  "analysis_date": "2026-01-24T04:17:49.229740",
+  "service_start": "2025-06-25",
+  "data_source": "sample",
+  "incident_count": 10,
+  "scenarios": {
+    "Conservative": {
+      "daily_miles_per_vehicle": 50,
+      "incidents": [
+        {
+          "incident_number": 1,
+          "incident_date": "2025-07-05",
+          "days_since_previous": 10,
+          "miles_since_previous": 6150,
+          "avg_fleet_size": 11.181818181818182,
+          "cumulative_miles": 6150,
+          "cumulative_incidents": 1,
+          "cumulative_miles_per_incident": 6150.0
+        },
+        {
+          "incident_number": 2,
+          "incident_date": "2025-07-18",
+          "days_since_previous": 13,
+          "miles_since_previous": 9650,
+          "avg_fleet_size": 13.785714285714286,
+          "cumulative_miles": 15800,
+          "cumulative_incidents": 2,
+          "cumulative_miles_per_incident": 7900.0
+        },
+        {
+          "incident_number": 3,
+          "incident_date": "2025-08-02",
+          "days_since_previous": 15,
+          "miles_since_previous": 13100,
+          "avg_fleet_size": 16.375,
+          "cumulative_miles": 28900,
+          "cumulative_incidents": 3,
+          "cumulative_miles_per_incident": 9633.333333333334
+        },
+        {
+          "incident_number": 4,
+          "incident_date": "2025-08-20",
+          "days_since_previous": 18,
+          "miles_since_previous": 18050,
+          "avg_fleet_size": 19.0,
+          "cumulative_miles": 46950,
+          "cumulative_incidents": 4,
+          "cumulative_miles_per_incident": 11737.5
+        },
+        {
+          "incident_number": 5,
+          "incident_date": "2025-09-05",
+          "days_since_previous": 16,
+          "miles_since_previous": 17900,
+          "avg_fleet_size": 21.058823529411764,
+          "cumulative_miles": 64850,
+          "cumulative_incidents": 5,
+          "cumulative_miles_per_incident": 12970.0
+        },
+        {
+          "incident_number": 6,
+          "incident_date": "2025-09-22",
+          "days_since_previous": 17,
+          "miles_since_previous": 21750,
+          "avg_fleet_size": 24.166666666666668,
+          "cumulative_miles": 86600,
+          "cumulative_incidents": 6,
+          "cumulative_miles_per_incident": 14433.333333333334
+        },
+        {
+          "incident_number": 7,
+          "incident_date": "2025-10-08",
+          "days_since_previous": 16,
+          "miles_since_previous": 23200,
+          "avg_fleet_size": 27.294117647058822,
+          "cumulative_miles": 109800,
+          "cumulative_incidents": 7,
+          "cumulative_miles_per_incident": 15685.714285714286
+        },
+        {
+          "incident_number": 8,
+          "incident_date": "2025-10-25",
+          "days_since_previous": 17,
+          "miles_since_previous": 26650,
+          "avg_fleet_size": 29.61111111111111,
+          "cumulative_miles": 136450,
+          "cumulative_incidents": 8,
+          "cumulative_miles_per_incident": 17056.25
+        },
+        {
+          "incident_number": 9,
+          "incident_date": "2025-11-12",
+          "days_since_previous": 18,
+          "miles_since_previous": 29100,
+          "avg_fleet_size": 30.63157894736842,
+          "cumulative_miles": 165550,
+          "cumulative_incidents": 9,
+          "cumulative_miles_per_incident": 18394.444444444445
+        },
+        {
+          "incident_number": 10,
+          "incident_date": "2025-12-10",
+          "days_since_previous": 28,
+          "miles_since_previous": 46750,
+          "avg_fleet_size": 32.241379310344826,
+          "cumulative_miles": 212300,
+          "cumulative_incidents": 10,
+          "cumulative_miles_per_incident": 21230.0
+        }
+      ]
+    },
+    "Moderate": {
+      "daily_miles_per_vehicle": 100,
+      "incidents": [
+        {
+          "incident_number": 1,
+          "incident_date": "2025-07-05",
+          "days_since_previous": 10,
+          "miles_since_previous": 12300,
+          "avg_fleet_size": 11.181818181818182,
+          "cumulative_miles": 12300,
+          "cumulative_incidents": 1,
+          "cumulative_miles_per_incident": 12300.0
+        },
+        {
+          "incident_number": 2,
+          "incident_date": "2025-07-18",
+          "days_since_previous": 13,
+          "miles_since_previous": 19300,
+          "avg_fleet_size": 13.785714285714286,
+          "cumulative_miles": 31600,
+          "cumulative_incidents": 2,
+          "cumulative_miles_per_incident": 15800.0
+        },
+        {
+          "incident_number": 3,
+          "incident_date": "2025-08-02",
+          "days_since_previous": 15,
+          "miles_since_previous": 26200,
+          "avg_fleet_size": 16.375,
+          "cumulative_miles": 57800,
+          "cumulative_incidents": 3,
+          "cumulative_miles_per_incident": 19266.666666666668
+        },
+        {
+          "incident_number": 4,
+          "incident_date": "2025-08-20",
+          "days_since_previous": 18,
+          "miles_since_previous": 36100,
+          "avg_fleet_size": 19.0,
+          "cumulative_miles": 93900,
+          "cumulative_incidents": 4,
+          "cumulative_miles_per_incident": 23475.0
+        },
+        {
+          "incident_number": 5,
+          "incident_date": "2025-09-05",
+          "days_since_previous": 16,
+          "miles_since_previous": 35800,
+          "avg_fleet_size": 21.058823529411764,
+          "cumulative_miles": 129700,
+          "cumulative_incidents": 5,
+          "cumulative_miles_per_incident": 25940.0
+        },
+        {
+          "incident_number": 6,
+          "incident_date": "2025-09-22",
+          "days_since_previous": 17,
+          "miles_since_previous": 43500,
+          "avg_fleet_size": 24.166666666666668,
+          "cumulative_miles": 173200,
+          "cumulative_incidents": 6,
+          "cumulative_miles_per_incident": 28866.666666666668
+        },
+        {
+          "incident_number": 7,
+          "incident_date": "2025-10-08",
+          "days_since_previous": 16,
+          "miles_since_previous": 46400,
+          "avg_fleet_size": 27.294117647058822,
+          "cumulative_miles": 219600,
+          "cumulative_incidents": 7,
+          "cumulative_miles_per_incident": 31371.428571428572
+        },
+        {
+          "incident_number": 8,
+          "incident_date": "2025-10-25",
+          "days_since_previous": 17,
+          "miles_since_previous": 53300,
+          "avg_fleet_size": 29.61111111111111,
+          "cumulative_miles": 272900,
+          "cumulative_incidents": 8,
+          "cumulative_miles_per_incident": 34112.5
+        },
+        {
+          "incident_number": 9,
+          "incident_date": "2025-11-12",
+          "days_since_previous": 18,
+          "miles_since_previous": 58200,
+          "avg_fleet_size": 30.63157894736842,
+          "cumulative_miles": 331100,
+          "cumulative_incidents": 9,
+          "cumulative_miles_per_incident": 36788.88888888889
+        },
+        {
+          "incident_number": 10,
+          "incident_date": "2025-12-10",
+          "days_since_previous": 28,
+          "miles_since_previous": 93500,
+          "avg_fleet_size": 32.241379310344826,
+          "cumulative_miles": 424600,
+          "cumulative_incidents": 10,
+          "cumulative_miles_per_incident": 42460.0
+        }
+      ]
+    },
+    "Aggressive": {
+      "daily_miles_per_vehicle": 150,
+      "incidents": [
+        {
+          "incident_number": 1,
+          "incident_date": "2025-07-05",
+          "days_since_previous": 10,
+          "miles_since_previous": 18450,
+          "avg_fleet_size": 11.181818181818182,
+          "cumulative_miles": 18450,
+          "cumulative_incidents": 1,
+          "cumulative_miles_per_incident": 18450.0
+        },
+        {
+          "incident_number": 2,
+          "incident_date": "2025-07-18",
+          "days_since_previous": 13,
+          "miles_since_previous": 28950,
+          "avg_fleet_size": 13.785714285714286,
+          "cumulative_miles": 47400,
+          "cumulative_incidents": 2,
+          "cumulative_miles_per_incident": 23700.0
+        },
+        {
+          "incident_number": 3,
+          "incident_date": "2025-08-02",
+          "days_since_previous": 15,
+          "miles_since_previous": 39300,
+          "avg_fleet_size": 16.375,
+          "cumulative_miles": 86700,
+          "cumulative_incidents": 3,
+          "cumulative_miles_per_incident": 28900.0
+        },
+        {
+          "incident_number": 4,
+          "incident_date": "2025-08-20",
+          "days_since_previous": 18,
+          "miles_since_previous": 54150,
+          "avg_fleet_size": 19.0,
+          "cumulative_miles": 140850,
+          "cumulative_incidents": 4,
+          "cumulative_miles_per_incident": 35212.5
+        },
+        {
+          "incident_number": 5,
+          "incident_date": "2025-09-05",
+          "days_since_previous": 16,
+          "miles_since_previous": 53700,
+          "avg_fleet_size": 21.058823529411764,
+          "cumulative_miles": 194550,
+          "cumulative_incidents": 5,
+          "cumulative_miles_per_incident": 38910.0
+        },
+        {
+          "incident_number": 6,
+          "incident_date": "2025-09-22",
+          "days_since_previous": 17,
+          "miles_since_previous": 65250,
+          "avg_fleet_size": 24.166666666666668,
+          "cumulative_miles": 259800,
+          "cumulative_incidents": 6,
+          "cumulative_miles_per_incident": 43300.0
+        },
+        {
+          "incident_number": 7,
+          "incident_date": "2025-10-08",
+          "days_since_previous": 16,
+          "miles_since_previous": 69600,
+          "avg_fleet_size": 27.294117647058822,
+          "cumulative_miles": 329400,
+          "cumulative_incidents": 7,
+          "cumulative_miles_per_incident": 47057.142857142855
+        },
+        {
+          "incident_number": 8,
+          "incident_date": "2025-10-25",
+          "days_since_previous": 17,
+          "miles_since_previous": 79950,
+          "avg_fleet_size": 29.61111111111111,
+          "cumulative_miles": 409350,
+          "cumulative_incidents": 8,
+          "cumulative_miles_per_incident": 51168.75
+        },
+        {
+          "incident_number": 9,
+          "incident_date": "2025-11-12",
+          "days_since_previous": 18,
+          "miles_since_previous": 87300,
+          "avg_fleet_size": 30.63157894736842,
+          "cumulative_miles": 496650,
+          "cumulative_incidents": 9,
+          "cumulative_miles_per_incident": 55183.333333333336
+        },
+        {
+          "incident_number": 10,
+          "incident_date": "2025-12-10",
+          "days_since_previous": 28,
+          "miles_since_previous": 140250,
+          "avg_fleet_size": 32.241379310344826,
+          "cumulative_miles": 636900,
+          "cumulative_incidents": 10,
+          "cumulative_miles_per_incident": 63690.0
+        }
+      ]
+    }
+  }
+}
