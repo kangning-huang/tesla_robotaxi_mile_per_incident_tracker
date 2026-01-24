@@ -1,6 +1,14 @@
 name: Deploy to GitHub Pages
 
 on:
+  # Run after daily analysis workflow completes
+  workflow_run:
+    workflows: ["Daily Tesla Robotaxi Analysis"]
+    types:
+      - completed
+  # Also run daily at 6:30 AM UTC (30 min after data update) as backup
+  schedule:
+    - cron: '30 6 * * *'
   push:
     branches:
       - main
