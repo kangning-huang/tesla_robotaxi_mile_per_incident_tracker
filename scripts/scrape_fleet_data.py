@@ -45,6 +45,44 @@ ROBOTAXI_TRACKER_URL = "https://robotaxitracker.com"
 NHTSA_PAGE_URL = "https://robotaxitracker.com/nhtsa"
 
 
+async def scroll_and_wait_for_charts(page):
+    """Scroll through the page to trigger lazy-loaded charts."""
+    print("  Scrolling to trigger lazy-loaded content...")
+
+    # Get page height
+    page_height = await page.evaluate("document.body.scrollHeight")
+    viewport_height = 1080
+
+    # Scroll down in steps to trigger IntersectionObserver for lazy elements
+    current_position = 0
+    while current_position < page_height:
+        current_position += viewport_height // 2
+        await page.evaluate(f"window.scrollTo(0, {current_position})")
+        await asyncio.sleep(0.5)  # Wait for lazy content to load
+
+    # Scroll back to top
+    await page.evaluate("window.scrollTo(0, 0)")
+    await asyncio.sleep(0.5)
+
+    # Now scroll specifically to Fleet Growth section and wait
+    try:
+        fleet_section = await page.query_selector("text=Fleet Growth")
+        if fleet_section:
+            await fleet_section.scroll_into_view_if_needed()
+            print("  Found Fleet Growth section, waiting for chart...")
+            await asyncio.sleep(2)  # Wait for chart animation to complete
+    except Exception as e:
+        print(f"  Could not scroll to Fleet Growth: {e}")
+
+    # Wait for any canvas or SVG charts to render
+    try:
+        await page.wait_for_selector("canvas, svg path", timeout=5000)
+        print("  Chart elements detected")
+        await asyncio.sleep(1)  # Extra wait for chart data to populate
+    except Exception:
+        print("  No chart canvas/SVG found within timeout")
+
+
 async def extract_fleet_numbers(page) -> dict:
     """Extract fleet size numbers from the page."""
     fleet_data = {
@@ -59,15 +97,23 @@ async def extract_fleet_numbers(page) -> dict:
     await page.wait_for_load_state("networkidle")
     await asyncio.sleep(2)  # Extra wait for JS rendering
 
+    # Scroll through page to trigger lazy-loaded charts
+    await scroll_and_wait_for_charts(page)
+
     # Get page content
     content = await page.content()
 
     # Try to find fleet numbers using various patterns
-    # Pattern 1: Look for specific text patterns
+    # Pattern 1: Look for specific text patterns (based on robotaxitracker.com layout)
     patterns = [
-        (r"Austin[:\s]*(\d+)\s*(?:vehicles?|cars?)", "austin_vehicles"),
-        (r"Bay\s*Area[:\s]*(\d+)\s*(?:vehicles?|cars?)", "bayarea_vehicles"),
-        (r"Total[:\s]*(\d+)\s*(?:vehicles?|cars?|robotaxis?)", "total_vehicles"),
+        # Fleet Growth section patterns: "TOTAL FLEET" "BAY AREA" "AUSTIN" followed by numbers
+        (r"TOTAL\s*FLEET\s*(\d+)", "total_vehicles"),
+        (r"BAY\s*AREA\s*(\d+)", "bayarea_vehicles"),
+        (r"AUSTIN\s*(\d+)", "austin_vehicles"),
+        # Alternative patterns
+        (r"Austin[:\s]*(\d+)\s*(?:vehicles?|cars?)?", "austin_vehicles"),
+        (r"Bay\s*Area[:\s]*(\d+)\s*(?:vehicles?|cars?)?", "bayarea_vehicles"),
+        (r"Total[:\s]*(\d+)\s*(?:vehicles?|cars?|robotaxis?)?", "total_vehicles"),
         (r"(\d+)\s*(?:vehicles?|cars?)\s*(?:in\s*)?Austin", "austin_vehicles"),
         (r"(\d+)\s*(?:vehicles?|cars?)\s*(?:in\s*)?(?:Bay\s*Area|SF|San\s*Francisco)", "bayarea_vehicles"),
     ]
@@ -76,6 +122,39 @@ async def extract_fleet_numbers(page) -> dict:
         match = re.search(pattern, content, re.IGNORECASE)
         if match and fleet_data[key] is None:
             fleet_data[key] = int(match.group(1))
+
+    # Try to extract from specific elements using JavaScript evaluation
+    # This handles dynamic React/Vue components better
+    try:
+        js_extraction = """
+        () => {
+            const result = {};
+            // Look for text containing fleet numbers in the Fleet Growth section
+            const allText = document.body.innerText;
+
+            // Pattern: TOTAL FLEET followed by number on next line or nearby
+            const totalMatch = allText.match(/TOTAL\\s*FLEET[\\s\\n]*(\\d+)/i);
+            if (totalMatch) result.total = parseInt(totalMatch[1]);
+
+            const bayMatch = allText.match(/BAY\\s*AREA[\\s\\n]*(\\d+)/i);
+            if (bayMatch) result.bayarea = parseInt(bayMatch[1]);
+
+            const austinMatch = allText.match(/AUSTIN[\\s\\n]*(\\d+)/i);
+            if (austinMatch) result.austin = parseInt(austinMatch[1]);
+
+            return result;
+        }
+        """
+        js_result = await page.evaluate(js_extraction)
+        if js_result:
+            if js_result.get("total") and fleet_data["total_vehicles"] is None:
+                fleet_data["total_vehicles"] = js_result["total"]
+            if js_result.get("bayarea") and fleet_data["bayarea_vehicles"] is None:
+                fleet_data["bayarea_vehicles"] = js_result["bayarea"]
+            if js_result.get("austin") and fleet_data["austin_vehicles"] is None:
+                fleet_data["austin_vehicles"] = js_result["austin"]
+    except Exception as e:
+        print(f"  JS extraction failed: {e}")
 
     # Try to extract from specific elements
     selectors_to_try = [
@@ -227,15 +306,32 @@ async def scrape_robotaxi_tracker():
             print(f"\nNavigating to {ROBOTAXI_TRACKER_URL}...")
             await page.goto(ROBOTAXI_TRACKER_URL, wait_until="domcontentloaded", timeout=30000)
 
-            # Take screenshot for debugging
-            await take_screenshot(page, "main_page")
+            # Wait for initial load
+            await page.wait_for_load_state("networkidle")
+            await asyncio.sleep(2)
 
-            # Extract fleet data
+            # Take initial screenshot (before scrolling)
+            await take_screenshot(page, "main_page_initial")
+
+            # Extract fleet data (this now includes scrolling to trigger lazy content)
             print("\nExtracting fleet data...")
             fleet_data = await extract_fleet_numbers(page)
             print(f"  Austin vehicles: {fleet_data['austin_vehicles']}")
             print(f"  Bay Area vehicles: {fleet_data['bayarea_vehicles']}")
             print(f"  Total vehicles: {fleet_data['total_vehicles']}")
+
+            # Scroll to Fleet Growth section and take screenshot
+            try:
+                fleet_section = await page.query_selector("text=Fleet Growth")
+                if fleet_section:
+                    await fleet_section.scroll_into_view_if_needed()
+                    await asyncio.sleep(2)  # Wait for chart to render
+                    await take_screenshot(page, "fleet_growth_section")
+            except Exception as e:
+                print(f"  Could not screenshot Fleet Growth section: {e}")
+
+            # Take full page screenshot after all content loaded
+            await take_screenshot(page, "main_page_full")
 
             # Extract historical data
             print("\nExtracting historical data...")
