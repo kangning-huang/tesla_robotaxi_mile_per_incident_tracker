@@ -502,6 +502,119 @@ a:hover {
     background: linear-gradient(90deg, var(--accent-primary), #60a5fa);
 }
 
+/* ===== Data Scope Section ===== */
+.data-scope {
+    padding: 60px 0;
+    background: var(--bg-primary);
+}
+
+.scope-content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 700px) {
+    .scope-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+.scope-card {
+    display: flex;
+    gap: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    transition: all 0.2s ease;
+}
+
+.scope-card:hover {
+    border-color: var(--border-light);
+}
+
+.scope-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+}
+
+.scope-icon.austin {
+    background: rgba(34, 197, 94, 0.1);
+    color: var(--accent-success);
+}
+
+.scope-icon.bayarea {
+    background: rgba(113, 113, 122, 0.1);
+    color: var(--text-muted);
+}
+
+.scope-info h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.scope-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.scope-badge.active {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--accent-success);
+}
+
+.scope-badge.inactive {
+    background: rgba(113, 113, 122, 0.15);
+    color: var(--text-muted);
+}
+
+.scope-info p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.scope-info p:last-child {
+    margin-bottom: 0;
+}
+
+.scope-detail {
+    font-size: 13px !important;
+    color: var(--text-muted) !important;
+}
+
+.scope-note {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(59, 130, 246, 0.08);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.scope-note svg {
+    flex-shrink: 0;
+    color: var(--accent-primary);
+}
+
 /* ===== Methodology ===== */
 .methodology {
     padding: 60px 0;

@@ -146,6 +146,24 @@ NHTSA provides **direct CSV downloads** of all autonomous vehicle crash data und
 | Austin, TX | ~34 Model Y | Robotaxi service with safety monitor |
 | Bay Area, CA | ~128 vehicles | Human driver behind wheel (CA regulation) |
 
+### Why All Incidents Are From Austin (Not Bay Area)
+
+**Important:** All 10 Tesla robotaxi incidents in NHTSA data are from Austin, TX. This is **not** because Austin operations are less safe—it's because of different operating modes:
+
+| Location | Operating Mode | NHTSA Reporting Requirement |
+|----------|----------------|----------------------------|
+| **Austin, TX** | Unsupervised ADS (Level 4) - No human driver | **Required** under SGO-2021-01 ADS rules |
+| **Bay Area, CA** | Supervised testing - Human safety driver present | Not required under ADS rules* |
+
+**Explanation:**
+- **Austin** is Tesla's true robotaxi deployment with unsupervised autonomous driving. Any incident must be reported to NHTSA under Standing General Order 2021-01.
+- **Bay Area** vehicles have human safety drivers behind the wheel (required by California regulations). Since a human is supervising, these vehicles are operating in testing/development mode, not true Level 4 autonomy.
+- Incidents with safety drivers present may be reported under **ADAS (Level 2)** requirements instead, or may not meet the ADS reporting threshold at all.
+
+This tracker focuses on **Austin incidents only** because that's where Tesla is operating true unsupervised robotaxis subject to ADS incident reporting.
+
+*Note: Bay Area incidents could appear in ADAS data if FSD was engaged, but would not appear in ADS data since a human driver was present.
+
 ### Known Incident Data:
 - **8 collisions** reported to NHTSA through October 2025
 - Service launched in Austin late June 2025
