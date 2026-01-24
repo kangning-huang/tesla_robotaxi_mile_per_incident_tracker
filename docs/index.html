@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesla Robotaxi MPI Tracker</title>
+    <meta name="description" content="Track Tesla Robotaxi miles per incident (MPI) with trend analysis. Independent safety metrics for TSLA investors.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                    </span>
+                    <span class="logo-text">Tesla Robotaxi <span class="highlight">MPI</span> Tracker</span>
+                </div>
+                <nav class="nav">
+                    <a href="#metrics" class="nav-link">Metrics</a>
+                    <a href="#trend" class="nav-link">Trend</a>
+                    <a href="#methodology" class="nav-link">Methodology</a>
+                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" class="nav-link github" target="_blank">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <p class="hero-label">Independent Safety Tracking</p>
+                <h1 class="hero-title">Miles Per Incident</h1>
+                <p class="hero-subtitle">Tracking Tesla Robotaxi safety metrics through NHTSA data and fleet analysis</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Metrics Cards -->
+    <section id="metrics" class="metrics">
+        <div class="container">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Latest MPI</div>
+                    <div class="metric-value" id="latest-mpi">93,500</div>
+                    <div class="metric-change positive">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 15l-6-6-6 6"/>
+                        </svg>
+                        +37% from previous
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Average MPI</div>
+                    <div class="metric-value" id="avg-mpi">42,460</div>
+                    <div class="metric-subtext">Across all intervals</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Total Incidents</div>
+                    <div class="metric-value" id="total-incidents">10</div>
+                    <div class="metric-subtext">Since June 2025</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">vs Human Drivers</div>
+                    <div class="metric-value negative" id="vs-human">5.3x</div>
+                    <div class="metric-subtext">worse (latest interval)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Chart Section -->
+    <section id="trend" class="chart-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>MPI Trend Analysis</h2>
+                <p>Miles between each consecutive incident with trend projection</p>
+            </div>
+            <div class="chart-container">
+                <canvas id="mpiChart"></canvas>
+            </div>
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <span class="legend-dot" style="background: #ef4444;"></span>
+                    MPI per Interval
+                </div>
+                <div class="legend-item">
+                    <span class="legend-line" style="background: #3b82f6;"></span>
+                    Exponential Trend (R² = 0.955)
+                </div>
+                <div class="legend-item">
+                    <span class="legend-line dashed" style="background: #22c55e;"></span>
+                    Human Driver Avg (500K)
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trend Analysis Stats -->
+    <section class="trend-stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M23 6l-9.5 9.5-5-5L1 18"/>
+                            <path d="M17 6h6v6"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Best Fit Model</div>
+                        <div class="stat-value">Exponential</div>
+                        <div class="stat-detail">R² = 0.955</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Doubling Time</div>
+                        <div class="stat-value">69 days</div>
+                        <div class="stat-detail">MPI doubles every ~2 months</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20V10"/>
+                            <path d="M18 20V4"/>
+                            <path d="M6 20v-4"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">Daily Growth</div>
+                        <div class="stat-value">+1.0%</div>
+                        <div class="stat-detail">Compound daily rate</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">30-Day Forecast</div>
+                        <div class="stat-value">119,460</div>
+                        <div class="stat-detail">Projected MPI</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fleet Size Chart -->
+    <section class="chart-section secondary">
+        <div class="container">
+            <div class="section-header">
+                <h2>Fleet Size Over Time</h2>
+                <p>Austin robotaxi fleet growth (true unsupervised ADS vehicles)</p>
+            </div>
+            <div class="chart-container small">
+                <canvas id="fleetChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Incident Table -->
+    <section class="data-table-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Incident-by-Incident Breakdown</h2>
+                <p>Miles driven between each consecutive incident</p>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Days</th>
+                            <th>Avg Fleet</th>
+                            <th>Miles Between</th>
+                            <th>MPI</th>
+                        </tr>
+                    </thead>
+                    <tbody id="incident-table-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison">
+        <div class="container">
+            <div class="section-header">
+                <h2>Industry Comparison</h2>
+                <p>How Tesla Robotaxi compares to benchmarks</p>
+            </div>
+            <div class="comparison-bars">
+                <div class="comparison-item">
+                    <div class="comparison-label">
+                        <span class="company">Tesla Robotaxi (Latest)</span>
+                        <span class="value">93,500</span>
+                    </div>
+                    <div class="comparison-bar-bg">
+                        <div class="comparison-bar tesla" style="width: 9.35%;"></div>
+                    </div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">
+                        <span class="company">Human Drivers (US Avg)</span>
+                        <span class="value">500,000</span>
+                    </div>
+                    <div class="comparison-bar-bg">
+                        <div class="comparison-bar human" style="width: 50%;"></div>
+                    </div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">
+                        <span class="company">Waymo (Reported)</span>
+                        <span class="value">1,000,000+</span>
+                    </div>
+                    <div class="comparison-bar-bg">
+                        <div class="comparison-bar waymo" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Methodology Section -->
+    <section id="methodology" class="methodology">
+        <div class="container">
+            <div class="section-header">
+                <h2>Methodology</h2>
+                <p>How we calculate miles per incident</p>
+            </div>
+            <div class="methodology-grid">
+                <div class="method-card">
+                    <div class="method-number">01</div>
+                    <h3>Fleet Data</h3>
+                    <p>Fleet size tracked from robotaxitracker.com, news sources, and NHTSA filings. Interpolated daily between snapshots.</p>
+                </div>
+                <div class="method-card">
+                    <div class="method-number">02</div>
+                    <h3>Miles Estimation</h3>
+                    <p>Daily miles = Fleet size × 100 mi/vehicle/day (moderate estimate). Waymo drives ~150-200 mi/day.</p>
+                </div>
+                <div class="method-card">
+                    <div class="method-number">03</div>
+                    <h3>Incident Data</h3>
+                    <p>Incidents from NHTSA Standing General Order reports. Tesla has been cited for delayed reporting.</p>
+                </div>
+                <div class="method-card">
+                    <div class="method-number">04</div>
+                    <h3>Trend Analysis</h3>
+                    <p>Linear, exponential, and quadratic models fitted. Best model selected by R² goodness of fit.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>Data sources: <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank">NHTSA SGO</a>, <a href="https://robotaxitracker.com" target="_blank">robotaxitracker.com</a></p>
+                    <p class="disclaimer">This is an independent analysis tool. Not affiliated with Tesla, Inc.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" target="_blank">GitHub</a>
+                    <span class="divider">|</span>
+                    <span>Updated: <span id="last-updated">Jan 24, 2026</span></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

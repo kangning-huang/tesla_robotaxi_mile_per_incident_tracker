@@ -2,6 +2,16 @@
 
 A tool to track and estimate the "miles per incident" metric for Tesla's Robotaxi service, based on NHTSA reports and fleet data.
 
+## Live Dashboard
+
+**[View Live Dashboard](https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/)**
+
+The dashboard shows:
+- Real-time MPI metrics and trends
+- Interactive charts with exponential trend analysis
+- Incident-by-incident breakdown
+- Industry comparison (vs human drivers, Waymo)
+
 ## Quick Start
 
 ```bash
@@ -46,12 +56,18 @@ COMPARISON BENCHMARKS
 ```
 ├── .github/
 │   └── workflows/
-│       └── daily-analysis.yml      # GitHub Action for daily updates
+│       ├── daily-analysis.yml      # GitHub Action for daily updates
+│       └── deploy-pages.yml        # Deploy dashboard to GitHub Pages
 ├── data/
 │   ├── fleet_data.json              # Fleet size snapshots over time
 │   ├── analysis_results.json        # Latest analysis output
+│   ├── mpi_trend_chart.png          # Generated trend chart
 │   ├── SGO-2021-01_Incident_Reports_ADS.csv    # (downloaded)
 │   └── SGO-2021-01_Incident_Reports_ADAS.csv   # (downloaded)
+├── docs/                            # GitHub Pages website
+│   ├── index.html                   # Dashboard homepage
+│   ├── styles.css                   # Dark theme styling
+│   └── app.js                       # Chart.js visualizations
 ├── scripts/
 │   ├── download_nhtsa_data.py       # Download NHTSA CSV files
 │   ├── analyze_tesla_incidents.py   # Calculate miles per incident
