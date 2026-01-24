@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tesla Robotaxi MPI Tracker</title>
-    <meta name="description" content="Track Tesla Robotaxi miles per incident (MPI) with trend analysis. Independent safety metrics for TSLA investors.">
+    <title>Tesla Robotaxi Safety Tracker</title>
+    <meta name="description" content="Track Tesla Robotaxi miles per incident with trend analysis. Independent safety metrics for TSLA investors.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,7 +30,7 @@
                             <path d="M2 12l10 5 10-5"/>
                         </svg>
                     </span>
-                    <span class="logo-text">Tesla Robotaxi <span class="highlight">MPI</span> Tracker</span>
+                    <span class="logo-text">Tesla Robotaxi <span class="highlight">Safety</span> Tracker</span>
                 </div>
                 <nav class="nav">
                     <a href="#metrics" class="nav-link">Metrics</a>
@@ -61,8 +61,8 @@
     <section id="trend" class="chart-section">
         <div class="container">
             <div class="section-header">
-                <h2>MPI Trend Analysis</h2>
-                <p>Miles between each consecutive incident with trend projection</p>
+                <h2>Safety Trend Analysis</h2>
+                <p>Miles driven between each consecutive incident with trend projection</p>
             </div>
             <div class="chart-container">
                 <canvas id="mpiChart"></canvas>
@@ -70,7 +70,7 @@
             <div class="chart-legend">
                 <div class="legend-item">
                     <span class="legend-dot" style="background: #ef4444;"></span>
-                    MPI per Interval
+                    Miles per Incident
                 </div>
                 <div class="legend-item">
                     <span class="legend-line" style="background: #3b82f6;"></span>
@@ -89,7 +89,7 @@
         <div class="container">
             <div class="metrics-grid">
                 <div class="metric-card">
-                    <div class="metric-label">Latest MPI</div>
+                    <div class="metric-label">Latest Interval</div>
                     <div class="metric-value" id="latest-mpi">107,500</div>
                     <div class="metric-change positive">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -99,9 +99,9 @@
                     </div>
                 </div>
                 <div class="metric-card">
-                    <div class="metric-label">Average MPI</div>
+                    <div class="metric-label">Average</div>
                     <div class="metric-value" id="avg-mpi">48,820</div>
-                    <div class="metric-subtext">Across all intervals</div>
+                    <div class="metric-subtext">miles per incident</div>
                 </div>
                 <div class="metric-card">
                     <div class="metric-label">Total Incidents</div>
@@ -144,7 +144,7 @@
                     <div class="stat-content">
                         <div class="stat-label">Doubling Time</div>
                         <div class="stat-value">69 days</div>
-                        <div class="stat-detail">MPI doubles every ~2 months</div>
+                        <div class="stat-detail">Safety doubles every ~2 months</div>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -170,7 +170,7 @@
                     <div class="stat-content">
                         <div class="stat-label">30-Day Forecast</div>
                         <div class="stat-value">137,400</div>
-                        <div class="stat-detail">Projected MPI</div>
+                        <div class="stat-detail">Projected miles/incident</div>
                     </div>
                 </div>
             </div>
@@ -205,8 +205,8 @@
                             <th>Date</th>
                             <th>Days</th>
                             <th>Avg Fleet</th>
-                            <th>Miles Between</th>
-                            <th>MPI</th>
+                            <th>Miles</th>
+                            <th>Per Incident</th>
                         </tr>
                     </thead>
                     <tbody id="incident-table-body">

@@ -136,7 +136,7 @@ function initMPIChart() {
             labels: labels,
             datasets: [
                 {
-                    label: 'MPI per Interval',
+                    label: 'Miles per Incident',
                     data: mpiValues,
                     borderColor: chartColors.danger,
                     backgroundColor: chartColors.danger,
