@@ -35,10 +35,11 @@ except ImportError:
     sys.exit(1)
 
 
-# Output file
+# Output files
 SCRIPT_DIR = Path(__file__).parent
 DATA_DIR = SCRIPT_DIR.parent / "data"
 OUTPUT_FILE = DATA_DIR / "fleet_data_scraped.json"
+FLEET_DATA_FILE = DATA_DIR / "fleet_data.json"
 
 # URLs
 ROBOTAXI_TRACKER_URL = "https://robotaxitracker.com"
@@ -664,6 +665,103 @@ async def scrape_robotaxi_tracker():
             print("\nBrowser closed.")
 
 
+def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
+    """
+    Merge scraped historical data into fleet_data.json.
+
+    This function:
+    1. Loads existing fleet_data.json
+    2. Converts scraped data to snapshot format
+    3. Merges new data points (skips duplicates by date)
+    4. Sorts by date
+    5. Saves updated fleet_data.json
+
+    Returns True if merge was successful and changes were made, False otherwise.
+    """
+    if not scraped_data or not scraped_data.get("historical_data"):
+        print("No historical data to merge")
+        return False
+
+    # Load existing fleet_data.json
+    if not FLEET_DATA_FILE.exists():
+        print(f"Warning: {FLEET_DATA_FILE} does not exist, skipping merge")
+        return False
+
+    try:
+        with open(FLEET_DATA_FILE, 'r') as f:
+            fleet_data = json.load(f)
+    except (json.JSONDecodeError, IOError) as e:
+        print(f"Error reading {FLEET_DATA_FILE}: {e}")
+        return False
+
+    # Get existing dates for deduplication
+    existing_dates = {s["date"] for s in fleet_data.get("snapshots", [])}
+    initial_count = len(existing_dates)
+
+    # Convert scraped historical data to snapshot format
+    new_snapshots = []
+    for item in scraped_data["historical_data"]:
+        date = item.get("date")
+        if not date or date in existing_dates:
+            continue  # Skip if no date or already exists
+
+        austin = item.get("austin")
+        bayarea = item.get("bayarea")
+
+        if austin is None and bayarea is None:
+            continue  # Skip if no fleet data
+
+        # Create snapshot in the same format as fleet_data.json
+        snapshot = {
+            "date": date,
+            "austin_vehicles": austin,
+            "bayarea_vehicles": bayarea,
+            "total_robotaxi": austin,  # Only Austin has true robotaxis (unsupervised)
+            "source": "robotaxitracker.com",
+            "notes": "Scraped from chart"
+        }
+
+        new_snapshots.append(snapshot)
+        existing_dates.add(date)
+
+    if not new_snapshots:
+        print("No new data points to merge")
+        return False
+
+    # Add new snapshots to existing data
+    fleet_data["snapshots"].extend(new_snapshots)
+
+    # Sort all snapshots by date
+    fleet_data["snapshots"].sort(key=lambda x: x["date"])
+
+    # Update metadata
+    fleet_data["metadata"]["last_updated"] = datetime.now().strftime("%Y-%m-%d")
+
+    # Update the last snapshot's notes with current fleet totals if available
+    current_fleet = scraped_data.get("current_fleet", {})
+    if current_fleet.get("austin_vehicles") and current_fleet.get("bayarea_vehicles"):
+        last_snapshot = fleet_data["snapshots"][-1]
+        austin = current_fleet["austin_vehicles"]
+        bayarea = current_fleet["bayarea_vehicles"]
+        total = austin + bayarea
+        last_snapshot["notes"] = f"Current fleet: {austin} Austin + {bayarea} Bay Area = {total} total"
+
+    # Save updated fleet_data.json
+    try:
+        with open(FLEET_DATA_FILE, 'w') as f:
+            json.dump(fleet_data, f, indent=2)
+
+        final_count = len(fleet_data["snapshots"])
+        print(f"\nMerge complete: {final_count - initial_count} new data points added")
+        print(f"  Total snapshots: {final_count}")
+        print(f"  Updated: {FLEET_DATA_FILE}")
+        return True
+
+    except IOError as e:
+        print(f"Error writing {FLEET_DATA_FILE}: {e}")
+        return False
+
+
 def main():
     """Entry point."""
     result = asyncio.run(scrape_robotaxi_tracker())
@@ -679,6 +777,16 @@ def main():
             print("\nWarning: Could not extract fleet numbers.")
             print("Check screenshots in data/ folder for debugging.")
             print("The site may have changed structure or be blocking scrapers.")
+
+        # Merge scraped data into fleet_data.json
+        print("\n" + "-" * 60)
+        print("MERGING TO FLEET DATA")
+        print("-" * 60)
+        merged = merge_scraped_to_fleet_data(result)
+        if merged:
+            print("Fleet data updated successfully.")
+        else:
+            print("No changes made to fleet data.")
 
         return 0
     else:
