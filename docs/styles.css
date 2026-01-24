@@ -298,6 +298,11 @@ a:hover {
     border-radius: 50%;
 }
 
+.legend-dot.hollow {
+    background: transparent;
+    border: 2px solid;
+}
+
 .legend-line {
     width: 24px;
     height: 3px;

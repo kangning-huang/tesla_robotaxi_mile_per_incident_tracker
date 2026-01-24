@@ -49,8 +49,8 @@ const commonOptions = {
     responsive: true,
     maintainAspectRatio: false,
     interaction: {
-        intersect: false,
-        mode: 'index'
+        intersect: true,
+        mode: 'nearest'
     },
     plugins: {
         legend: {
@@ -62,18 +62,19 @@ const commonOptions = {
             bodyColor: '#a1a1aa',
             borderColor: '#27272a',
             borderWidth: 1,
-            padding: 12,
-            displayColors: true,
+            padding: 8,
+            displayColors: false,
             callbacks: {
+                title: function() {
+                    return ''; // Hide title to save space
+                },
                 label: function(context) {
-                    let label = context.dataset.label || '';
-                    if (label) {
-                        label += ': ';
+                    const value = context.parsed.y;
+                    if (value === null) return null;
+                    if (value >= 1000) {
+                        return Math.round(value / 1000) + 'K miles';
                     }
-                    if (context.parsed.y !== null) {
-                        label += context.parsed.y.toLocaleString();
-                    }
-                    return label;
+                    return value.toLocaleString() + ' miles';
                 }
             }
         }
@@ -125,6 +126,7 @@ function initMPIChart() {
     const mpiValues = [];
     const trendData = [];
     const humanBenchmark = [];
+    const ongoingProgress = []; // Cumulative miles since last incident
 
     // Add all incident data points
     incidentData.forEach(d => {
@@ -134,6 +136,7 @@ function initMPIChart() {
         const daysSinceStart = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
         trendData.push(Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)));
         humanBenchmark.push(500000);
+        ongoingProgress.push(null); // No ongoing data for past incidents
     });
 
     // Extend projection to today (add monthly points after last incident)
@@ -147,10 +150,11 @@ function initMPIChart() {
         const daysSinceStart = Math.floor((projectionDate - startDate) / (1000 * 60 * 60 * 24));
         trendData.push(Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)));
         humanBenchmark.push(500000);
+        ongoingProgress.push(null);
         projectionDate.setDate(projectionDate.getDate() + 30); // Monthly intervals
     }
 
-    // Add today as final point
+    // Add today as final point with cumulative miles since last incident
     if (today > lastIncidentDate) {
         const todayStr = today.toISOString().split('T')[0];
         if (!labels.includes(todayStr)) {
@@ -159,6 +163,19 @@ function initMPIChart() {
             const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
             trendData.push(Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)));
             humanBenchmark.push(500000);
+
+            // Calculate cumulative miles since last incident
+            const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
+            const currentFleetSize = fleetData[fleetData.length - 1].size; // Latest fleet size
+            const cumulativeMiles = daysSinceLastIncident * currentFleetSize * 115; // 115 mi/day/vehicle
+            ongoingProgress.push(cumulativeMiles);
+        } else {
+            // Today already in labels, find its index and set ongoing progress
+            const todayIndex = labels.indexOf(todayStr);
+            const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
+            const currentFleetSize = fleetData[fleetData.length - 1].size;
+            const cumulativeMiles = daysSinceLastIncident * currentFleetSize * 115;
+            ongoingProgress[todayIndex] = cumulativeMiles;
         }
     }
 
@@ -202,6 +219,21 @@ function initMPIChart() {
                     borderDash: [8, 4],
                     pointRadius: 0,
                     order: 3
+                },
+                {
+                    label: 'Miles Since Last Incident',
+                    data: ongoingProgress,
+                    borderColor: chartColors.warning,
+                    backgroundColor: 'transparent',
+                    borderWidth: 0,
+                    pointRadius: 8,
+                    pointHoverRadius: 10,
+                    pointBackgroundColor: 'transparent',
+                    pointBorderColor: chartColors.warning,
+                    pointBorderWidth: 3,
+                    pointStyle: 'circle',
+                    showLine: false,
+                    order: 0
                 }
             ]
         },
