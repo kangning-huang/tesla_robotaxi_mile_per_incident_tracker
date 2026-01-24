@@ -2,6 +2,59 @@
 
 A tool to track and estimate the "miles per incident" metric for Tesla's Robotaxi service, based on NHTSA reports and fleet data.
 
+## Quick Start
+
+```bash
+# 1. Clone and setup
+git clone <repo-url>
+cd tesla_robotaxi_mile_per_incident_tracker
+pip install -r requirements.txt
+
+# 2. Download NHTSA data (ADS + ADAS CSV files)
+python scripts/download_nhtsa_data.py
+
+# 3. Run analysis
+python scripts/analyze_tesla_incidents.py
+```
+
+### Sample Output
+```
+TESLA ROBOTAXI MILES PER INCIDENT ANALYSIS
+======================================================================
+Period: 2025-06-25 to 2025-12-15
+Tesla incidents found: 8
+
+  Conservative (50 mi/day/vehicle):
+    Total estimated miles: 208,500
+    Miles per incident: 26,063
+
+  Moderate (100 mi/day/vehicle):
+    Total estimated miles: 417,000
+    Miles per incident: 52,125
+
+  Aggressive (150 mi/day/vehicle):
+    Total estimated miles: 625,500
+    Miles per incident: 78,188
+
+COMPARISON BENCHMARKS
+  Human Drivers (US avg):     ~500,000 miles per accident
+  Waymo (reported):           ~1,000,000+ miles per incident
+```
+
+## Project Structure
+
+```
+├── data/
+│   ├── fleet_data.json              # Fleet size snapshots over time
+│   ├── SGO-2021-01_Incident_Reports_ADS.csv    # (downloaded)
+│   └── SGO-2021-01_Incident_Reports_ADAS.csv   # (downloaded)
+├── scripts/
+│   ├── download_nhtsa_data.py       # Download NHTSA CSV files
+│   └── analyze_tesla_incidents.py   # Calculate miles per incident
+├── requirements.txt
+└── README.md
+```
+
 ## Why This Metric Matters
 
 For TSLA investors, **miles per incident** is a critical safety metric that indicates:

@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "description": "Tesla Robotaxi fleet size data collected from news sources",
+    "last_updated": "2026-01-24",
+    "sources": [
+      "robotaxitracker.com",
+      "Electrek",
+      "Teslarati",
+      "Tesla official announcements"
+    ]
+  },
+  "snapshots": [
+    {
+      "date": "2025-06-25",
+      "austin_vehicles": 10,
+      "bayarea_vehicles": 50,
+      "total_robotaxi": 10,
+      "source": "Tesla Robotaxi launch announcement",
+      "notes": "Initial Austin launch with ~10 vehicles"
+    },
+    {
+      "date": "2025-07-15",
+      "austin_vehicles": 15,
+      "bayarea_vehicles": 60,
+      "total_robotaxi": 15,
+      "source": "Electrek report",
+      "notes": "Fleet expansion in Austin"
+    },
+    {
+      "date": "2025-08-15",
+      "austin_vehicles": 20,
+      "bayarea_vehicles": 80,
+      "total_robotaxi": 20,
+      "source": "News aggregation",
+      "notes": "Continued ramp"
+    },
+    {
+      "date": "2025-09-15",
+      "austin_vehicles": 25,
+      "bayarea_vehicles": 100,
+      "total_robotaxi": 25,
+      "source": "News aggregation",
+      "notes": "Fleet approaching target"
+    },
+    {
+      "date": "2025-10-15",
+      "austin_vehicles": 30,
+      "bayarea_vehicles": 110,
+      "total_robotaxi": 30,
+      "source": "NHTSA filing analysis",
+      "notes": "Based on incident reports mentioning fleet"
+    },
+    {
+      "date": "2025-11-15",
+      "austin_vehicles": 32,
+      "bayarea_vehicles": 120,
+      "total_robotaxi": 32,
+      "source": "Jalopnik/Electrek",
+      "notes": "Fleet stabilizing"
+    },
+    {
+      "date": "2025-12-22",
+      "austin_vehicles": 34,
+      "bayarea_vehicles": 128,
+      "total_robotaxi": 34,
+      "source": "Jalopnik report",
+      "notes": "Current confirmed fleet size"
+    }
+  ],
+  "assumptions": {
+    "daily_miles_per_vehicle": {
+      "conservative": 50,
+      "moderate": 100,
+      "aggressive": 150
+    },
+    "notes": "Waymo vehicles drive ~150-200 miles/day. Tesla robotaxis likely operate fewer hours during ramp-up phase."
+  }
+}

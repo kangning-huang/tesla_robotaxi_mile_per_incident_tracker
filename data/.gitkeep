@@ -1,0 +1,2 @@
+# This directory stores NHTSA data files
+# Run: python scripts/download_nhtsa_data.py to download the data
