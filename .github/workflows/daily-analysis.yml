@@ -121,7 +121,21 @@ jobs:
       - name: Check for fleet data changes
         id: fleet-changes
         run: |
-          git diff --quiet data/fleet_data_scraped.json || echo "changed=true" >> $GITHUB_OUTPUT
+          # Check if file exists (handles both new and modified files)
+          if [ -f data/fleet_data_scraped.json ]; then
+            # Check if it's untracked (new) or has changes
+            if ! git ls-files --error-unmatch data/fleet_data_scraped.json >/dev/null 2>&1; then
+              echo "File is new (untracked)"
+              echo "changed=true" >> $GITHUB_OUTPUT
+            elif ! git diff --quiet data/fleet_data_scraped.json; then
+              echo "File has changes"
+              echo "changed=true" >> $GITHUB_OUTPUT
+            else
+              echo "No changes to fleet data"
+            fi
+          else
+            echo "fleet_data_scraped.json was not created"
+          fi
 
       - name: Commit fleet data updates
         if: steps.fleet-changes.outputs.changed == 'true'
