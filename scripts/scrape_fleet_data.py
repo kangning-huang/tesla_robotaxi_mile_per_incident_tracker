@@ -408,36 +408,83 @@ def parse_tooltip_text(text: str) -> dict:
         print(f"    [DEBUG] Tooltip text: {repr(text[:200])}")
         parse_tooltip_text._debug_count += 1
 
-    # Try to extract date - various formats
-    # Format: "2025年6月22日" (Chinese) or "Jan 24, 2026" or "2026-01-24"
+    # Comprehensive month name mappings for multiple languages
+    month_map = {
+        # English short
+        "jan": 1, "feb": 2, "mar": 3, "apr": 4, "may": 5, "jun": 6,
+        "jul": 7, "aug": 8, "sep": 9, "oct": 10, "nov": 11, "dec": 12,
+        # English full
+        "january": 1, "february": 2, "march": 3, "april": 4, "june": 6,
+        "july": 7, "august": 8, "september": 9, "october": 10, "november": 11, "december": 12,
+        # German
+        "januar": 1, "februar": 2, "märz": 3, "april": 4, "mai": 5, "juni": 6,
+        "juli": 7, "august": 8, "september": 9, "oktober": 10, "november": 11, "dezember": 12,
+        # French
+        "janvier": 1, "février": 2, "mars": 3, "avril": 4, "mai": 5, "juin": 6,
+        "juillet": 7, "août": 8, "septembre": 9, "octobre": 10, "novembre": 11, "décembre": 12,
+        # Spanish
+        "enero": 1, "febrero": 2, "marzo": 3, "abril": 4, "mayo": 5, "junio": 6,
+        "julio": 7, "agosto": 8, "septiembre": 9, "octubre": 10, "noviembre": 11, "diciembre": 12,
+    }
+
+    # Try to extract date - various formats ordered by specificity
+    # Most specific patterns first to avoid false matches
     date_patterns = [
-        (r'(\d{4})年(\d{1,2})月(\d{1,2})日', 'chinese'),  # Chinese format
-        (r'(\d{4})-(\d{2})-(\d{2})', 'iso'),  # ISO format
-        (r'([A-Za-z]{3})\s+(\d{1,2}),?\s+(\d{4})', 'english'),  # "Jan 24, 2026"
-        (r'(\d{1,2})/(\d{1,2})/(\d{4})', 'slash'),  # MM/DD/YYYY
+        # Asian formats (most specific due to unique characters)
+        (r'(\d{4})年(\d{1,2})月(\d{1,2})日', 'cjk'),  # Chinese/Japanese: 2025年6月22日
+        (r'(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일', 'korean'),  # Korean: 2025년 6월 22일
+
+        # ISO format (very specific)
+        (r'(\d{4})-(\d{2})-(\d{2})', 'iso'),  # ISO: 2025-06-22
+
+        # Full month name formats (before short names to avoid partial matches)
+        (r'([A-Za-zäöüéèàùâêîôûëïç]+)\s+(\d{1,2}),?\s+(\d{4})', 'month_day_year'),  # June 22, 2025
+        (r'(\d{1,2})\.?\s+([A-Za-zäöüéèàùâêîôûëïç]+),?\s+(\d{4})', 'day_month_year'),  # 22 June 2025 or 22. Juni 2025
+
+        # Numeric formats (least specific, check last)
+        (r'(\d{1,2})/(\d{1,2})/(\d{4})', 'mdy_slash'),  # US: 6/22/2025 (assume M/D/Y for en-US locale)
+        (r'(\d{1,2})\.(\d{1,2})\.(\d{4})', 'dmy_dot'),  # European: 22.06.2025
     ]
 
     for pattern, fmt_name in date_patterns:
-        match = re.search(pattern, text)
+        match = re.search(pattern, text, re.IGNORECASE)
         if match:
             groups = match.groups()
-            if fmt_name == 'chinese':
-                result["date"] = f"{groups[0]}-{int(groups[1]):02d}-{int(groups[2]):02d}"
-            elif fmt_name == 'iso':
-                result["date"] = f"{groups[0]}-{groups[1]}-{groups[2]}"
-            elif fmt_name == 'english':
-                month_map = {"Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04",
-                            "May": "05", "Jun": "06", "Jul": "07", "Aug": "08",
-                            "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12"}
-                month = month_map.get(groups[0], "01")
-                result["date"] = f"{groups[2]}-{month}-{int(groups[1]):02d}"
-            elif fmt_name == 'slash':
-                result["date"] = f"{groups[2]}-{int(groups[0]):02d}-{int(groups[1]):02d}"
+            try:
+                if fmt_name == 'cjk' or fmt_name == 'korean':
+                    # Year, Month, Day order
+                    result["date"] = f"{groups[0]}-{int(groups[1]):02d}-{int(groups[2]):02d}"
+                elif fmt_name == 'iso':
+                    result["date"] = f"{groups[0]}-{groups[1]}-{groups[2]}"
+                elif fmt_name == 'month_day_year':
+                    # Month name, Day, Year (e.g., "June 22, 2025")
+                    month_name = groups[0].lower()
+                    month_num = month_map.get(month_name) or month_map.get(month_name[:3])
+                    if month_num:
+                        result["date"] = f"{groups[2]}-{month_num:02d}-{int(groups[1]):02d}"
+                elif fmt_name == 'day_month_year':
+                    # Day, Month name, Year (e.g., "22 June 2025")
+                    month_name = groups[1].lower()
+                    month_num = month_map.get(month_name) or month_map.get(month_name[:3])
+                    if month_num:
+                        result["date"] = f"{groups[2]}-{month_num:02d}-{int(groups[0]):02d}"
+                elif fmt_name == 'mdy_slash':
+                    # US format: Month/Day/Year
+                    result["date"] = f"{groups[2]}-{int(groups[0]):02d}-{int(groups[1]):02d}"
+                elif fmt_name == 'dmy_dot':
+                    # European format: Day.Month.Year
+                    result["date"] = f"{groups[2]}-{int(groups[1]):02d}-{int(groups[0]):02d}"
 
-            # Debug: show which pattern matched
-            if parse_tooltip_text._debug_count <= 5:
-                print(f"    [DEBUG] Matched pattern '{fmt_name}': {groups} -> {result.get('date')}")
-            break
+                if result.get("date"):
+                    # Debug: show which pattern matched
+                    if parse_tooltip_text._debug_count <= 5:
+                        print(f"    [DEBUG] Matched pattern '{fmt_name}': {groups} -> {result.get('date')}")
+                    break
+            except (ValueError, IndexError) as e:
+                # If parsing fails, try next pattern
+                if parse_tooltip_text._debug_count <= 5:
+                    print(f"    [DEBUG] Pattern '{fmt_name}' failed: {e}")
+                continue
 
     if not result.get("date"):
         return None
@@ -525,10 +572,13 @@ async def scrape_robotaxi_tracker():
             args=['--disable-blink-features=AutomationControlled']
         )
 
-        # Create context with realistic settings
+        # Create context with realistic settings and explicit locale
+        # Setting locale to en-US ensures consistent date formats in the website
         context = await browser.new_context(
             viewport={'width': 1920, 'height': 1080},
-            user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            user_agent='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            locale='en-US',  # Force English US locale for consistent date formats
+            timezone_id='America/Los_Angeles',  # US Pacific timezone
         )
 
         page = await context.new_page()
