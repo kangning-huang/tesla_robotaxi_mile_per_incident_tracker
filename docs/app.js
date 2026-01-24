@@ -216,7 +216,7 @@ function initMPIChart() {
                     borderWidth: 2,
                     borderDash: [],
                     pointRadius: 0,
-                    tension: 0.4,
+                    tension: 0,
                     order: 2
                 },
                 {
