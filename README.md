@@ -44,16 +44,42 @@ COMPARISON BENCHMARKS
 ## Project Structure
 
 ```
+├── .github/
+│   └── workflows/
+│       └── daily-analysis.yml      # GitHub Action for daily updates
 ├── data/
 │   ├── fleet_data.json              # Fleet size snapshots over time
+│   ├── analysis_results.json        # Latest analysis output
 │   ├── SGO-2021-01_Incident_Reports_ADS.csv    # (downloaded)
 │   └── SGO-2021-01_Incident_Reports_ADAS.csv   # (downloaded)
 ├── scripts/
 │   ├── download_nhtsa_data.py       # Download NHTSA CSV files
-│   └── analyze_tesla_incidents.py   # Calculate miles per incident
+│   ├── analyze_tesla_incidents.py   # Calculate miles per incident
+│   └── scrape_fleet_data.py         # Scrape robotaxitracker.com
 ├── requirements.txt
 └── README.md
 ```
+
+## Automated Daily Updates
+
+This repository uses **GitHub Actions** to automatically update the analysis daily.
+
+### Schedule
+| Job | Frequency | Description |
+|-----|-----------|-------------|
+| `update-data` | Daily at 6:00 AM UTC | Downloads NHTSA data and runs analysis |
+| `scrape-fleet-data` | Weekly (Sundays) | Scrapes robotaxitracker.com for fleet size |
+
+### Manual Trigger
+You can manually trigger the workflow from the GitHub Actions tab or via CLI:
+```bash
+gh workflow run daily-analysis.yml
+```
+
+### What Gets Updated
+- `data/SGO-2021-01_Incident_Reports_*.csv` - Latest NHTSA incident data
+- `data/analysis_results.json` - Fresh miles-per-incident calculations
+- `data/fleet_data_scraped.json` - Latest fleet size from robotaxitracker.com
 
 ## Why This Metric Matters
 
