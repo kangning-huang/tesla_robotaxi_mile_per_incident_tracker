@@ -121,20 +121,31 @@ jobs:
       - name: Check for fleet data changes
         id: fleet-changes
         run: |
-          # Check if file exists (handles both new and modified files)
+          CHANGED=false
+
+          # Check fleet_data_scraped.json
           if [ -f data/fleet_data_scraped.json ]; then
-            # Check if it's untracked (new) or has changes
             if ! git ls-files --error-unmatch data/fleet_data_scraped.json >/dev/null 2>&1; then
-              echo "File is new (untracked)"
-              echo "changed=true" >> $GITHUB_OUTPUT
+              echo "fleet_data_scraped.json is new (untracked)"
+              CHANGED=true
             elif ! git diff --quiet data/fleet_data_scraped.json; then
-              echo "File has changes"
-              echo "changed=true" >> $GITHUB_OUTPUT
-            else
-              echo "No changes to fleet data"
+              echo "fleet_data_scraped.json has changes"
+              CHANGED=true
             fi
+          fi
+
+          # Check fleet_data.json (merged data)
+          if [ -f data/fleet_data.json ]; then
+            if ! git diff --quiet data/fleet_data.json; then
+              echo "fleet_data.json has changes"
+              CHANGED=true
+            fi
+          fi
+
+          if [ "$CHANGED" = true ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
           else
-            echo "fleet_data_scraped.json was not created"
+            echo "No changes to fleet data files"
           fi
 
       - name: Commit fleet data updates
@@ -142,7 +153,8 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add data/fleet_data_scraped.json
+          # Add both scraped and merged fleet data files
+          git add data/fleet_data_scraped.json data/fleet_data.json
           git commit -m "Update fleet data from robotaxitracker.com - $(date +'%Y-%m-%d')"
           # Pull any changes from other jobs before pushing
           git pull --rebase origin main
