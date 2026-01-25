@@ -522,7 +522,6 @@ function populateIncidentTable() {
             <td>${incident.days}</td>
             <td>${incident.fleet}</td>
             <td>${incident.miles.toLocaleString()}</td>
-            <td>${incident.mpi.toLocaleString()}</td>
         `;
         tbody.appendChild(row);
     });
@@ -533,16 +532,23 @@ function updateMetrics() {
     // Calculate metrics
     const latestMPI = incidentData[incidentData.length - 1].mpi;
     const previousMPI = incidentData[incidentData.length - 2].mpi;
-    const avgMPI = Math.round(incidentData.reduce((sum, d) => sum + d.mpi, 0) / incidentData.length);
     const totalIncidents = incidentData.length;
     const vsHuman = (500000 / latestMPI).toFixed(1);
+
+    // Calculate miles since last incident
+    const lastIncident = incidentData[incidentData.length - 1];
+    const lastIncidentDate = new Date(lastIncident.date);
+    const today = new Date();
+    const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
+    const currentFleetSize = fleetData[fleetData.length - 1].size;
+    const milesSinceLastIncident = daysSinceLastIncident * currentFleetSize * 115;
 
     // Calculate change percentage
     const changePercent = Math.round(((latestMPI - previousMPI) / previousMPI) * 100);
 
     // Update DOM
     document.getElementById('latest-mpi').textContent = latestMPI.toLocaleString();
-    document.getElementById('avg-mpi').textContent = avgMPI.toLocaleString();
+    document.getElementById('miles-since-incident').textContent = milesSinceLastIncident.toLocaleString();
     document.getElementById('total-incidents').textContent = totalIncidents;
     document.getElementById('vs-human').textContent = vsHuman + 'x';
 
