@@ -85,8 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    # Run weekly on Sundays to update fleet data
-    if: github.event.schedule == '0 6 * * 0' || github.event_name == 'workflow_dispatch'
+    # Run daily to update fleet data (robotaxitracker.com updates daily)
 
     steps:
       - name: Checkout repository
