@@ -312,8 +312,8 @@ a:hover {
 .legend-line.dashed {
     background: repeating-linear-gradient(
         90deg,
-        var(--accent-success),
-        var(--accent-success) 4px,
+        var(--dash-color, var(--accent-success)),
+        var(--dash-color, var(--accent-success)) 4px,
         transparent 4px,
         transparent 8px
     ) !important;
