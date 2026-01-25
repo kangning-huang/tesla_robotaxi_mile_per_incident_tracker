@@ -619,11 +619,10 @@ function updateHeroStreak() {
     // Update the progress bar (relative to 500K target)
     const heroBarEl = document.getElementById('hero-streak-bar');
     if (heroBarEl) {
-        const widthPercent = Math.min((milesSinceLastIncident / 500000) * 100, 100);
-        // Delay animation slightly for visual effect
-        setTimeout(() => {
-            heroBarEl.style.width = widthPercent.toFixed(1) + '%';
-        }, 300);
+        const targetMiles = 500000;
+        const widthPercent = Math.min((milesSinceLastIncident / targetMiles) * 100, 100);
+        // Set width directly without animation delay to ensure correct value
+        heroBarEl.style.width = widthPercent.toFixed(1) + '%';
     }
 }
 
