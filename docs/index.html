@@ -57,69 +57,70 @@
         </div>
     </section>
 
-    <!-- Main Chart Section (First for mobile users) -->
+    <!-- Main Chart Section with Metrics (side by side on desktop) -->
     <section id="trend" class="chart-section">
         <div class="container">
             <div class="section-header">
                 <h2>Safety Trend Analysis</h2>
                 <p>Miles driven between each consecutive incident with trend projection</p>
             </div>
-            <div class="chart-container">
-                <canvas id="mpiChart"></canvas>
-            </div>
-            <div class="chart-legend">
-                <div class="legend-item">
-                    <span class="legend-dot" style="background: #ef4444;"></span>
-                    Miles per Incident
-                </div>
-                <div class="legend-item">
-                    <span class="legend-dot hollow" style="border-color: #f59e0b;"></span>
-                    Miles Since Last Incident
-                </div>
-                <div class="legend-item">
-                    <span class="legend-line" style="background: #3b82f6;"></span>
-                    Projected Trend (R² = 0.955)
-                </div>
-                <div class="legend-item">
-                    <span class="legend-line dashed" style="--dash-color: #22c55e;"></span>
-                    Human - Police Reports (500K)
-                </div>
-                <div class="legend-item">
-                    <span class="legend-line dashed" style="--dash-color: #a855f7;"></span>
-                    Human - Insurance Claims (300K)
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Key Metrics Cards -->
-    <section id="metrics" class="metrics">
-        <div class="container">
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <div class="metric-label">Latest Interval</div>
-                    <div class="metric-value" id="latest-mpi">107,500</div>
-                    <div class="metric-change positive">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M18 15l-6-6-6 6"/>
-                        </svg>
-                        +61% from previous
+            <div class="chart-metrics-layout">
+                <div class="chart-area">
+                    <div class="chart-container">
+                        <canvas id="mpiChart"></canvas>
+                    </div>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <span class="legend-dot" style="background: #ef4444;"></span>
+                            Miles per Incident
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot hollow" style="border-color: #f59e0b;"></span>
+                            Miles Since Last Incident
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-line" style="background: #3b82f6;"></span>
+                            Projected Trend (R² = 0.955)
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-line dashed" style="--dash-color: #22c55e;"></span>
+                            Human - Police Reports (500K)
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-line dashed" style="--dash-color: #a855f7;"></span>
+                            Human - Insurance Claims (300K)
+                        </div>
                     </div>
                 </div>
-                <div class="metric-card">
-                    <div class="metric-label">Average</div>
-                    <div class="metric-value" id="avg-mpi">48,820</div>
-                    <div class="metric-subtext">miles per incident</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">Total Incidents</div>
-                    <div class="metric-value" id="total-incidents">10</div>
-                    <div class="metric-subtext">Since June 2025</div>
-                </div>
-                <div class="metric-card">
-                    <div class="metric-label">vs Human Drivers</div>
-                    <div class="metric-value negative" id="vs-human">4.7x</div>
-                    <div class="metric-subtext">worse (latest interval)</div>
+                <!-- Key Metrics Cards (side panel on desktop, below on mobile) -->
+                <div id="metrics" class="metrics-side">
+                    <div class="metrics-grid-vertical">
+                        <div class="metric-card">
+                            <div class="metric-label">Latest Interval</div>
+                            <div class="metric-value" id="latest-mpi">107,500</div>
+                            <div class="metric-change positive">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 15l-6-6-6 6"/>
+                                </svg>
+                                +61% from previous
+                            </div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Current Streak</div>
+                            <div class="metric-value" id="miles-since-incident">--</div>
+                            <div class="metric-subtext">miles since last incident</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">Total Incidents</div>
+                            <div class="metric-value" id="total-incidents">10</div>
+                            <div class="metric-subtext">Since June 2025</div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-label">vs Human Drivers</div>
+                            <div class="metric-value negative" id="vs-human">4.7x</div>
+                            <div class="metric-subtext">worse (latest interval)</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -213,8 +214,7 @@
                             <th>Date</th>
                             <th>Days</th>
                             <th>Avg Fleet</th>
-                            <th>Miles</th>
-                            <th>Per Incident</th>
+                            <th>Miles Between Incidents</th>
                         </tr>
                     </thead>
                     <tbody id="incident-table-body">

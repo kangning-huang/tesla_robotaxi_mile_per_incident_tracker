@@ -339,6 +339,61 @@ a:hover {
     font-size: 15px;
 }
 
+/* Desktop layout: chart + metrics side by side */
+.chart-metrics-layout {
+    display: flex;
+    gap: 24px;
+    align-items: stretch;
+}
+
+.chart-area {
+    flex: 1;
+    min-width: 0;
+}
+
+.metrics-side {
+    width: 280px;
+    flex-shrink: 0;
+}
+
+.metrics-grid-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+}
+
+.metrics-grid-vertical .metric-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Mobile: stack chart and metrics */
+@media (max-width: 1024px) {
+    .chart-metrics-layout {
+        flex-direction: column;
+    }
+
+    .metrics-side {
+        width: 100%;
+    }
+
+    .metrics-grid-vertical {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        height: auto;
+    }
+}
+
+@media (max-width: 500px) {
+    .metrics-grid-vertical {
+        grid-template-columns: 1fr;
+    }
+}
+
 .chart-container {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
