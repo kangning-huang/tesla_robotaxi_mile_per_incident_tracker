@@ -502,6 +502,124 @@ a:hover {
     background: linear-gradient(90deg, var(--accent-primary), #60a5fa);
 }
 
+.comparison-bar.insurance {
+    background: linear-gradient(90deg, #a855f7, #c084fc);
+}
+
+/* ===== Benchmark Explanation Section ===== */
+.benchmark-explanation {
+    padding: 60px 0;
+    background: var(--bg-secondary);
+}
+
+.benchmark-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 800px) {
+    .benchmark-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.benchmark-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.benchmark-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.benchmark-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.benchmark-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 4px 0;
+}
+
+.benchmark-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.benchmark-body {
+    padding: 20px;
+}
+
+.benchmark-body p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0 0 12px 0;
+    line-height: 1.6;
+}
+
+.benchmark-body p:last-child {
+    margin-bottom: 0;
+}
+
+.benchmark-body strong {
+    color: var(--text-primary);
+}
+
+.benchmark-note {
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent-primary);
+    font-style: italic;
+}
+
+.benchmark-comparison-note {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    align-items: flex-start;
+}
+
+.benchmark-comparison-note svg {
+    flex-shrink: 0;
+    color: var(--accent-warning);
+}
+
+.benchmark-comparison-note div {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.benchmark-comparison-note strong {
+    color: var(--text-primary);
+}
+
+.benchmark-comparison-note em {
+    color: var(--accent-warning);
+    font-style: normal;
+}
+
 /* ===== Data Scope Section ===== */
 .data-scope {
     padding: 60px 0;

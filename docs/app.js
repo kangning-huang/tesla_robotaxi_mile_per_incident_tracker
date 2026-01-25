@@ -134,7 +134,8 @@ function initMPIChart() {
     const labels = [];
     const mpiValues = [];
     const trendData = [];
-    const humanBenchmark = [];
+    const humanBenchmarkPolice = [];    // 500K - police-reported crashes
+    const humanBenchmarkInsurance = []; // 300K - insurance claims (Swiss Re)
     const ongoingProgress = []; // Cumulative miles since last incident
 
     // Add all incident data points
@@ -144,7 +145,8 @@ function initMPIChart() {
         const currentDate = new Date(d.date);
         const daysSinceStart = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
         trendData.push(Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)));
-        humanBenchmark.push(500000);
+        humanBenchmarkPolice.push(500000);
+        humanBenchmarkInsurance.push(300000);
         ongoingProgress.push(null); // No ongoing data for past incidents
     });
 
@@ -158,7 +160,8 @@ function initMPIChart() {
         mpiValues.push(null); // No actual incident data
         const daysSinceStart = Math.floor((projectionDate - startDate) / (1000 * 60 * 60 * 24));
         trendData.push(Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)));
-        humanBenchmark.push(500000);
+        humanBenchmarkPolice.push(500000);
+        humanBenchmarkInsurance.push(300000);
         ongoingProgress.push(null);
         projectionDate.setDate(projectionDate.getDate() + 30); // Monthly intervals
     }
@@ -171,7 +174,8 @@ function initMPIChart() {
             mpiValues.push(null);
             const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
             trendData.push(Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)));
-            humanBenchmark.push(500000);
+            humanBenchmarkPolice.push(500000);
+            humanBenchmarkInsurance.push(300000);
 
             // Calculate cumulative miles since last incident
             const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
@@ -220,14 +224,24 @@ function initMPIChart() {
                     order: 2
                 },
                 {
-                    label: 'Human Driver Avg (500K)',
-                    data: humanBenchmark,
+                    label: 'Human Benchmark - Police Reports (500K)',
+                    data: humanBenchmarkPolice,
                     borderColor: chartColors.success,
                     backgroundColor: 'transparent',
                     borderWidth: 2,
                     borderDash: [8, 4],
                     pointRadius: 0,
                     order: 3
+                },
+                {
+                    label: 'Human Benchmark - Insurance Claims (300K)',
+                    data: humanBenchmarkInsurance,
+                    borderColor: '#a855f7',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    borderDash: [4, 4],
+                    pointRadius: 0,
+                    order: 4
                 },
                 {
                     label: 'Miles Since Last Incident',
@@ -242,7 +256,7 @@ function initMPIChart() {
                     pointBorderWidth: 3,
                     pointStyle: 'circle',
                     showLine: false,
-                    order: 0
+                    order: 5
                 }
             ]
         },
@@ -265,6 +279,7 @@ function initMPIChart() {
                             { value: 50000 },
                             { value: 100000 },
                             { value: 200000 },
+                            { value: 300000 },
                             { value: 500000 },
                             { value: 1000000 }
                         ];
@@ -278,6 +293,7 @@ function initMPIChart() {
                             if (value === 50000) return '50K';
                             if (value === 100000) return '100K';
                             if (value === 200000) return '200K';
+                            if (value === 300000) return '300K';
                             if (value === 500000) return '500K';
                             if (value === 1000000) return '1M';
                             return '';
@@ -289,13 +305,21 @@ function initMPIChart() {
                 ...commonOptions.plugins,
                 annotation: {
                     annotations: {
-                        humanLine: {
+                        humanLinePolice: {
                             type: 'line',
                             yMin: 500000,
                             yMax: 500000,
                             borderColor: chartColors.success,
                             borderWidth: 2,
                             borderDash: [8, 4]
+                        },
+                        humanLineInsurance: {
+                            type: 'line',
+                            yMin: 300000,
+                            yMax: 300000,
+                            borderColor: '#a855f7',
+                            borderWidth: 2,
+                            borderDash: [4, 4]
                         }
                     }
                 }
