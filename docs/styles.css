@@ -199,7 +199,7 @@ a:hover {
 
 /* ===== Hero ===== */
 .hero {
-    padding: 140px 0 60px;
+    padding: 120px 0 48px;
     text-align: center;
     background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
 }
@@ -418,7 +418,7 @@ a:hover {
 
 /* ===== Chart Section ===== */
 .chart-section {
-    padding: 60px 0;
+    padding: 40px 0;
 }
 
 .chart-section.secondary {
@@ -426,13 +426,13 @@ a:hover {
 }
 
 .section-header {
-    margin-bottom: 32px;
+    margin-bottom: 20px;
 }
 
 .section-header h2 {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .section-header p {
@@ -462,14 +462,24 @@ a:hover {
 .metrics-grid-vertical {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
 .metrics-grid-vertical .metric-card {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 100px;
+    min-height: 72px;
+    padding: 16px 20px;
+}
+
+.metrics-grid-vertical .metric-card .metric-value {
+    font-size: 28px;
+    margin-bottom: 4px;
+}
+
+.metrics-grid-vertical .metric-card .metric-label {
+    margin-bottom: 4px;
 }
 
 /* Mobile: stack chart and metrics */
@@ -500,8 +510,8 @@ a:hover {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: 24px;
-    height: 400px;
+    padding: 20px;
+    height: 340px;
 }
 
 /* Desktop: make chart container fill remaining space after legend */
@@ -509,7 +519,7 @@ a:hover {
     .chart-container {
         flex: 1;
         height: auto;
-        min-height: 300px;
+        min-height: 260px;
     }
 
     .chart-legend {
@@ -524,8 +534,8 @@ a:hover {
 .chart-legend {
     display: flex;
     justify-content: center;
-    gap: 32px;
-    margin-top: 20px;
+    gap: 24px;
+    margin-top: 16px;
 }
 
 .legend-item {
