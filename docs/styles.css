@@ -199,7 +199,7 @@ a:hover {
 
 /* ===== Hero ===== */
 .hero {
-    padding: 120px 0 48px;
+    padding: 100px 0 40px;
     text-align: center;
     background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
 }
@@ -219,11 +219,11 @@ a:hover {
 }
 
 .hero-title {
-    font-size: clamp(32px, 6vw, 56px);
+    font-size: clamp(28px, 5vw, 44px);
     font-weight: 700;
-    letter-spacing: -1.5px;
-    line-height: 1.1;
-    margin-bottom: 20px;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    margin-bottom: 16px;
     background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -231,17 +231,28 @@ a:hover {
 }
 
 .hero-subtitle {
-    font-size: 18px;
+    font-size: 16px;
     color: var(--text-secondary);
     max-width: 600px;
-    margin: 0 auto 40px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+}
+
+.hero-subtitle .highlight-number {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    background: linear-gradient(135deg, var(--accent-primary) 0%, #60a5fa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 /* Hero Streak Card */
 .hero-streak-card {
-    max-width: 480px;
+    max-width: 420px;
     margin: 0 auto;
-    padding: 28px 32px;
+    padding: 24px 28px;
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
@@ -286,10 +297,13 @@ a:hover {
 }
 
 .hero-streak-value {
-    font-size: clamp(42px, 10vw, 64px);
+    font-size: clamp(36px, 8vw, 52px);
     font-weight: 700;
     font-family: var(--font-mono);
-    color: var(--text-primary);
+    background: linear-gradient(135deg, var(--accent-success) 0%, #4ade80 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     line-height: 1;
     margin-bottom: 4px;
 }
@@ -322,14 +336,14 @@ a:hover {
     right: 0;
     top: 50%;
     transform: translateY(-50%);
-    padding: 2px 8px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
+    padding: 3px 10px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(96, 165, 250, 0.1) 100%);
+    border: 1px solid var(--accent-primary);
     border-radius: 4px;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     font-family: var(--font-mono);
-    color: var(--text-muted);
+    color: var(--accent-primary);
 }
 
 .hero-streak-context {
