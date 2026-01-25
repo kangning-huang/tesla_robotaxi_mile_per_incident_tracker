@@ -13,24 +13,81 @@ const incidentData = [
     { date: '2025-12-10', days: 28, fleet: 32, miles: 107500, mpi: 107500 },
 ];
 
-// Fleet size data (Austin unsupervised robotaxis only) - sampled from fleet_data.json
+// Fleet size data (Austin unsupervised robotaxis only) - all data points from fleet_data.json
 const fleetData = [
     { date: '2025-06-25', size: 10 },
+    { date: '2025-07-01', size: 12 },
     { date: '2025-07-15', size: 14 },
     { date: '2025-08-14', size: 15 },
+    { date: '2025-08-21', size: 15 },
+    { date: '2025-08-31', size: 15 },
+    { date: '2025-09-03', size: 15 },
+    { date: '2025-09-04', size: 15 },
     { date: '2025-09-05', size: 16 },
     { date: '2025-09-06', size: 18 },
+    { date: '2025-09-13', size: 18 },
+    { date: '2025-09-17', size: 18 },
+    { date: '2025-09-19', size: 18 },
+    { date: '2025-10-01', size: 18 },
+    { date: '2025-10-02', size: 18 },
+    { date: '2025-10-05', size: 18 },
+    { date: '2025-10-07', size: 18 },
+    { date: '2025-10-09', size: 18 },
+    { date: '2025-10-18', size: 18 },
+    { date: '2025-10-22', size: 18 },
+    { date: '2025-10-26', size: 18 },
     { date: '2025-10-30', size: 19 },
+    { date: '2025-11-04', size: 20 },
     { date: '2025-11-08', size: 21 },
+    { date: '2025-11-09', size: 21 },
+    { date: '2025-11-11', size: 22 },
     { date: '2025-11-17', size: 25 },
+    { date: '2025-11-18', size: 28 },
+    { date: '2025-11-20', size: 28 },
     { date: '2025-11-22', size: 29 },
+    { date: '2025-11-23', size: 29 },
+    { date: '2025-11-24', size: 29 },
+    { date: '2025-11-25', size: 29 },
+    { date: '2025-11-26', size: 29 },
+    { date: '2025-11-27', size: 29 },
+    { date: '2025-11-29', size: 29 },
+    { date: '2025-11-30', size: 29 },
+    { date: '2025-12-01', size: 29 },
+    { date: '2025-12-02', size: 29 },
+    { date: '2025-12-08', size: 29 },
+    { date: '2025-12-10', size: 29 },
+    { date: '2025-12-12', size: 29 },
+    { date: '2025-12-15', size: 29 },
+    { date: '2025-12-16', size: 29 },
+    { date: '2025-12-19', size: 29 },
     { date: '2025-12-25', size: 31 },
+    { date: '2025-12-28', size: 31 },
+    { date: '2025-12-29', size: 32 },
+    { date: '2025-12-30', size: 32 },
     { date: '2025-12-31', size: 33 },
+    { date: '2026-01-01', size: 34 },
+    { date: '2026-01-02', size: 34 },
+    { date: '2026-01-03', size: 34 },
+    { date: '2026-01-04', size: 35 },
+    { date: '2026-01-05', size: 35 },
     { date: '2026-01-06', size: 36 },
+    { date: '2026-01-07', size: 36 },
+    { date: '2026-01-08', size: 37 },
+    { date: '2026-01-09', size: 37 },
+    { date: '2026-01-10', size: 38 },
+    { date: '2026-01-11', size: 38 },
+    { date: '2026-01-12', size: 38 },
+    { date: '2026-01-13', size: 38 },
+    { date: '2026-01-15', size: 39 },
     { date: '2026-01-16', size: 42 },
+    { date: '2026-01-17', size: 43 },
+    { date: '2026-01-18', size: 46 },
     { date: '2026-01-19', size: 48 },
+    { date: '2026-01-20', size: 49 },
+    { date: '2026-01-21', size: 50 },
     { date: '2026-01-22', size: 60 },
     { date: '2026-01-23', size: 68 },
+    { date: '2026-01-24', size: 72 },
 ];
 
 // Trend analysis parameters (from Python analysis, updated for 115 mi/day)
@@ -335,26 +392,30 @@ function initFleetChart() {
     const sizes = fleetData.map(d => d.size);
 
     new Chart(ctx, {
-        type: 'bar',
+        type: 'line',
         data: {
             labels: labels,
             datasets: [{
                 label: 'Fleet Size',
                 data: sizes,
+                fill: true,
                 backgroundColor: (context) => {
                     const chart = context.chart;
                     const { ctx, chartArea } = chart;
-                    if (!chartArea) return chartColors.primary;
+                    if (!chartArea) return 'rgba(59, 130, 246, 0.3)';
 
                     const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-                    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
-                    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.8)');
+                    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.05)');
+                    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.4)');
                     return gradient;
                 },
                 borderColor: chartColors.primary,
-                borderWidth: 1,
-                borderRadius: 4,
-                borderSkipped: false
+                borderWidth: 2,
+                pointRadius: 2,
+                pointHoverRadius: 5,
+                pointBackgroundColor: chartColors.primary,
+                pointBorderColor: chartColors.primary,
+                tension: 0.1
             }]
         },
         options: {
@@ -364,8 +425,8 @@ function initFleetChart() {
                 tooltip: {
                     ...commonOptions.plugins.tooltip,
                     callbacks: {
-                        title: function() {
-                            return ''; // Hide title to save space
+                        title: function(context) {
+                            return context[0].label;
                         },
                         label: function(context) {
                             const value = context.parsed.y;
