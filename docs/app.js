@@ -449,6 +449,29 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
+// ===== Update Current Streak Comparison =====
+function updateCurrentStreakComparison() {
+    const lastIncident = incidentData[incidentData.length - 1];
+    const lastIncidentDate = new Date(lastIncident.date);
+    const today = new Date();
+    const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
+    const currentFleetSize = fleetData[fleetData.length - 1].size;
+    const milesSinceLastIncident = daysSinceLastIncident * currentFleetSize * 115;
+
+    // Update the value display
+    const valueEl = document.getElementById('current-streak-value');
+    if (valueEl) {
+        valueEl.textContent = milesSinceLastIncident.toLocaleString();
+    }
+
+    // Update the bar width (relative to 1,000,000 as max)
+    const barEl = document.getElementById('current-streak-bar');
+    if (barEl) {
+        const widthPercent = Math.min((milesSinceLastIncident / 1000000) * 100, 100);
+        barEl.style.width = widthPercent.toFixed(2) + '%';
+    }
+}
+
 // ===== Animate Comparison Bars =====
 function animateComparisonBars() {
     const bars = document.querySelectorAll('.comparison-bar');
@@ -473,6 +496,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initFleetChart();
     populateIncidentTable();
     updateMetrics();
+    updateCurrentStreakComparison();
     animateComparisonBars();
 
     // Update date
