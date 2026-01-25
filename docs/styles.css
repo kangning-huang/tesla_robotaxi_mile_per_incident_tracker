@@ -506,6 +506,10 @@ a:hover {
     background: linear-gradient(90deg, #a855f7, #c084fc);
 }
 
+.comparison-bar.current {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
 /* ===== Benchmark Explanation Section ===== */
 .benchmark-explanation {
     padding: 60px 0;
