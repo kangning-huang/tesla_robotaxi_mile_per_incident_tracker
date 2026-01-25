@@ -99,88 +99,139 @@ const trendParams = {
     forecast30Day: 137400
 };
 
+// ===== Theme Detection =====
+function isDarkMode() {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
 // ===== Chart Configuration =====
-const chartColors = {
+const darkChartColors = {
     primary: '#3b82f6',
     danger: '#ef4444',
     success: '#22c55e',
     warning: '#f59e0b',
     muted: '#71717a',
     grid: '#27272a',
-    background: '#161616'
+    background: '#161616',
+    tooltipBg: '#1a1a1a',
+    tooltipTitle: '#ffffff',
+    tooltipBody: '#a1a1aa',
+    tooltipBorder: '#27272a',
+    pointBorder: '#0a0a0a',
+    purple: '#a855f7'
 };
 
-// Common chart options
-const commonOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: {
-        intersect: true,
-        mode: 'nearest'
-    },
-    plugins: {
-        legend: {
-            display: false
-        },
-        tooltip: {
-            backgroundColor: '#1a1a1a',
-            titleColor: '#ffffff',
-            bodyColor: '#a1a1aa',
-            borderColor: '#27272a',
-            borderWidth: 1,
-            padding: 8,
-            displayColors: false,
-            callbacks: {
-                title: function() {
-                    return ''; // Hide title to save space
-                },
-                label: function(context) {
-                    const value = context.parsed.y;
-                    if (value === null) return null;
-                    if (value >= 1000) {
-                        return Math.round(value / 1000) + 'K miles';
-                    }
-                    return value.toLocaleString() + ' miles';
-                }
-            }
-        }
-    },
-    scales: {
-        x: {
-            grid: {
-                color: chartColors.grid,
-                drawBorder: false
-            },
-            ticks: {
-                color: chartColors.muted,
-                font: {
-                    family: "'Inter', sans-serif",
-                    size: 11
-                }
-            }
-        },
-        y: {
-            grid: {
-                color: chartColors.grid,
-                drawBorder: false
-            },
-            ticks: {
-                color: chartColors.muted,
-                font: {
-                    family: "'JetBrains Mono', monospace",
-                    size: 11
-                },
-                callback: function(value) {
-                    return value.toLocaleString();
-                }
-            }
-        }
-    }
+const lightChartColors = {
+    primary: '#2563eb',
+    danger: '#dc2626',
+    success: '#16a34a',
+    warning: '#d97706',
+    muted: '#64748b',
+    grid: '#e2e8f0',
+    background: '#ffffff',
+    tooltipBg: '#ffffff',
+    tooltipTitle: '#0f172a',
+    tooltipBody: '#475569',
+    tooltipBorder: '#e2e8f0',
+    pointBorder: '#ffffff',
+    purple: '#7c3aed'
 };
+
+function getChartColors() {
+    return isDarkMode() ? darkChartColors : lightChartColors;
+}
+
+// Initialize with current theme
+let chartColors = getChartColors();
+
+// Common chart options (function to get fresh colors)
+function getCommonOptions() {
+    const colors = getChartColors();
+    return {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+            intersect: true,
+            mode: 'nearest'
+        },
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                backgroundColor: colors.tooltipBg,
+                titleColor: colors.tooltipTitle,
+                bodyColor: colors.tooltipBody,
+                borderColor: colors.tooltipBorder,
+                borderWidth: 1,
+                padding: 8,
+                displayColors: false,
+                callbacks: {
+                    title: function() {
+                        return ''; // Hide title to save space
+                    },
+                    label: function(context) {
+                        const value = context.parsed.y;
+                        if (value === null) return null;
+                        if (value >= 1000) {
+                            return Math.round(value / 1000) + 'K miles';
+                        }
+                        return value.toLocaleString() + ' miles';
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                grid: {
+                    color: colors.grid,
+                    drawBorder: false
+                },
+                ticks: {
+                    color: colors.muted,
+                    font: {
+                        family: "'Inter', sans-serif",
+                        size: 11
+                    }
+                }
+            },
+            y: {
+                grid: {
+                    color: colors.grid,
+                    drawBorder: false
+                },
+                ticks: {
+                    color: colors.muted,
+                    font: {
+                        family: "'JetBrains Mono', monospace",
+                        size: 11
+                    },
+                    callback: function(value) {
+                        return value.toLocaleString();
+                    }
+                }
+            }
+        }
+    };
+}
+
+// Keep backward compatibility
+const commonOptions = getCommonOptions();
 
 // ===== Initialize Charts =====
+// Store chart instances for theme updates
+let mpiChartInstance = null;
+let fleetChartInstance = null;
+
 function initMPIChart() {
     const ctx = document.getElementById('mpiChart').getContext('2d');
+    const colors = getChartColors();
+    const options = getCommonOptions();
+
+    // Destroy existing chart if present
+    if (mpiChartInstance) {
+        mpiChartInstance.destroy();
+    }
 
     // Prepare base data from incidents
     const startDate = new Date(incidentData[0].date);
@@ -249,7 +300,7 @@ function initMPIChart() {
         }
     }
 
-    new Chart(ctx, {
+    mpiChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
@@ -257,13 +308,13 @@ function initMPIChart() {
                 {
                     label: 'Miles per Incident',
                     data: mpiValues,
-                    borderColor: chartColors.danger,
-                    backgroundColor: chartColors.danger,
+                    borderColor: colors.danger,
+                    backgroundColor: colors.danger,
                     borderWidth: 2,
                     pointRadius: 6,
                     pointHoverRadius: 8,
-                    pointBackgroundColor: chartColors.danger,
-                    pointBorderColor: '#0a0a0a',
+                    pointBackgroundColor: colors.danger,
+                    pointBorderColor: colors.pointBorder,
                     pointBorderWidth: 2,
                     tension: 0,
                     spanGaps: false,
@@ -272,7 +323,7 @@ function initMPIChart() {
                 {
                     label: 'Exponential Trend (Projected)',
                     data: trendData,
-                    borderColor: chartColors.primary,
+                    borderColor: colors.primary,
                     backgroundColor: 'transparent',
                     borderWidth: 2,
                     borderDash: [],
@@ -283,7 +334,7 @@ function initMPIChart() {
                 {
                     label: 'Human Benchmark - Police Reports (500K)',
                     data: humanBenchmarkPolice,
-                    borderColor: chartColors.success,
+                    borderColor: colors.success,
                     backgroundColor: 'transparent',
                     borderWidth: 2,
                     borderDash: [8, 4],
@@ -293,7 +344,7 @@ function initMPIChart() {
                 {
                     label: 'Human Benchmark - Insurance Claims (300K)',
                     data: humanBenchmarkInsurance,
-                    borderColor: '#a855f7',
+                    borderColor: colors.purple,
                     backgroundColor: 'transparent',
                     borderWidth: 2,
                     borderDash: [4, 4],
@@ -303,13 +354,13 @@ function initMPIChart() {
                 {
                     label: 'Miles Since Last Incident',
                     data: ongoingProgress,
-                    borderColor: chartColors.warning,
+                    borderColor: colors.warning,
                     backgroundColor: 'transparent',
                     borderWidth: 0,
                     pointRadius: 8,
                     pointHoverRadius: 10,
                     pointBackgroundColor: 'transparent',
-                    pointBorderColor: chartColors.warning,
+                    pointBorderColor: colors.warning,
                     pointBorderWidth: 3,
                     pointStyle: 'circle',
                     showLine: false,
@@ -318,13 +369,13 @@ function initMPIChart() {
             ]
         },
         options: {
-            ...commonOptions,
+            ...options,
             scales: {
-                x: commonOptions.scales.x,
+                x: options.scales.x,
                 y: {
                     type: 'logarithmic',
                     grid: {
-                        color: chartColors.grid,
+                        color: colors.grid,
                         drawBorder: false
                     },
                     min: 10000,
@@ -342,7 +393,7 @@ function initMPIChart() {
                         ];
                     },
                     ticks: {
-                        color: chartColors.muted,
+                        color: colors.muted,
                         font: { family: "'JetBrains Mono', monospace", size: 11 },
                         callback: function(value) {
                             if (value === 10000) return '10K';
@@ -359,14 +410,14 @@ function initMPIChart() {
                 }
             },
             plugins: {
-                ...commonOptions.plugins,
+                ...options.plugins,
                 annotation: {
                     annotations: {
                         humanLinePolice: {
                             type: 'line',
                             yMin: 500000,
                             yMax: 500000,
-                            borderColor: chartColors.success,
+                            borderColor: colors.success,
                             borderWidth: 2,
                             borderDash: [8, 4]
                         },
@@ -374,7 +425,7 @@ function initMPIChart() {
                             type: 'line',
                             yMin: 300000,
                             yMax: 300000,
-                            borderColor: '#a855f7',
+                            borderColor: colors.purple,
                             borderWidth: 2,
                             borderDash: [4, 4]
                         }
@@ -387,11 +438,22 @@ function initMPIChart() {
 
 function initFleetChart() {
     const ctx = document.getElementById('fleetChart').getContext('2d');
+    const colors = getChartColors();
+    const options = getCommonOptions();
+
+    // Destroy existing chart if present
+    if (fleetChartInstance) {
+        fleetChartInstance.destroy();
+    }
 
     const labels = fleetData.map(d => d.date);
     const sizes = fleetData.map(d => d.size);
 
-    new Chart(ctx, {
+    // Get gradient colors based on theme
+    const gradientStartAlpha = isDarkMode() ? 0.05 : 0.1;
+    const gradientEndAlpha = isDarkMode() ? 0.4 : 0.3;
+
+    fleetChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
@@ -401,29 +463,29 @@ function initFleetChart() {
                 fill: true,
                 backgroundColor: (context) => {
                     const chart = context.chart;
-                    const { ctx, chartArea } = chart;
-                    if (!chartArea) return 'rgba(59, 130, 246, 0.3)';
+                    const { ctx: chartCtx, chartArea } = chart;
+                    if (!chartArea) return `rgba(59, 130, 246, ${gradientEndAlpha})`;
 
-                    const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-                    gradient.addColorStop(0, 'rgba(59, 130, 246, 0.05)');
-                    gradient.addColorStop(1, 'rgba(59, 130, 246, 0.4)');
+                    const gradient = chartCtx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                    gradient.addColorStop(0, `rgba(37, 99, 235, ${gradientStartAlpha})`);
+                    gradient.addColorStop(1, `rgba(37, 99, 235, ${gradientEndAlpha})`);
                     return gradient;
                 },
-                borderColor: chartColors.primary,
+                borderColor: colors.primary,
                 borderWidth: 2,
                 pointRadius: 2,
                 pointHoverRadius: 5,
-                pointBackgroundColor: chartColors.primary,
-                pointBorderColor: chartColors.primary,
+                pointBackgroundColor: colors.primary,
+                pointBorderColor: colors.primary,
                 tension: 0.1
             }]
         },
         options: {
-            ...commonOptions,
+            ...options,
             plugins: {
-                ...commonOptions.plugins,
+                ...options.plugins,
                 tooltip: {
-                    ...commonOptions.plugins.tooltip,
+                    ...options.plugins.tooltip,
                     callbacks: {
                         title: function(context) {
                             return context[0].label;
@@ -437,9 +499,9 @@ function initFleetChart() {
                 }
             },
             scales: {
-                ...commonOptions.scales,
+                ...options.scales,
                 y: {
-                    ...commonOptions.scales.y,
+                    ...options.scales.y,
                     beginAtZero: true,
                     max: 80
                 }
@@ -566,6 +628,17 @@ document.addEventListener('DOMContentLoaded', () => {
         day: 'numeric',
         year: 'numeric'
     });
+
+    // Listen for system theme changes and reinitialize charts
+    if (window.matchMedia) {
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            // Update chart colors
+            chartColors = getChartColors();
+            // Reinitialize charts with new theme colors
+            initMPIChart();
+            initFleetChart();
+        });
+    }
 });
 
 // ===== Fetch Latest Data (for future use) =====
