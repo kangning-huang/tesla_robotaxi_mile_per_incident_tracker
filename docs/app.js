@@ -610,19 +610,60 @@ function updateHeroStreak() {
     const currentFleetSize = fleetData[fleetData.length - 1].size;
     const milesSinceLastIncident = daysSinceLastIncident * currentFleetSize * 115;
 
+    const targetMiles = 500000;
+    const exceededHumanLevel = milesSinceLastIncident >= targetMiles;
+
     // Update the hero streak value
     const heroValueEl = document.getElementById('hero-streak-value');
     if (heroValueEl) {
         heroValueEl.textContent = milesSinceLastIncident.toLocaleString();
     }
 
-    // Update the progress bar (relative to 500K target)
+    // Get all elements we need to update
     const heroBarEl = document.getElementById('hero-streak-bar');
-    if (heroBarEl) {
-        const targetMiles = 500000;
-        const widthPercent = Math.min((milesSinceLastIncident / targetMiles) * 100, 100);
-        // Set width directly without animation delay to ensure correct value
-        heroBarEl.style.width = widthPercent.toFixed(1) + '%';
+    const heroTargetEl = document.getElementById('hero-streak-target');
+    const heroContextEl = document.getElementById('hero-streak-context');
+    const heroLabelEl = document.getElementById('hero-streak-label');
+    const heroSublabelEl = document.getElementById('hero-streak-sublabel');
+    const heroCardEl = document.querySelector('.hero-streak-card');
+
+    if (exceededHumanLevel) {
+        // Calculate how many times safer than human drivers
+        const safetyMultiplier = milesSinceLastIncident / targetMiles;
+        const formattedMultiplier = safetyMultiplier.toFixed(1);
+
+        // Update to show safety comparison mode
+        if (heroBarEl) {
+            heroBarEl.style.width = '100%';
+            heroBarEl.classList.add('exceeded');
+        }
+        if (heroTargetEl) {
+            heroTargetEl.textContent = formattedMultiplier + 'x';
+            heroTargetEl.classList.add('exceeded');
+        }
+        if (heroContextEl) {
+            heroContextEl.innerHTML = '<span class="safety-highlight">' + formattedMultiplier + 'x safer</span> than human drivers (police-reported)';
+        }
+        if (heroCardEl) {
+            heroCardEl.classList.add('exceeded-human-level');
+        }
+    } else {
+        // Normal progress mode
+        if (heroBarEl) {
+            const widthPercent = (milesSinceLastIncident / targetMiles) * 100;
+            heroBarEl.style.width = widthPercent.toFixed(1) + '%';
+            heroBarEl.classList.remove('exceeded');
+        }
+        if (heroTargetEl) {
+            heroTargetEl.textContent = '500K';
+            heroTargetEl.classList.remove('exceeded');
+        }
+        if (heroContextEl) {
+            heroContextEl.textContent = 'Human driver benchmark (police-reported)';
+        }
+        if (heroCardEl) {
+            heroCardEl.classList.remove('exceeded-human-level');
+        }
     }
 }
 
