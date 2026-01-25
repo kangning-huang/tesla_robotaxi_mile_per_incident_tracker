@@ -82,7 +82,11 @@
                 </div>
                 <div class="legend-item">
                     <span class="legend-line dashed" style="background: #22c55e;"></span>
-                    Human Driver Avg (500K)
+                    Human - Police Reports (500K)
+                </div>
+                <div class="legend-item">
+                    <span class="legend-line dashed" style="background: #a855f7;"></span>
+                    Human - Insurance Claims (300K)
                 </div>
             </div>
         </div>
@@ -240,7 +244,16 @@
                 </div>
                 <div class="comparison-item">
                     <div class="comparison-label">
-                        <span class="company">Human Drivers (US Avg)</span>
+                        <span class="company">Human - Insurance Claims</span>
+                        <span class="value">300,000</span>
+                    </div>
+                    <div class="comparison-bar-bg">
+                        <div class="comparison-bar insurance" style="width: 30%;"></div>
+                    </div>
+                </div>
+                <div class="comparison-item">
+                    <div class="comparison-label">
+                        <span class="company">Human - Police Reports</span>
                         <span class="value">500,000</span>
                     </div>
                     <div class="comparison-bar-bg">
@@ -255,6 +268,69 @@
                     <div class="comparison-bar-bg">
                         <div class="comparison-bar waymo" style="width: 100%;"></div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Human Benchmark Explanation -->
+    <section class="benchmark-explanation">
+        <div class="container">
+            <div class="section-header">
+                <h2>Understanding the Human Driver Benchmarks</h2>
+                <p>Why we show two different comparison lines</p>
+            </div>
+            <div class="benchmark-grid">
+                <div class="benchmark-card">
+                    <div class="benchmark-header">
+                        <div class="benchmark-icon" style="background: rgba(34, 197, 94, 0.2); color: #22c55e;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>500K - Police-Reported Crashes</h3>
+                            <span class="benchmark-value">~529,000 miles/crash</span>
+                        </div>
+                    </div>
+                    <div class="benchmark-body">
+                        <p><strong>Source:</strong> NHTSA Crash Report Sampling System (CRSS) 2023</p>
+                        <p><strong>Calculation:</strong> ~6.14 million police-reported crashes ÷ 3,247 billion vehicle miles traveled = ~1.89 crashes per million miles</p>
+                        <p><strong>Limitation:</strong> Significantly undercounts actual crashes. NHTSA estimates 60% of property damage crashes and 32% of injury crashes are never reported to police.</p>
+                        <p class="benchmark-note">This is the "official" statistic but represents a best-case scenario for human drivers.</p>
+                    </div>
+                </div>
+                <div class="benchmark-card">
+                    <div class="benchmark-header">
+                        <div class="benchmark-icon" style="background: rgba(168, 85, 247, 0.2); color: #a855f7;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3>300K - Insurance Claims</h3>
+                            <span class="benchmark-value">~307,000 miles/claim</span>
+                        </div>
+                    </div>
+                    <div class="benchmark-body">
+                        <p><strong>Source:</strong> Swiss Re / Waymo study (2023), analyzing 500,000+ claims over 200 billion miles</p>
+                        <p><strong>Calculation:</strong> 3.26 property damage claims per million miles for human drivers</p>
+                        <p><strong>Advantage:</strong> Insurance claims capture incidents that go unreported to police, providing a more complete picture of actual crash frequency.</p>
+                        <p class="benchmark-note">This is a more realistic comparison for AV incident data, which captures all crashes regardless of severity.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="benchmark-comparison-note">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+                <div>
+                    <strong>Why this matters:</strong> Tesla robotaxi incidents are reported to NHTSA under Standing General Order 2021-01, which requires reporting <em>any</em> crash where ADS was engaged within 30 seconds—including minor incidents that human drivers would never report. Comparing AV data to police-reported human crashes (500K) may overstate human safety. The insurance-adjusted benchmark (300K) provides a more apples-to-apples comparison.
                 </div>
             </div>
         </div>
@@ -345,7 +421,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-info">
-                    <p>Data sources: <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank">NHTSA SGO</a>, <a href="https://robotaxitracker.com" target="_blank">robotaxitracker.com</a></p>
+                    <p>Data sources: <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank">NHTSA SGO</a>, <a href="https://robotaxitracker.com" target="_blank">robotaxitracker.com</a>, <a href="https://crashstats.nhtsa.dot.gov/Api/Public/Publication/813705" target="_blank">NHTSA CRSS</a>, <a href="https://waymo.com/blog/2023/09/waymos-autonomous-vehicles-are-significantly-safer-than-human-driven-ones/" target="_blank">Swiss Re/Waymo</a></p>
                     <p class="disclaimer">This is an independent analysis tool. Not affiliated with Tesla, Inc.</p>
                 </div>
                 <div class="footer-links">

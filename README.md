@@ -210,9 +210,59 @@ Total Miles = Σ (Active Vehicles × Days in Period × Avg Daily Miles)
 | Aggressive | 150 | 504,000 | 72,000 |
 
 ### Comparison Benchmarks
-- **Human Drivers (US avg)**: ~500,000 miles per accident
-- **Waymo (reported)**: ~1,000,000+ miles per incident (varies by severity)
-- **Tesla FSD (supervised)**: ~3.4M miles per crash (Tesla's claim, different conditions)
+
+We display **two human driver benchmarks** to provide context on data comparability:
+
+| Benchmark | Value | Source | Notes |
+|-----------|-------|--------|-------|
+| **Human - Police Reports** | ~500,000 mi/crash | NHTSA CRSS 2023 | Official statistic, but undercounts actual crashes |
+| **Human - Insurance Claims** | ~300,000 mi/claim | Swiss Re 2023 | More complete data, better for AV comparison |
+| **Waymo (reported)** | ~1,000,000+ mi/incident | Swiss Re / Waymo 2024 | Varies by severity |
+| **Tesla FSD (supervised)** | ~3.4M mi/crash | Tesla claim | Different conditions (supervised driving) |
+
+### Human Driver Benchmark Deep Dive
+
+#### 500K - Police-Reported Crashes (NHTSA CRSS)
+
+**Source:** [NHTSA Crash Report Sampling System (CRSS) 2023](https://crashstats.nhtsa.dot.gov/Api/Public/Publication/813705)
+
+**Calculation:**
+- ~6.14 million police-reported crashes in 2023
+- ~3,247 billion vehicle miles traveled (VMT)
+- Rate: 6.14M ÷ 3,247B = **1.89 crashes per million miles**
+- Inverse: **~529,000 miles per crash** (rounded to 500K)
+
+**Limitation:** This significantly **undercounts actual crashes**. According to NHTSA research:
+- ~60% of property damage crashes are never reported to police
+- ~32% of injury crashes are never reported to police
+
+This means the true human crash rate could be **2-3x higher** than official statistics suggest.
+
+#### 300K - Insurance Claims (Swiss Re)
+
+**Source:** [Swiss Re / Waymo Comparative Study (2023)](https://waymo.com/blog/2023/09/waymos-autonomous-vehicles-are-significantly-safer-than-human-driven-ones/)
+
+**Calculation:**
+- Swiss Re analyzed 500,000+ liability claims across 200+ billion miles
+- Human driver rate: **3.26 property damage claims per million miles**
+- Inverse: **~307,000 miles per claim** (rounded to 300K)
+
+**Advantage:** Insurance claims capture incidents that go unreported to police, providing a more complete picture of actual crash frequency.
+
+#### Why Two Benchmarks Matter
+
+AV incident data under [NHTSA SGO 2021-01](https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting) requires reporting of **any crash where ADS was engaged within 30 seconds**—including minor incidents that human drivers would typically not report.
+
+| Data Type | Reporting Threshold | Completeness |
+|-----------|---------------------|--------------|
+| AV Incidents (SGO) | Any crash, any severity | ~100% (mandatory) |
+| Human Police Reports | Varies by state/severity | ~40-70% |
+| Human Insurance Claims | Any claim filed | ~80-90% |
+
+**Recommendation:** When comparing AV safety to human drivers:
+- Use **500K** as the "official" conservative benchmark
+- Use **300K** as the more realistic, apples-to-apples comparison
+- Acknowledge that neither is perfect due to fundamental differences in reporting requirements
 
 ## Data Collection Approach
 
@@ -468,6 +518,13 @@ requests>=2.31
 - [NHTSA File Downloads](https://www.nhtsa.gov/file-downloads)
 - [SGO Data Dictionary (PDF)](https://static.nhtsa.gov/odi/ffdd/sgo-2021-01/SGO-2021-01_Data_Element_Definitions.pdf)
 - [Tesla FSD Safety Report](https://www.tesla.com/fsd/safety)
+
+### Human Driver Benchmark Sources
+- [NHTSA CRSS 2023 Overview](https://crashstats.nhtsa.dot.gov/Api/Public/Publication/813705) - Police-reported crash statistics (basis for 500K benchmark)
+- [NHTSA 2024 Fatality Estimates](https://www.nhtsa.gov/press-releases/nhtsa-estimates-39345-traffic-fatalities-2024) - Annual traffic safety data
+- [Swiss Re / Waymo Comparative Study (2023)](https://waymo.com/blog/2023/09/waymos-autonomous-vehicles-are-significantly-safer-than-human-driven-ones/) - Insurance claims analysis (basis for 300K benchmark)
+- [Swiss Re / Waymo Study (2024) - 25M Miles](https://waymo.com/blog/2024/12/new-swiss-re-study-waymo) - Updated analysis with larger dataset
+- [Waymo Safety Research](https://waymo.com/research/do-autonomous-vehicles-outperform-latest-generation-human-driven-vehicles-25-million-miles/) - Methodology and findings
 
 ### News & Analysis
 - [NHTSA Tesla Investigation (TechCrunch)](https://techcrunch.com/2025/12/05/feds-find-more-complaints-of-teslas-fsd-running-red-lights-and-crossing-lanes/)
