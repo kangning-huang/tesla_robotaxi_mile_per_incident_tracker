@@ -349,6 +349,8 @@ a:hover {
 .chart-area {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .metrics-side {
@@ -360,14 +362,13 @@ a:hover {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    height: 100%;
 }
 
 .metrics-grid-vertical .metric-card {
-    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    min-height: 100px;
 }
 
 /* Mobile: stack chart and metrics */
@@ -400,6 +401,19 @@ a:hover {
     border-radius: var(--radius-lg);
     padding: 24px;
     height: 400px;
+}
+
+/* Desktop: make chart container fill remaining space after legend */
+@media (min-width: 1025px) {
+    .chart-container {
+        flex: 1;
+        height: auto;
+        min-height: 300px;
+    }
+
+    .chart-legend {
+        flex-shrink: 0;
+    }
 }
 
 .chart-container.small {
