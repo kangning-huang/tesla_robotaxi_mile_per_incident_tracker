@@ -199,7 +199,7 @@ a:hover {
 
 /* ===== Hero ===== */
 .hero {
-    padding: 140px 0 60px;
+    padding: 120px 0 48px;
     text-align: center;
     background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
 }
@@ -219,10 +219,11 @@ a:hover {
 }
 
 .hero-title {
-    font-size: clamp(48px, 8vw, 72px);
+    font-size: clamp(32px, 6vw, 56px);
     font-weight: 700;
-    letter-spacing: -2px;
-    margin-bottom: 16px;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    margin-bottom: 20px;
     background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -232,8 +233,108 @@ a:hover {
 .hero-subtitle {
     font-size: 18px;
     color: var(--text-secondary);
-    max-width: 500px;
+    max-width: 600px;
+    margin: 0 auto 40px;
+}
+
+/* Hero Streak Card */
+.hero-streak-card {
+    max-width: 480px;
     margin: 0 auto;
+    padding: 28px 32px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    text-align: center;
+}
+
+.hero-streak-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.hero-streak-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.hero-streak-live {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--accent-success);
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-success);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.9); }
+}
+
+.hero-streak-value {
+    font-size: clamp(42px, 10vw, 64px);
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.hero-streak-sublabel {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.hero-streak-progress {
+    position: relative;
+    height: 12px;
+    background: var(--bg-secondary);
+    border-radius: 6px;
+    overflow: visible;
+    margin-bottom: 8px;
+}
+
+.hero-streak-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-success), #4ade80);
+    border-radius: 6px;
+    transition: width 1s ease-out;
+    width: 0%;
+}
+
+.hero-streak-target {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 2px 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+}
+
+.hero-streak-context {
+    font-size: 12px;
+    color: var(--text-muted);
 }
 
 /* ===== Metrics Cards ===== */
@@ -317,7 +418,7 @@ a:hover {
 
 /* ===== Chart Section ===== */
 .chart-section {
-    padding: 60px 0;
+    padding: 40px 0;
 }
 
 .chart-section.secondary {
@@ -325,13 +426,13 @@ a:hover {
 }
 
 .section-header {
-    margin-bottom: 32px;
+    margin-bottom: 20px;
 }
 
 .section-header h2 {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .section-header p {
@@ -361,14 +462,24 @@ a:hover {
 .metrics-grid-vertical {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
 .metrics-grid-vertical .metric-card {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 100px;
+    min-height: 72px;
+    padding: 16px 20px;
+}
+
+.metrics-grid-vertical .metric-card .metric-value {
+    font-size: 28px;
+    margin-bottom: 4px;
+}
+
+.metrics-grid-vertical .metric-card .metric-label {
+    margin-bottom: 4px;
 }
 
 /* Mobile: stack chart and metrics */
@@ -399,8 +510,8 @@ a:hover {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
-    padding: 24px;
-    height: 400px;
+    padding: 20px;
+    height: 340px;
 }
 
 /* Desktop: make chart container fill remaining space after legend */
@@ -408,7 +519,7 @@ a:hover {
     .chart-container {
         flex: 1;
         height: auto;
-        min-height: 300px;
+        min-height: 260px;
     }
 
     .chart-legend {
@@ -423,8 +534,8 @@ a:hover {
 .chart-legend {
     display: flex;
     justify-content: center;
-    gap: 32px;
-    margin-top: 20px;
+    gap: 24px;
+    margin-top: 16px;
 }
 
 .legend-item {
@@ -1007,7 +1118,21 @@ a:hover {
     }
 
     .hero-title {
-        font-size: 36px;
+        font-size: 28px;
+        letter-spacing: -1px;
+    }
+
+    .hero-subtitle {
+        font-size: 16px;
+        margin-bottom: 32px;
+    }
+
+    .hero-streak-card {
+        padding: 24px 20px;
+    }
+
+    .hero-streak-value {
+        font-size: 48px;
     }
 
     .chart-legend {
