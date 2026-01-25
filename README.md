@@ -84,7 +84,7 @@ This repository uses **GitHub Actions** to automatically update the analysis dai
 | Job | Frequency | Description |
 |-----|-----------|-------------|
 | `update-data` | Daily at 6:00 AM UTC | Downloads NHTSA data and runs analysis |
-| `scrape-fleet-data` | Weekly (Sundays) | Scrapes robotaxitracker.com for fleet size |
+| `scrape-fleet-data` | Daily at 6:00 AM UTC | Scrapes robotaxitracker.com for fleet size |
 
 ### Manual Trigger
 You can manually trigger the workflow from the GitHub Actions tab or via CLI:
