@@ -1,5 +1,5 @@
 {
-  "analysis_date": "2026-01-25T02:24:22.052766",
+  "analysis_date": "2026-01-25T04:46:12.351604",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "incident_count": 580,
@@ -4959,12 +4959,12 @@
       "incident_number": 549,
       "incident_date": "2025-12-01",
       "days_since_previous": 30,
-      "miles_since_previous": 87630,
-      "mpi_since_previous": 87630,
-      "avg_fleet_size": 24.580645161290324,
-      "cumulative_miles": 1143100,
+      "miles_since_previous": 87975,
+      "mpi_since_previous": 87975,
+      "avg_fleet_size": 24.677419354838708,
+      "cumulative_miles": 1143445,
       "cumulative_incidents": 451,
-      "cumulative_mpi": 2534.589800443459
+      "cumulative_mpi": 2535.3547671840356
     },
     {
       "incident_number": 550,
@@ -4973,9 +4973,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1146435,
+      "cumulative_miles": 1146780,
       "cumulative_incidents": 452,
-      "cumulative_mpi": 2536.3606194690265
+      "cumulative_mpi": 2537.1238938053098
     },
     {
       "incident_number": 551,
@@ -4984,9 +4984,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1149770,
+      "cumulative_miles": 1150115,
       "cumulative_incidents": 453,
-      "cumulative_mpi": 2538.1236203090507
+      "cumulative_mpi": 2538.8852097130243
     },
     {
       "incident_number": 552,
@@ -4995,9 +4995,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1153105,
+      "cumulative_miles": 1153450,
       "cumulative_incidents": 454,
-      "cumulative_mpi": 2539.8788546255505
+      "cumulative_mpi": 2540.638766519824
     },
     {
       "incident_number": 553,
@@ -5006,9 +5006,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1156440,
+      "cumulative_miles": 1156785,
       "cumulative_incidents": 455,
-      "cumulative_mpi": 2541.6263736263736
+      "cumulative_mpi": 2542.3846153846152
     },
     {
       "incident_number": 554,
@@ -5017,9 +5017,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1159775,
+      "cumulative_miles": 1160120,
       "cumulative_incidents": 456,
-      "cumulative_mpi": 2543.3662280701756
+      "cumulative_mpi": 2544.122807017544
     },
     {
       "incident_number": 555,
@@ -5028,9 +5028,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1163110,
+      "cumulative_miles": 1163455,
       "cumulative_incidents": 457,
-      "cumulative_mpi": 2545.0984682713347
+      "cumulative_mpi": 2545.8533916849015
     },
     {
       "incident_number": 556,
@@ -5039,9 +5039,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1166445,
+      "cumulative_miles": 1166790,
       "cumulative_incidents": 458,
-      "cumulative_mpi": 2546.8231441048033
+      "cumulative_mpi": 2547.5764192139736
     },
     {
       "incident_number": 557,
@@ -5050,9 +5050,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1169780,
+      "cumulative_miles": 1170125,
       "cumulative_incidents": 459,
-      "cumulative_mpi": 2548.5403050108935
+      "cumulative_mpi": 2549.2919389978215
     },
     {
       "incident_number": 558,
@@ -5061,9 +5061,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1173115,
+      "cumulative_miles": 1173460,
       "cumulative_incidents": 460,
-      "cumulative_mpi": 2550.25
+      "cumulative_mpi": 2551.0
     },
     {
       "incident_number": 559,
@@ -5072,9 +5072,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1176450,
+      "cumulative_miles": 1176795,
       "cumulative_incidents": 461,
-      "cumulative_mpi": 2551.9522776572667
+      "cumulative_mpi": 2552.700650759219
     },
     {
       "incident_number": 560,
@@ -5083,9 +5083,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1179785,
+      "cumulative_miles": 1180130,
       "cumulative_incidents": 462,
-      "cumulative_mpi": 2553.647186147186
+      "cumulative_mpi": 2554.3939393939395
     },
     {
       "incident_number": 561,
@@ -5094,9 +5094,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1183120,
+      "cumulative_miles": 1183465,
       "cumulative_incidents": 463,
-      "cumulative_mpi": 2555.3347732181423
+      "cumulative_mpi": 2556.0799136069113
     },
     {
       "incident_number": 562,
@@ -5105,9 +5105,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1186455,
+      "cumulative_miles": 1186800,
       "cumulative_incidents": 464,
-      "cumulative_mpi": 2557.0150862068967
+      "cumulative_mpi": 2557.7586206896553
     },
     {
       "incident_number": 563,
@@ -5116,9 +5116,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1189790,
+      "cumulative_miles": 1190135,
       "cumulative_incidents": 465,
-      "cumulative_mpi": 2558.6881720430106
+      "cumulative_mpi": 2559.430107526882
     },
     {
       "incident_number": 564,
@@ -5127,9 +5127,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1193125,
+      "cumulative_miles": 1193470,
       "cumulative_incidents": 466,
-      "cumulative_mpi": 2560.3540772532187
+      "cumulative_mpi": 2561.0944206008585
     },
     {
       "incident_number": 565,
@@ -5138,9 +5138,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1196460,
+      "cumulative_miles": 1196805,
       "cumulative_incidents": 467,
-      "cumulative_mpi": 2562.0128479657387
+      "cumulative_mpi": 2562.7516059957175
     },
     {
       "incident_number": 566,
@@ -5149,9 +5149,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1199795,
+      "cumulative_miles": 1200140,
       "cumulative_incidents": 468,
-      "cumulative_mpi": 2563.66452991453
+      "cumulative_mpi": 2564.4017094017095
     },
     {
       "incident_number": 567,
@@ -5160,9 +5160,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1203130,
+      "cumulative_miles": 1203475,
       "cumulative_incidents": 469,
-      "cumulative_mpi": 2565.3091684434967
+      "cumulative_mpi": 2566.044776119403
     },
     {
       "incident_number": 568,
@@ -5171,9 +5171,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1206465,
+      "cumulative_miles": 1206810,
       "cumulative_incidents": 470,
-      "cumulative_mpi": 2566.946808510638
+      "cumulative_mpi": 2567.68085106383
     },
     {
       "incident_number": 569,
@@ -5182,9 +5182,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1209800,
+      "cumulative_miles": 1210145,
       "cumulative_incidents": 471,
-      "cumulative_mpi": 2568.5774946921442
+      "cumulative_mpi": 2569.3099787685774
     },
     {
       "incident_number": 570,
@@ -5193,9 +5193,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1213135,
+      "cumulative_miles": 1213480,
       "cumulative_incidents": 472,
-      "cumulative_mpi": 2570.201271186441
+      "cumulative_mpi": 2570.9322033898306
     },
     {
       "incident_number": 571,
@@ -5204,9 +5204,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1216470,
+      "cumulative_miles": 1216815,
       "cumulative_incidents": 473,
-      "cumulative_mpi": 2571.818181818182
+      "cumulative_mpi": 2572.5475687103594
     },
     {
       "incident_number": 572,
@@ -5215,9 +5215,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1219805,
+      "cumulative_miles": 1220150,
       "cumulative_incidents": 474,
-      "cumulative_mpi": 2573.428270042194
+      "cumulative_mpi": 2574.15611814346
     },
     {
       "incident_number": 573,
@@ -5226,9 +5226,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1223140,
+      "cumulative_miles": 1223485,
       "cumulative_incidents": 475,
-      "cumulative_mpi": 2575.0315789473684
+      "cumulative_mpi": 2575.757894736842
     },
     {
       "incident_number": 574,
@@ -5237,9 +5237,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1226475,
+      "cumulative_miles": 1226820,
       "cumulative_incidents": 476,
-      "cumulative_mpi": 2576.628151260504
+      "cumulative_mpi": 2577.3529411764707
     },
     {
       "incident_number": 575,
@@ -5248,9 +5248,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1229810,
+      "cumulative_miles": 1230155,
       "cumulative_incidents": 477,
-      "cumulative_mpi": 2578.2180293501046
+      "cumulative_mpi": 2578.9412997903564
     },
     {
       "incident_number": 576,
@@ -5259,9 +5259,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1233145,
+      "cumulative_miles": 1233490,
       "cumulative_incidents": 478,
-      "cumulative_mpi": 2579.8012552301257
+      "cumulative_mpi": 2580.523012552301
     },
     {
       "incident_number": 577,
@@ -5270,9 +5270,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1236480,
+      "cumulative_miles": 1236825,
       "cumulative_incidents": 479,
-      "cumulative_mpi": 2581.377870563674
+      "cumulative_mpi": 2582.098121085595
     },
     {
       "incident_number": 578,
@@ -5281,9 +5281,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1239815,
+      "cumulative_miles": 1240160,
       "cumulative_incidents": 480,
-      "cumulative_mpi": 2582.9479166666665
+      "cumulative_mpi": 2583.6666666666665
     },
     {
       "incident_number": 579,
@@ -5292,9 +5292,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1243150,
+      "cumulative_miles": 1243495,
       "cumulative_incidents": 481,
-      "cumulative_mpi": 2584.5114345114343
+      "cumulative_mpi": 2585.22869022869
     },
     {
       "incident_number": 580,
@@ -5303,9 +5303,9 @@
       "miles_since_previous": 3335,
       "mpi_since_previous": 3335,
       "avg_fleet_size": 29.0,
-      "cumulative_miles": 1246485,
+      "cumulative_miles": 1246830,
       "cumulative_incidents": 482,
-      "cumulative_mpi": 2586.0684647302905
+      "cumulative_mpi": 2586.7842323651453
     }
   ],
   "trend_analysis": {
@@ -5313,52 +5313,52 @@
     "best_fit": {
       "type": "polynomial_deg2",
       "coefficients": [
-        0.16513128787222953,
-        -6.060423757966748,
-        1793.1410260902246
+        0.1659121734097664,
+        -6.142070154792478,
+        1793.9342127902207
       ],
-      "r_squared": 0.01784835496872539,
+      "r_squared": 0.017869881417308164,
       "interpretation": "accelerating",
       "current_trend": "worsening"
     },
     "all_models": {
       "linear": {
         "type": "linear",
-        "slope": 16.673046837299324,
-        "intercept": 1381.838631645433,
-        "r_squared": 0.014942353816084192,
-        "p_value": 0.007213824462861392,
+        "slope": 16.698904225096133,
+        "intercept": 1380.6868199413452,
+        "r_squared": 0.01494490884199506,
+        "p_value": 0.007208827908488882,
         "interpretation": "improving",
-        "daily_change": 16.673046837299324,
-        "monthly_change": 500.19140511897973
+        "daily_change": 16.698904225096133,
+        "monthly_change": 500.967126752884
       },
       "exponential": {
         "type": "exponential",
-        "a": 1383.0258558068283,
-        "b": 0.007674640210640807,
-        "r_squared": 0.017107952162124684,
+        "a": 1381.3038185290268,
+        "b": 0.00769104001229982,
+        "r_squared": 0.017122828181664884,
         "interpretation": "improving",
-        "growth_rate_per_day": 0.007674640210640807,
-        "doubling_time_days": 90.31657009782741,
+        "growth_rate_per_day": 0.00769104001229982,
+        "doubling_time_days": 90.12398576154025,
         "halving_time_days": null
       },
       "quadratic": {
         "type": "polynomial_deg2",
         "coefficients": [
-          0.16513128787222953,
-          -6.060423757966748,
-          1793.1410260902246
+          0.1659121734097664,
+          -6.142070154792478,
+          1793.9342127902207
         ],
-        "r_squared": 0.01784835496872539,
+        "r_squared": 0.017869881417308164,
         "interpretation": "accelerating",
         "current_trend": "worsening"
       }
     }
   },
   "summary": {
-    "average_mpi": 2586.0684647302905,
+    "average_mpi": 2586.7842323651453,
     "latest_mpi": 3335,
-    "cumulative_mpi": 2586.0684647302905,
-    "total_miles": 1246485
+    "cumulative_mpi": 2586.7842323651453,
+    "total_miles": 1246830
   }
 }
