@@ -601,6 +601,32 @@ function updateCurrentStreakComparison() {
     }
 }
 
+// ===== Update Hero Streak Card =====
+function updateHeroStreak() {
+    const lastIncident = incidentData[incidentData.length - 1];
+    const lastIncidentDate = new Date(lastIncident.date);
+    const today = new Date();
+    const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
+    const currentFleetSize = fleetData[fleetData.length - 1].size;
+    const milesSinceLastIncident = daysSinceLastIncident * currentFleetSize * 115;
+
+    // Update the hero streak value
+    const heroValueEl = document.getElementById('hero-streak-value');
+    if (heroValueEl) {
+        heroValueEl.textContent = milesSinceLastIncident.toLocaleString();
+    }
+
+    // Update the progress bar (relative to 300K target)
+    const heroBarEl = document.getElementById('hero-streak-bar');
+    if (heroBarEl) {
+        const widthPercent = Math.min((milesSinceLastIncident / 300000) * 100, 100);
+        // Delay animation slightly for visual effect
+        setTimeout(() => {
+            heroBarEl.style.width = widthPercent.toFixed(1) + '%';
+        }, 300);
+    }
+}
+
 // ===== Animate Comparison Bars =====
 function animateComparisonBars() {
     const bars = document.querySelectorAll('.comparison-bar');
@@ -625,6 +651,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initFleetChart();
     populateIncidentTable();
     updateMetrics();
+    updateHeroStreak();
     updateCurrentStreakComparison();
     animateComparisonBars();
 
