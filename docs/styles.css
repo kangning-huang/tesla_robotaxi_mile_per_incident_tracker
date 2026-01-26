@@ -1188,3 +1188,105 @@ a:hover {
         text-align: center;
     }
 }
+
+/* ===== Creator Section ===== */
+.creator-section {
+    padding: 60px 0;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border-color);
+}
+
+.creator-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .creator-content {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+}
+
+.creator-info p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.social-links {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+}
+
+.social-link:hover {
+    border-color: var(--border-light);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+}
+
+.social-link.x:hover {
+    border-color: #1da1f2;
+    color: var(--text-primary);
+}
+
+.social-link.substack:hover {
+    border-color: #ff6719;
+    color: var(--text-primary);
+}
+
+.related-reading h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.article-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.article-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+    line-height: 1.4;
+}
+
+.article-link:hover {
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
+    transform: translateX(4px);
+}
+
+.article-link svg {
+    flex-shrink: 0;
+    color: var(--accent-primary);
+}
