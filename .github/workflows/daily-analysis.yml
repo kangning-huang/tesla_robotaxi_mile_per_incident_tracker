@@ -2,8 +2,9 @@ name: Daily Tesla Robotaxi Analysis
 
 on:
   schedule:
-    # Run daily at 6:00 AM UTC (midnight CST, 10 PM PST)
-    - cron: '0 6 * * *'
+    # Run daily at 6:15 AM UTC (12:15 AM CST, 10:15 PM PST)
+    # Note: Avoid :00 to reduce GitHub Actions scheduling contention
+    - cron: '15 6 * * *'
   workflow_dispatch:  # Allow manual trigger
   push:
     branches:
