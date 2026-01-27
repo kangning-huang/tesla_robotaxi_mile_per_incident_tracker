@@ -87,22 +87,34 @@ class FleetInterpolator:
         self,
         start_date: datetime,
         end_date: datetime,
-        daily_miles_per_vehicle: int
+        daily_miles_per_vehicle: int,
+        excluded_dates: set[str] | None = None
     ) -> tuple[int, list[dict]]:
-        """Calculate total miles driven in a period with day-by-day fleet tracking."""
+        """Calculate total miles driven in a period with day-by-day fleet tracking.
+
+        Args:
+            excluded_dates: Set of date strings (YYYY-MM-DD) to skip (e.g. service stoppages).
+        """
         total_miles = 0
         daily_breakdown = []
 
         current_date = start_date
         while current_date <= end_date:
+            date_str = current_date.strftime("%Y-%m-%d")
             fleet_size = self.get_fleet_size(current_date)
-            day_miles = fleet_size * daily_miles_per_vehicle
+
+            if excluded_dates and date_str in excluded_dates:
+                day_miles = 0
+            else:
+                day_miles = fleet_size * daily_miles_per_vehicle
+
             total_miles += day_miles
 
             daily_breakdown.append({
-                "date": current_date.strftime("%Y-%m-%d"),
+                "date": date_str,
                 "fleet_size": fleet_size,
-                "daily_miles": day_miles
+                "daily_miles": day_miles,
+                "excluded": date_str in excluded_dates if excluded_dates else False
             })
 
             current_date += timedelta(days=1)
@@ -376,16 +388,48 @@ def load_fleet_data(data_dir: Path) -> list[dict]:
     return snapshots
 
 
+def load_service_stoppages(data_dir: Path) -> tuple[set[str], list[dict]]:
+    """Load service stoppage dates from JSON.
+
+    Returns:
+        A tuple of (set of excluded date strings, list of stoppage records).
+    """
+    stoppages_file = data_dir / "service_stoppages.json"
+
+    if not stoppages_file.exists():
+        print(f"  No service stoppages file found: {stoppages_file}")
+        return set(), []
+
+    with open(stoppages_file) as f:
+        data = json.load(f)
+
+    stoppages = data.get("stoppages", [])
+    excluded_dates = set()
+    for stoppage in stoppages:
+        for date_str in stoppage.get("dates", []):
+            excluded_dates.add(date_str)
+
+    print(f"  Loaded {len(stoppages)} service stoppage event(s) covering {len(excluded_dates)} day(s)")
+    for stoppage in stoppages:
+        dates = stoppage.get("dates", [])
+        reason = stoppage.get("reason", "Unknown")
+        print(f"    - {reason}: {', '.join(dates)}")
+
+    return excluded_dates, stoppages
+
+
 def calculate_mpi_between_incidents(
     incidents_df: pd.DataFrame,
     fleet_interpolator: FleetInterpolator,
     daily_miles: int,
-    service_start: datetime
+    service_start: datetime,
+    excluded_dates: set[str] | None = None
 ) -> list[dict]:
     """
     Calculate miles driven between EACH consecutive pair of incidents.
 
     Returns a list with MPI for each interval, not cumulative.
+    Days in excluded_dates are skipped (0 miles accumulated).
     """
     results = []
 
@@ -411,16 +455,18 @@ def calculate_mpi_between_incidents(
 
         # Calculate miles between previous incident and this one
         miles, daily_breakdown = fleet_interpolator.calculate_miles_in_period(
-            prev_date, incident_date, daily_miles
+            prev_date, incident_date, daily_miles, excluded_dates
         )
 
         days_between = (incident_date - prev_date).days
+        excluded_days_in_period = sum(1 for d in daily_breakdown if d.get('excluded', False))
+        active_days = days_between - excluded_days_in_period
         avg_fleet = sum(d['fleet_size'] for d in daily_breakdown) / len(daily_breakdown) if daily_breakdown else 0
 
         cumulative_miles += miles
         cumulative_incidents += 1
 
-        results.append({
+        result = {
             "incident_number": incident_num,
             "incident_date": incident_date.strftime("%Y-%m-%d"),
             "days_since_previous": days_between,
@@ -430,7 +476,13 @@ def calculate_mpi_between_incidents(
             "cumulative_miles": cumulative_miles,
             "cumulative_incidents": cumulative_incidents,
             "cumulative_mpi": cumulative_miles / cumulative_incidents
-        })
+        }
+
+        if excluded_days_in_period > 0:
+            result["excluded_days"] = excluded_days_in_period
+            result["active_days"] = active_days
+
+        results.append(result)
 
         prev_date = incident_date
 
@@ -629,6 +681,7 @@ def main():
     ads_df, adas_df = load_nhtsa_data(data_dir)
     fleet_snapshots = load_fleet_data(data_dir)
     fleet_interpolator = FleetInterpolator(fleet_snapshots)
+    excluded_dates, stoppages_list = load_service_stoppages(data_dir)
 
     # Filter for Tesla
     print("\n" + "─" * 75)
@@ -658,7 +711,7 @@ def main():
     print("=" * 75)
 
     daily_miles = 115  # Moderate scenario (based on Tesla's 250K miles / 97 days / ~20 vehicles)
-    results = calculate_mpi_between_incidents(all_tesla, fleet_interpolator, daily_miles, service_start)
+    results = calculate_mpi_between_incidents(all_tesla, fleet_interpolator, daily_miles, service_start, excluded_dates)
 
     print_mpi_analysis(results, "Moderate", daily_miles)
 
@@ -718,6 +771,7 @@ def main():
   - Miles between incident N and N+1 = Σ(daily_fleet_size × miles_per_day)
   - Fleet size interpolated daily from {len(fleet_snapshots)} snapshots
   - Assumes {daily_miles} miles/vehicle/day (moderate estimate)
+  - Service stoppage days excluded: {len(excluded_dates)} day(s) with 0 miles
 
   Trend Analysis:
   - Linear: MPI = a + b×t (constant rate of change)
@@ -739,19 +793,30 @@ def main():
         analyzer = MPITrendAnalyzer(results)
         trend_data = analyzer.get_best_fit()
 
+    # Build stoppage summary for output
+    stoppage_summary = []
+    for stoppage in stoppages_list:
+        stoppage_summary.append({
+            "dates": stoppage.get("dates", []),
+            "reason": stoppage.get("reason", "Unknown")
+        })
+
     output = {
         "analysis_date": datetime.now().isoformat(),
         "service_start": service_start.strftime("%Y-%m-%d"),
         "data_source": "sample" if use_sample else "nhtsa",
         "incident_count": len(all_tesla),
         "daily_miles_assumption": daily_miles,
+        "excluded_dates": sorted(excluded_dates),
+        "service_stoppages": stoppage_summary,
         "incidents": results,
         "trend_analysis": trend_data,
         "summary": {
             "average_mpi": sum(r['mpi_since_previous'] for r in results) / len(results) if results else 0,
             "latest_mpi": results[-1]['mpi_since_previous'] if results else 0,
             "cumulative_mpi": results[-1]['cumulative_mpi'] if results else 0,
-            "total_miles": results[-1]['cumulative_miles'] if results else 0
+            "total_miles": results[-1]['cumulative_miles'] if results else 0,
+            "total_excluded_days": len(excluded_dates)
         }
     }
 

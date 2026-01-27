@@ -22,6 +22,7 @@ The dashboard displays:
 ├── data/
 │   ├── fleet_data.json         # Fleet size snapshots (Austin)
 │   ├── fleet_data_scraped.json # Auto-scraped from robotaxitracker.com
+│   ├── service_stoppages.json  # Dates when service was suspended (e.g. storms)
 │   ├── analysis_results.json   # Latest MPI analysis output
 │   ├── mpi_trend_chart.png     # Generated trend chart
 │   └── SGO-2021-01_*.csv       # NHTSA incident data (downloaded)
@@ -85,6 +86,16 @@ The 300K benchmark is more comparable since NHTSA requires reporting of *all* AV
 | [robotaxitracker.com](https://robotaxitracker.com) | Fleet size (Austin & Bay Area) |
 | [NHTSA CRSS 2023](https://crashstats.nhtsa.dot.gov/Api/Public/Publication/813705) | Human crash statistics |
 | [Swiss Re / Waymo Study](https://waymo.com/blog/2023/09/waymos-autonomous-vehicles-are-significantly-safer-than-human-driven-ones/) | Insurance claims analysis |
+
+## Service Stoppages
+
+The tracker accounts for days when Tesla's Robotaxi service was not operating. On these days, zero miles are accumulated — they are excluded from all MPI and streak calculations. Stoppage dates are recorded in [`data/service_stoppages.json`](data/service_stoppages.json) with sourced justifications.
+
+| Dates | Reason |
+|-------|--------|
+| Jan 25–26, 2026 | [January 2026 North American winter storm](https://en.wikipedia.org/wiki/January_2026_North_American_winter_storm) — ice storm hit Austin with up to ¼ inch of ice, roads "extremely dangerous and near impossible," CapMetro suspended all transit, City of Austin closed facilities. Tesla Robotaxi service was observed offline before being reported as resumed later during the storm. |
+
+**Why exclude these days?** Counting miles on days when no vehicles were operating would artificially inflate MPI figures and misrepresent the fleet's actual safety record. By zeroing out stoppage days, the tracker provides a more accurate miles-driven denominator.
 
 ## Data Scope
 

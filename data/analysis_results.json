@@ -1,9 +1,22 @@
 {
-  "analysis_date": "2026-01-27T08:16:10.993523",
+  "analysis_date": "2026-01-27T08:27:12.116558",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "incident_count": 580,
   "daily_miles_assumption": 115,
+  "excluded_dates": [
+    "2026-01-25",
+    "2026-01-26"
+  ],
+  "service_stoppages": [
+    {
+      "dates": [
+        "2026-01-25",
+        "2026-01-26"
+      ],
+      "reason": "January 2026 North American winter storm"
+    }
+  ],
   "incidents": [
     {
       "incident_number": 99,
@@ -5313,11 +5326,11 @@
     "best_fit": {
       "type": "polynomial_deg2",
       "coefficients": [
-        0.1659121734097664,
-        -6.142070154792478,
+        0.16591217340976644,
+        -6.1420701547924725,
         1793.9342127902207
       ],
-      "r_squared": 0.017869881417308164,
+      "r_squared": 0.017869881417308275,
       "interpretation": "accelerating",
       "current_trend": "worsening"
     },
@@ -5334,22 +5347,22 @@
       },
       "exponential": {
         "type": "exponential",
-        "a": 1381.3038185290268,
-        "b": 0.00769104001229982,
-        "r_squared": 0.017122828181664884,
+        "a": 1381.3038294935195,
+        "b": 0.007691039942951948,
+        "r_squared": 0.017122828181655336,
         "interpretation": "improving",
-        "growth_rate_per_day": 0.00769104001229982,
-        "doubling_time_days": 90.12398576154025,
+        "growth_rate_per_day": 0.007691039942951948,
+        "doubling_time_days": 90.12398657416203,
         "halving_time_days": null
       },
       "quadratic": {
         "type": "polynomial_deg2",
         "coefficients": [
-          0.1659121734097664,
-          -6.142070154792478,
+          0.16591217340976644,
+          -6.1420701547924725,
           1793.9342127902207
         ],
-        "r_squared": 0.017869881417308164,
+        "r_squared": 0.017869881417308275,
         "interpretation": "accelerating",
         "current_trend": "worsening"
       }
@@ -5359,6 +5372,7 @@
     "average_mpi": 2586.7842323651453,
     "latest_mpi": 3335,
     "cumulative_mpi": 2586.7842323651453,
-    "total_miles": 1246830
+    "total_miles": 1246830,
+    "total_excluded_days": 2
   }
 }
