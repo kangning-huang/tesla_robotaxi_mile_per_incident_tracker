@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "description": "Dates when Tesla Robotaxi service in Austin was stopped or suspended, excluded from mile accumulation calculations",
+    "last_updated": "2026-01-27",
+    "notes": "These dates are excluded from MPI calculations because no miles were accumulated while service was suspended. Days are identified from news reports, official city emergency declarations, and transit system shutdowns."
+  },
+  "stoppages": [
+    {
+      "dates": ["2026-01-25", "2026-01-26"],
+      "reason": "January 2026 North American winter storm",
+      "description": "A major winter and ice storm hit Austin with freezing rain, up to 1/4 inch of ice accumulation, and temperatures in the low 20s with single-digit wind chills. Roads were reported as 'extremely dangerous and near impossible' to travel. CapMetro suspended all bus, rail, and rideshare service. City of Austin closed all facilities and shifted to modified operations. Schools and government offices closed. Tesla Robotaxi service was observed to be offline during the storm before being reported as 'turned back on' later.",
+      "sources": [
+        "https://www.kut.org/energy-environment/2026-01-23/austin-tx-winter-storm-weather-freezing-rain-low-temperatures",
+        "https://www.austintexas.gov/news/city-austin-continues-winter-weather-response-hazardous-conditions-persist-overnight",
+        "https://www.kxan.com/news/local/austin/were-often-told-not-to-drive-during-severe-weather-will-self-driving-cars-do-the-same/"
+      ]
+    }
+  ]
+}

@@ -99,6 +99,26 @@ const trendParams = {
     forecast30Day: 137400
 };
 
+// Service stoppage dates — days when Tesla Robotaxi was not operating (0 miles accumulated)
+// January 2026 winter storm: ice storm, roads impassable, CapMetro suspended, city facilities closed
+const serviceStoppageDates = new Set([
+    '2026-01-25',
+    '2026-01-26',
+]);
+
+// Helper: count stoppage days in a date range (exclusive of start, inclusive of end)
+function countStoppageDays(startDate, endDate) {
+    let count = 0;
+    const current = new Date(startDate);
+    current.setDate(current.getDate() + 1); // start day after
+    while (current <= endDate) {
+        const dateStr = current.toISOString().split('T')[0];
+        if (serviceStoppageDates.has(dateStr)) count++;
+        current.setDate(current.getDate() + 1);
+    }
+    return count;
+}
+
 // ===== Theme Detection =====
 function isDarkMode() {
     return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -285,17 +305,21 @@ function initMPIChart() {
             humanBenchmarkPolice.push(500000);
             humanBenchmarkInsurance.push(300000);
 
-            // Calculate cumulative miles since last incident
+            // Calculate cumulative miles since last incident (excluding stoppage days)
             const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
+            const stoppageDays = countStoppageDays(lastIncidentDate, today);
+            const activeDays = daysSinceLastIncident - stoppageDays;
             const currentFleetSize = fleetData[fleetData.length - 1].size; // Latest fleet size
-            const cumulativeMiles = daysSinceLastIncident * currentFleetSize * 115; // 115 mi/day/vehicle
+            const cumulativeMiles = activeDays * currentFleetSize * 115; // 115 mi/day/vehicle
             ongoingProgress.push(cumulativeMiles);
         } else {
             // Today already in labels, find its index and set ongoing progress
             const todayIndex = labels.indexOf(todayStr);
             const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
+            const stoppageDays = countStoppageDays(lastIncidentDate, today);
+            const activeDays = daysSinceLastIncident - stoppageDays;
             const currentFleetSize = fleetData[fleetData.length - 1].size;
-            const cumulativeMiles = daysSinceLastIncident * currentFleetSize * 115;
+            const cumulativeMiles = activeDays * currentFleetSize * 115;
             ongoingProgress[todayIndex] = cumulativeMiles;
         }
     }
@@ -535,13 +559,15 @@ function updateMetrics() {
     const totalIncidents = incidentData.length;
     const vsHuman = (500000 / latestMPI).toFixed(1);
 
-    // Calculate miles since last incident
+    // Calculate miles since last incident (excluding stoppage days)
     const lastIncident = incidentData[incidentData.length - 1];
     const lastIncidentDate = new Date(lastIncident.date);
     const today = new Date();
     const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
+    const stoppageDays = countStoppageDays(lastIncidentDate, today);
+    const activeDays = daysSinceLastIncident - stoppageDays;
     const currentFleetSize = fleetData[fleetData.length - 1].size;
-    const milesSinceLastIncident = daysSinceLastIncident * currentFleetSize * 115;
+    const milesSinceLastIncident = activeDays * currentFleetSize * 115;
 
     // Calculate change percentage
     const changePercent = Math.round(((latestMPI - previousMPI) / previousMPI) * 100);
@@ -584,8 +610,10 @@ function updateCurrentStreakComparison() {
     const lastIncidentDate = new Date(lastIncident.date);
     const today = new Date();
     const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
+    const stoppageDays = countStoppageDays(lastIncidentDate, today);
+    const activeDays = daysSinceLastIncident - stoppageDays;
     const currentFleetSize = fleetData[fleetData.length - 1].size;
-    const milesSinceLastIncident = daysSinceLastIncident * currentFleetSize * 115;
+    const milesSinceLastIncident = activeDays * currentFleetSize * 115;
 
     // Update the value display
     const valueEl = document.getElementById('current-streak-value');
@@ -607,8 +635,10 @@ function updateHeroStreak() {
     const lastIncidentDate = new Date(lastIncident.date);
     const today = new Date();
     const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
+    const stoppageDays = countStoppageDays(lastIncidentDate, today);
+    const activeDays = daysSinceLastIncident - stoppageDays;
     const currentFleetSize = fleetData[fleetData.length - 1].size;
-    const milesSinceLastIncident = daysSinceLastIncident * currentFleetSize * 115;
+    const milesSinceLastIncident = activeDays * currentFleetSize * 115;
 
     const targetMiles = 500000;
     const exceededHumanLevel = milesSinceLastIncident >= targetMiles;
