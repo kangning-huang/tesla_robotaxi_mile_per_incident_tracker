@@ -5,11 +5,8 @@ on:
     # Every Monday at 7:00 AM UTC (after daily analysis at 6:15 AM)
     - cron: '0 7 * * 1'
   push:
-    branches:
-      - 'claude/add-subscribe-button-v5Zs0'
     paths:
       - '.github/workflows/weekly-email.yml'
-      - 'scripts/send_weekly_update.py'
   workflow_dispatch:
     inputs:
       test_email:
