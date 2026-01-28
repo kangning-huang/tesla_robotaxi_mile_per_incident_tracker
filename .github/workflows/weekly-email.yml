@@ -5,7 +5,11 @@ on:
     # Every Monday at 7:00 AM UTC (after daily analysis at 6:15 AM)
     - cron: '0 7 * * 1'
   workflow_dispatch:
-    # Allow manual trigger for testing
+    inputs:
+      test_email:
+        description: 'Send a test email to this address (leave empty to send to all subscribers)'
+        required: false
+        default: ''
 
 jobs:
   send-email:
@@ -25,8 +29,20 @@ jobs:
           SMTP_PORT: '465'
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
-        run: python scripts/send_weekly_update.py
+        run: |
+          if [ -n "${{ github.event.inputs.test_email }}" ]; then
+            python scripts/send_weekly_update.py --test-to "${{ github.event.inputs.test_email }}"
+          else
+            python scripts/send_weekly_update.py
+          fi
 
       - name: Summary
         if: always()
-        run: echo "Weekly update email job completed at $(date -u)" >> $GITHUB_STEP_SUMMARY
+        run: |
+          echo "## Weekly Update Email" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ github.event.inputs.test_email }}" ]; then
+            echo "- **Mode:** Test (sent to ${{ github.event.inputs.test_email }})" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Mode:** Production (sent to all subscribers)" >> $GITHUB_STEP_SUMMARY
+          fi
