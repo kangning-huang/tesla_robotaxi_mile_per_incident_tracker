@@ -1,0 +1,8 @@
+# robots.txt for Tesla Robotaxi Safety Tracker
+# https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/sitemap.xml

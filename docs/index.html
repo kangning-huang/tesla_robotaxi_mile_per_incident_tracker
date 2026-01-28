@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tesla Robotaxi Safety Tracker</title>
     <meta name="description" content="Track Tesla Robotaxi miles per incident with trend analysis. Independent safety metrics for TSLA investors.">
+    <meta name="author" content="Kangning Huang">
+    <meta name="robots" content="index, follow">
     <meta name="google-site-verification" content="abZJn0glSeK0F1M5tJWNACVXJlmNoQoKrvEIEybbd8o" />
+    <link rel="canonical" href="https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/">
 
     <!-- Open Graph / Social Media Preview -->
     <meta property="og:type" content="website">
@@ -32,6 +35,85 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 
     <link rel="stylesheet" href="styles.css">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/#website",
+                "url": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/",
+                "name": "Tesla Robotaxi Safety Tracker",
+                "description": "Track Tesla Robotaxi miles per incident with trend analysis. Independent safety metrics for TSLA investors.",
+                "publisher": {
+                    "@id": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/#person"
+                }
+            },
+            {
+                "@type": "WebPage",
+                "@id": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/#webpage",
+                "url": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/",
+                "name": "Tesla Robotaxi Safety Tracker - Miles Per Incident Analysis",
+                "description": "Track Tesla Robotaxi miles per incident with trend analysis. Safety is doubling every ~69 days.",
+                "isPartOf": {
+                    "@id": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/#website"
+                },
+                "about": {
+                    "@id": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/#dataset"
+                },
+                "author": {
+                    "@id": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/#person"
+                }
+            },
+            {
+                "@type": "Person",
+                "@id": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/#person",
+                "name": "Kangning Huang",
+                "url": "https://open.substack.com/pub/kangninghuang",
+                "sameAs": [
+                    "https://x.com/FytasoK60918",
+                    "https://open.substack.com/pub/kangninghuang",
+                    "https://github.com/kangning-huang"
+                ]
+            },
+            {
+                "@type": "Dataset",
+                "@id": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/#dataset",
+                "name": "Tesla Robotaxi Safety Data",
+                "description": "Miles per incident data for Tesla's autonomous robotaxi fleet in Austin, TX. Includes incident dates, fleet size, and calculated safety metrics.",
+                "url": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/",
+                "license": "https://opensource.org/licenses/MIT",
+                "creator": {
+                    "@id": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/#person"
+                },
+                "temporalCoverage": "2025-06/..",
+                "spatialCoverage": {
+                    "@type": "Place",
+                    "name": "Austin, Texas, USA"
+                },
+                "variableMeasured": [
+                    {
+                        "@type": "PropertyValue",
+                        "name": "Miles Per Incident",
+                        "description": "Miles driven between consecutive autonomous vehicle incidents"
+                    },
+                    {
+                        "@type": "PropertyValue",
+                        "name": "Fleet Size",
+                        "description": "Number of active Tesla robotaxi vehicles"
+                    }
+                ],
+                "distribution": {
+                    "@type": "DataDownload",
+                    "encodingFormat": "application/json",
+                    "contentUrl": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/analysis_results.json"
+                }
+            }
+        ]
+    }
+    </script>
 </head>
 <body>
     <!-- Header -->
@@ -52,7 +134,7 @@
                     <a href="#trend" class="nav-link">Trend</a>
                     <a href="#methodology" class="nav-link">Methodology</a>
                     <a href="#creator" class="nav-link">Creator</a>
-                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" class="nav-link github" target="_blank">
+                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" class="nav-link github" target="_blank" rel="noopener noreferrer">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                         </svg>
@@ -467,7 +549,7 @@
                 <div class="method-card">
                     <div class="method-number">01</div>
                     <h3>Fleet Data</h3>
-                    <p>Fleet size updated daily from <a href="https://robotaxitracker.com" target="_blank" rel="noopener">robotaxitracker.com</a>, supplemented by news sources and NHTSA filings.</p>
+                    <p>Fleet size updated daily from <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a>, supplemented by news sources and NHTSA filings.</p>
                 </div>
                 <div class="method-card">
                     <div class="method-number">02</div>
@@ -477,7 +559,7 @@
                 <div class="method-card">
                     <div class="method-number">03</div>
                     <h3>Incident Data</h3>
-                    <p>Incidents from <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener">NHTSA Standing General Order</a> reports. Tesla has been cited for delayed reporting.</p>
+                    <p>Incidents from <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA Standing General Order</a> reports. Tesla has been cited for delayed reporting.</p>
                 </div>
                 <div class="method-card">
                     <div class="method-number">04</div>
@@ -499,13 +581,13 @@
                 <div class="creator-info">
                     <p>This tracker was created to provide transparent, data-driven insights into Tesla's robotaxi safety performance. Follow for more analysis on autonomous vehicles and technology.</p>
                     <div class="social-links">
-                        <a href="https://x.com/FytasoK60918" target="_blank" class="social-link x">
+                        <a href="https://x.com/FytasoK60918" target="_blank" rel="noopener noreferrer" class="social-link x">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                             </svg>
                             <span>@FytasoK60918</span>
                         </a>
-                        <a href="https://open.substack.com/pub/kangninghuang" target="_blank" class="social-link substack">
+                        <a href="https://open.substack.com/pub/kangninghuang" target="_blank" rel="noopener noreferrer" class="social-link substack">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z"/>
                             </svg>
@@ -516,7 +598,7 @@
                 <div class="related-reading">
                     <h3>Related Reading</h3>
                     <div class="article-links">
-                        <a href="https://open.substack.com/pub/kangninghuang/p/could-fleets-of-self-driving-cars" target="_blank" class="article-link">
+                        <a href="https://open.substack.com/pub/kangninghuang/p/could-fleets-of-self-driving-cars" target="_blank" rel="noopener noreferrer" class="article-link">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                                 <polyline points="15 3 21 3 21 9"/>
@@ -524,7 +606,7 @@
                             </svg>
                             <span>Could Fleets of Self-Driving Cars Transform Our Cities?</span>
                         </a>
-                        <a href="https://open.substack.com/pub/kangninghuang/p/the-hidden-geometry-of-inequality" target="_blank" class="article-link">
+                        <a href="https://open.substack.com/pub/kangninghuang/p/the-hidden-geometry-of-inequality" target="_blank" rel="noopener noreferrer" class="article-link">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
                                 <polyline points="15 3 21 3 21 9"/>
@@ -543,16 +625,16 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-info">
-                    <p>Created by <a href="https://x.com/FytasoK60918" target="_blank">Kangning Huang</a></p>
-                    <p>Data sources: <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank">NHTSA SGO</a>, <a href="https://robotaxitracker.com" target="_blank">robotaxitracker.com</a>, <a href="https://crashstats.nhtsa.dot.gov/Api/Public/Publication/813705" target="_blank">NHTSA CRSS</a>, <a href="https://waymo.com/blog/2023/09/waymos-autonomous-vehicles-are-significantly-safer-than-human-driven-ones/" target="_blank">Swiss Re/Waymo</a></p>
+                    <p>Created by <a href="https://x.com/FytasoK60918" target="_blank" rel="noopener noreferrer">Kangning Huang</a></p>
+                    <p>Data sources: <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA SGO</a>, <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a>, <a href="https://crashstats.nhtsa.dot.gov/Api/Public/Publication/813705" target="_blank" rel="noopener noreferrer">NHTSA CRSS</a>, <a href="https://waymo.com/blog/2023/09/waymos-autonomous-vehicles-are-significantly-safer-than-human-driven-ones/" target="_blank" rel="noopener noreferrer">Swiss Re/Waymo</a></p>
                     <p class="disclaimer">This is an independent analysis tool. Not affiliated with Tesla, Inc.</p>
                 </div>
                 <div class="footer-links">
-                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" target="_blank">GitHub</a>
+                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" target="_blank" rel="noopener noreferrer">GitHub</a>
                     <span class="divider">|</span>
-                    <a href="https://x.com/FytasoK60918" target="_blank">X</a>
+                    <a href="https://x.com/FytasoK60918" target="_blank" rel="noopener noreferrer">X</a>
                     <span class="divider">|</span>
-                    <a href="https://open.substack.com/pub/kangninghuang" target="_blank">Substack</a>
+                    <a href="https://open.substack.com/pub/kangninghuang" target="_blank" rel="noopener noreferrer">Substack</a>
                     <span class="divider">|</span>
                     <span>Updated: <span id="last-updated">Jan 24, 2026</span></span>
                 </div>
