@@ -248,8 +248,8 @@ def load_nhtsa_data(data_dir: Path) -> tuple[Optional[pd.DataFrame], Optional[pd
     return ads_df, adas_df
 
 
-def filter_tesla_incidents(df: pd.DataFrame, system_type: str) -> pd.DataFrame:
-    """Filter dataframe for Tesla incidents only."""
+def filter_tesla_incidents(df: pd.DataFrame, system_type: str, city: str | None = None) -> pd.DataFrame:
+    """Filter dataframe for Tesla incidents, optionally in a specific city."""
     if df is None or len(df) == 0:
         return pd.DataFrame()
 
@@ -265,9 +265,23 @@ def filter_tesla_incidents(df: pd.DataFrame, system_type: str) -> pd.DataFrame:
         return pd.DataFrame()
 
     tesla_df = df[df[make_col].str.contains('Tesla', case=False, na=False)].copy()
-    tesla_df['System_Type'] = system_type
 
-    print(f"  Found {len(tesla_df)} Tesla {system_type} incidents")
+    if city:
+        city_columns = ['City', 'CITY']
+        city_col = None
+        for col in city_columns:
+            if col in tesla_df.columns:
+                city_col = col
+                break
+        if city_col:
+            tesla_df = tesla_df[tesla_df[city_col].str.contains(city, case=False, na=False)]
+            print(f"  Found {len(tesla_df)} Tesla {system_type} incidents in {city}")
+        else:
+            print(f"  Warning: Could not find city column in {system_type} data, skipping city filter")
+    else:
+        print(f"  Found {len(tesla_df)} Tesla {system_type} incidents")
+
+    tesla_df['System_Type'] = system_type
     return tesla_df
 
 
@@ -566,24 +580,23 @@ def main():
     fleet_interpolator = FleetInterpolator(fleet_snapshots)
     excluded_dates, stoppages_list = load_service_stoppages(data_dir)
 
-    # Filter for Tesla
+    # Filter for Tesla Robotaxi in Austin (ADS = Level 4 unsupervised)
+    # Per project scope: Austin only, unsupervised Level 4 robotaxis (ADS, not ADAS)
     print("\n" + "─" * 75)
-    print("FILTERING TESLA INCIDENTS")
+    print("FILTERING TESLA ROBOTAXI INCIDENTS (Austin ADS)")
     print("─" * 75)
 
-    tesla_ads = filter_tesla_incidents(ads_df, "ADS")
-    tesla_adas = filter_tesla_incidents(adas_df, "ADAS")
+    tesla_ads = filter_tesla_incidents(ads_df, "ADS", city="Austin")
 
-    if len(tesla_ads) > 0 or len(tesla_adas) > 0:
-        all_tesla = pd.concat([tesla_ads, tesla_adas], ignore_index=True)
-        all_tesla = parse_incident_dates(all_tesla)
+    if len(tesla_ads) > 0:
+        all_tesla = parse_incident_dates(tesla_ads)
         use_sample = False
     else:
-        print("\n  No NHTSA data found. Using sample incident data from news reports.")
+        print("\n  No Austin ADS data found. Using sample incident data from news reports.")
         all_tesla = get_sample_incidents()
         use_sample = True
 
-    print(f"\nTotal Tesla incidents for analysis: {len(all_tesla)}")
+    print(f"\nTotal Tesla Robotaxi incidents for analysis: {len(all_tesla)}")
 
     service_start = datetime(2025, 6, 25)
     print(f"Service start date: {service_start.strftime('%Y-%m-%d')}")
