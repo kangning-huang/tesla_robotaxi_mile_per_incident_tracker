@@ -7,7 +7,7 @@ This script:
 2. Filters for Tesla incidents
 3. Combines with fleet size data (day-by-day interpolation)
 4. Calculates miles between EACH consecutive incident
-5. Runs nonlinear trend analysis to detect safety improvements
+5. Runs exponential trend analysis to detect safety improvements
 6. Visualizes the MPI trend over time
 """
 
@@ -141,35 +141,6 @@ class MPITrendAnalyzer:
                 self.mpi_values.append(d['mpi_since_previous'])
                 self.dates.append(incident_date)
 
-    def linear_trend(self) -> dict:
-        """Fit linear trend: MPI = a + b*t"""
-        if not HAS_NUMPY or len(self.mpi_values) < 2:
-            return {"error": "Insufficient data or numpy not available"}
-
-        x = np.array(self.days_since_start)
-        y = np.array(self.mpi_values)
-
-        # Linear regression
-        slope, intercept, r_value, p_value, std_err = stats.linregress(x, y) if HAS_SCIPY else (0, 0, 0, 1, 0)
-
-        if not HAS_SCIPY:
-            # Fallback to numpy polyfit
-            coeffs = np.polyfit(x, y, 1)
-            slope, intercept = coeffs[0], coeffs[1]
-            r_value = np.corrcoef(x, y)[0, 1]
-            p_value = None
-
-        return {
-            "type": "linear",
-            "slope": slope,
-            "intercept": intercept,
-            "r_squared": r_value ** 2,
-            "p_value": p_value,
-            "interpretation": "improving" if slope > 0 else "worsening",
-            "daily_change": slope,
-            "monthly_change": slope * 30
-        }
-
     def exponential_trend(self) -> dict:
         """Fit exponential trend: MPI = a * exp(b*t)"""
         if not HAS_NUMPY or not HAS_SCIPY or len(self.mpi_values) < 3:
@@ -217,29 +188,21 @@ class MPITrendAnalyzer:
             return {"error": f"Exponential fit failed: {e}"}
 
     def get_best_fit(self) -> dict:
-        """Determine which model fits best based on R-squared."""
-        models = {}
-
-        linear = self.linear_trend()
-        if "r_squared" in linear:
-            models["linear"] = linear
-
+        """Return the exponential model fit."""
         exp = self.exponential_trend()
         if "r_squared" in exp:
-            models["exponential"] = exp
+            return {
+                "best_model": "exponential",
+                "best_fit": exp,
+                "all_models": {
+                    "exponential": exp
+                }
+            }
 
-        if not models:
-            return {"error": "No models could be fitted"}
-
-        best = max(models.items(), key=lambda x: x[1].get("r_squared", 0))
-        return {
-            "best_model": best[0],
-            "best_fit": best[1],
-            "all_models": models
-        }
+        return {"error": "No models could be fitted"}
 
     def forecast(self, days_ahead: int = 30) -> dict:
-        """Forecast future MPI based on best fit model."""
+        """Forecast future MPI based on exponential model."""
         best = self.get_best_fit()
         if "error" in best:
             return best
@@ -250,16 +213,11 @@ class MPITrendAnalyzer:
         x_future = np.array(self.days_since_start[-1]) + np.arange(1, days_ahead + 1)
 
         model = best["best_fit"]
-        if model["type"] == "linear":
-            y_future = model["intercept"] + model["slope"] * x_future
-        elif model["type"] == "exponential":
-            y_future = model["a"] * np.exp(model["b"] * x_future)
-        else:
-            return {"error": "Unknown model type"}
+        y_future = model["a"] * np.exp(model["b"] * x_future)
 
         return {
             "forecast_days": days_ahead,
-            "model_used": model["type"],
+            "model_used": "exponential",
             "predicted_mpi_30_days": float(y_future[-1]) if len(y_future) > 0 else None,
             "trend": "improving" if y_future[-1] > self.mpi_values[-1] else "worsening"
         }
@@ -496,15 +454,6 @@ def print_trend_analysis(analyzer: MPITrendAnalyzer):
         print("\n  Insufficient data points for trend analysis (need at least 3)")
         return
 
-    # Linear trend
-    linear = analyzer.linear_trend()
-    if "error" not in linear:
-        print(f"\n  LINEAR TREND:")
-        print(f"    MPI = {linear['intercept']:,.0f} + {linear['slope']:,.1f} × days")
-        print(f"    R² = {linear['r_squared']:.3f}")
-        print(f"    Monthly change: {linear['monthly_change']:+,.0f} miles/incident")
-        print(f"    Interpretation: MPI is {linear['interpretation'].upper()}")
-
     # Exponential trend
     exp = analyzer.exponential_trend()
     if "error" not in exp:
@@ -517,12 +466,6 @@ def print_trend_analysis(analyzer: MPITrendAnalyzer):
         if exp.get('halving_time_days'):
             print(f"    Halving time: {exp['halving_time_days']:.0f} days")
         print(f"    Interpretation: MPI is {exp['interpretation'].upper()}")
-
-    # Best fit
-    best = analyzer.get_best_fit()
-    if "error" not in best:
-        print(f"\n  BEST FIT MODEL: {best['best_model'].upper()}")
-        print(f"    R² = {best['best_fit']['r_squared']:.3f}")
 
     # Forecast
     forecast = analyzer.forecast(days_ahead=30)
@@ -558,18 +501,12 @@ def plot_mpi_trend(results: list[dict], analyzer: MPITrendAnalyzer, output_path:
             x_smooth = np.linspace(x_days[0], x_days[-1], 100)
 
             model = best['best_fit']
-            if model['type'] == 'linear':
-                y_smooth = model['intercept'] + model['slope'] * x_smooth
-            elif model['type'] == 'exponential':
-                y_smooth = model['a'] * np.exp(model['b'] * x_smooth)
-            else:
-                y_smooth = None
+            y_smooth = model['a'] * np.exp(model['b'] * x_smooth)
 
-            if y_smooth is not None:
-                start_date = dates[0]
-                trend_dates = [start_date + timedelta(days=int(d)) for d in x_smooth]
-                ax1.plot(trend_dates, y_smooth, 'b-', linewidth=2,
-                        label=f'{best["best_model"].title()} Trend (R²={model["r_squared"]:.2f})')
+            start_date = dates[0]
+            trend_dates = [start_date + timedelta(days=int(d)) for d in x_smooth]
+            ax1.plot(trend_dates, y_smooth, 'b-', linewidth=2,
+                    label=f'Exponential Trend (R²={model["r_squared"]:.2f})')
 
     ax1.axhline(y=500000, color='green', linestyle=':', linewidth=2, label='Human Driver Avg (500K)')
     ax1.set_ylabel('Miles Per Incident (MPI)', fontsize=12)

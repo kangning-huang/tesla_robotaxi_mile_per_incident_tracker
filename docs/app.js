@@ -345,7 +345,7 @@ function initMPIChart() {
                     order: 1
                 },
                 {
-                    label: 'Exponential Trend (Projected)',
+                    label: 'Exponential Trend',
                     data: trendData,
                     borderColor: colors.primary,
                     backgroundColor: 'transparent',
@@ -725,6 +725,14 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCurrentStreakComparison();
     animateComparisonBars();
 
+    // Set default equation display from hardcoded trendParams
+    const legendEquationEl = document.getElementById('legend-equation');
+    if (legendEquationEl) {
+        const aVal = Math.round(trendParams.exponential.a).toLocaleString();
+        const bVal = trendParams.exponential.b.toFixed(4);
+        legendEquationEl.innerHTML = 'MPI = ' + aVal + '·e<sup>' + bVal + 't</sup>';
+    }
+
     // Update date
     document.getElementById('last-updated').textContent = new Date().toLocaleDateString('en-US', {
         month: 'short',
@@ -801,6 +809,12 @@ async function fetchLatestData() {
         const legendRSquaredEl = document.getElementById('legend-r-squared');
         if (expModel.r_squared != null && legendRSquaredEl) {
             legendRSquaredEl.textContent = 'R\u00B2 = ' + expModel.r_squared.toFixed(3);
+        }
+        const legendEquationEl = document.getElementById('legend-equation');
+        if (expModel.a != null && expModel.b != null && legendEquationEl) {
+            const aVal = Math.round(expModel.a).toLocaleString();
+            const bVal = expModel.b.toFixed(4);
+            legendEquationEl.innerHTML = 'MPI = ' + aVal + '·e<sup>' + bVal + 't</sup>';
         }
         if (expModel.growth_rate_per_day != null && statGrowthEl) {
             statGrowthEl.textContent = '+' + (expModel.growth_rate_per_day * 100).toFixed(1) + '%';
