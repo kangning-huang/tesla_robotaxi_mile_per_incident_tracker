@@ -4,12 +4,6 @@ on:
   schedule:
     # Every Monday at 7:00 AM UTC (after daily analysis at 6:15 AM)
     - cron: '0 7 * * 1'
-  push:
-    branches:
-      - 'claude/add-subscribe-button-v5Zs0'
-    paths:
-      - '.github/workflows/weekly-email.yml'
-      - 'scripts/send_weekly_update.py'
   workflow_dispatch:
     inputs:
       test_email:
@@ -29,13 +23,20 @@ jobs:
         with:
           python-version: '3.11'
 
+      - name: Check SMTP credentials
+        id: smtp-check
+        run: |
+          if [ -z "${{ secrets.SMTP_USER }}" ] || [ -z "${{ secrets.SMTP_PASS }}" ]; then
+            echo "available=false" >> $GITHUB_OUTPUT
+            echo "::warning::SMTP_USER and/or SMTP_PASS secrets are not configured. Falling back to dry-run mode."
+          else
+            echo "available=true" >> $GITHUB_OUTPUT
+          fi
+
       - name: Determine recipient
         id: recipient
         run: |
-          if [ "${{ github.event_name }}" = "push" ]; then
-            echo "email=fytaso@gmail.com" >> $GITHUB_OUTPUT
-            echo "mode=test" >> $GITHUB_OUTPUT
-          elif [ -n "${{ github.event.inputs.test_email }}" ]; then
+          if [ -n "${{ github.event.inputs.test_email }}" ]; then
             echo "email=${{ github.event.inputs.test_email }}" >> $GITHUB_OUTPUT
             echo "mode=test" >> $GITHUB_OUTPUT
           else
@@ -50,7 +51,10 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
         run: |
-          if [ -n "${{ steps.recipient.outputs.email }}" ]; then
+          if [ "${{ steps.smtp-check.outputs.available }}" != "true" ]; then
+            echo "SMTP credentials not configured. Running in dry-run mode."
+            python scripts/send_weekly_update.py --dry-run
+          elif [ -n "${{ steps.recipient.outputs.email }}" ]; then
             echo "Sending test email to ${{ steps.recipient.outputs.email }}"
             python scripts/send_weekly_update.py --test-to "${{ steps.recipient.outputs.email }}"
           else
@@ -65,7 +69,10 @@ jobs:
           echo "- **Time:** $(date -u)" >> $GITHUB_STEP_SUMMARY
           echo "- **Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Mode:** ${{ steps.recipient.outputs.mode }}" >> $GITHUB_STEP_SUMMARY
-          if [ -n "${{ steps.recipient.outputs.email }}" ]; then
+          echo "- **SMTP Configured:** ${{ steps.smtp-check.outputs.available }}" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.smtp-check.outputs.available }}" != "true" ]; then
+            echo "- **Note:** SMTP secrets not configured — ran in dry-run mode" >> $GITHUB_STEP_SUMMARY
+          elif [ -n "${{ steps.recipient.outputs.email }}" ]; then
             echo "- **Recipient:** ${{ steps.recipient.outputs.email }}" >> $GITHUB_STEP_SUMMARY
           else
             echo "- **Recipients:** All subscribers from data/subscribers.json" >> $GITHUB_STEP_SUMMARY
