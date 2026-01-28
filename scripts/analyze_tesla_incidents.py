@@ -216,45 +216,6 @@ class MPITrendAnalyzer:
         except Exception as e:
             return {"error": f"Exponential fit failed: {e}"}
 
-    def polynomial_trend(self, degree: int = 2) -> dict:
-        """Fit polynomial trend: MPI = a + b*t + c*t^2 + ..."""
-        if not HAS_NUMPY or len(self.mpi_values) < degree + 1:
-            return {"error": "Insufficient data or numpy not available"}
-
-        x = np.array(self.days_since_start)
-        y = np.array(self.mpi_values)
-
-        try:
-            coeffs = np.polyfit(x, y, degree)
-            poly = np.poly1d(coeffs)
-
-            # Calculate R-squared
-            y_pred = poly(x)
-            ss_res = np.sum((y - y_pred) ** 2)
-            ss_tot = np.sum((y - np.mean(y)) ** 2)
-            r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
-
-            # Determine if accelerating or decelerating improvement
-            if degree >= 2:
-                second_deriv = 2 * coeffs[-3] if len(coeffs) > 2 else 0
-                acceleration = "accelerating" if second_deriv > 0 else "decelerating"
-            else:
-                acceleration = "linear"
-
-            # Evaluate derivative at the latest time point for current trend
-            deriv = np.polyder(poly)
-            current_slope = deriv(x[-1])
-
-            return {
-                "type": f"polynomial_deg{degree}",
-                "coefficients": coeffs.tolist(),
-                "r_squared": r_squared,
-                "interpretation": acceleration,
-                "current_trend": "improving" if current_slope > 0 else "worsening"
-            }
-        except Exception as e:
-            return {"error": f"Polynomial fit failed: {e}"}
-
     def get_best_fit(self) -> dict:
         """Determine which model fits best based on R-squared."""
         models = {}
@@ -266,10 +227,6 @@ class MPITrendAnalyzer:
         exp = self.exponential_trend()
         if "r_squared" in exp:
             models["exponential"] = exp
-
-        poly2 = self.polynomial_trend(degree=2)
-        if "r_squared" in poly2:
-            models["quadratic"] = poly2
 
         if not models:
             return {"error": "No models could be fitted"}
@@ -297,9 +254,6 @@ class MPITrendAnalyzer:
             y_future = model["intercept"] + model["slope"] * x_future
         elif model["type"] == "exponential":
             y_future = model["a"] * np.exp(model["b"] * x_future)
-        elif model["type"].startswith("polynomial"):
-            poly = np.poly1d(model["coefficients"])
-            y_future = poly(x_future)
         else:
             return {"error": "Unknown model type"}
 
@@ -564,15 +518,6 @@ def print_trend_analysis(analyzer: MPITrendAnalyzer):
             print(f"    Halving time: {exp['halving_time_days']:.0f} days")
         print(f"    Interpretation: MPI is {exp['interpretation'].upper()}")
 
-    # Polynomial trend
-    poly = analyzer.polynomial_trend(degree=2)
-    if "error" not in poly:
-        coeffs = poly['coefficients']
-        print(f"\n  QUADRATIC TREND:")
-        print(f"    MPI = {coeffs[2]:,.0f} + {coeffs[1]:,.2f}×t + {coeffs[0]:.4f}×t²")
-        print(f"    R² = {poly['r_squared']:.3f}")
-        print(f"    Interpretation: {poly['interpretation'].upper()} {poly['current_trend']}")
-
     # Best fit
     best = analyzer.get_best_fit()
     if "error" not in best:
@@ -617,9 +562,6 @@ def plot_mpi_trend(results: list[dict], analyzer: MPITrendAnalyzer, output_path:
                 y_smooth = model['intercept'] + model['slope'] * x_smooth
             elif model['type'] == 'exponential':
                 y_smooth = model['a'] * np.exp(model['b'] * x_smooth)
-            elif model['type'].startswith('polynomial'):
-                poly = np.poly1d(model['coefficients'])
-                y_smooth = poly(x_smooth)
             else:
                 y_smooth = None
 
@@ -780,7 +722,6 @@ def main():
   Trend Analysis:
   - Linear: MPI = a + b×t (constant rate of change)
   - Exponential: MPI = a×e^(bt) (percentage growth/decay)
-  - Quadratic: MPI = a + bt + ct² (accelerating/decelerating change)
   - Best model selected by highest R² value
 
   Caveats:
