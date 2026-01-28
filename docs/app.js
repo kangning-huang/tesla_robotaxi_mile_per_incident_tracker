@@ -760,3 +760,99 @@ async function fetchLatestData() {
 
 // Try to fetch latest data
 fetchLatestData();
+
+// ===== Subscribe Modal =====
+(function initSubscribeModal() {
+    const overlay = document.getElementById('subscribe-overlay');
+    const openBtn = document.getElementById('open-subscribe');
+    const closeBtn = document.getElementById('subscribe-close');
+    const form = document.getElementById('subscribe-form');
+    const emailInput = document.getElementById('subscribe-email');
+    const submitBtn = document.getElementById('subscribe-submit');
+    const successEl = document.getElementById('subscribe-success');
+    const errorEl = document.getElementById('subscribe-error');
+    const errorText = document.getElementById('error-text');
+
+    if (!overlay || !openBtn) return;
+
+    function openModal() {
+        overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        setTimeout(() => emailInput && emailInput.focus(), 200);
+    }
+
+    function closeModal() {
+        overlay.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    function resetForm() {
+        form.style.display = '';
+        successEl.style.display = 'none';
+        errorEl.style.display = 'none';
+        submitBtn.disabled = false;
+        submitBtn.querySelector('.submit-text').style.display = '';
+        submitBtn.querySelector('.submit-loading').style.display = 'none';
+    }
+
+    openBtn.addEventListener('click', () => {
+        resetForm();
+        openModal();
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email = emailInput.value.trim();
+        if (!email) return;
+
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.querySelector('.submit-text').style.display = 'none';
+        submitBtn.querySelector('.submit-loading').style.display = '';
+
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: email,
+                    _subject: 'New Subscriber - Tesla Robotaxi Safety Tracker'
+                })
+            });
+
+            if (response.ok) {
+                form.style.display = 'none';
+                successEl.style.display = '';
+                errorEl.style.display = 'none';
+            } else {
+                throw new Error('Submission failed');
+            }
+        } catch (err) {
+            // Fallback: open mailto link so the subscription still works
+            const mailtoUrl = 'mailto:weekly-update@robotaxi-safety-tracker.com'
+                + '?subject=' + encodeURIComponent('Subscribe to Weekly Updates')
+                + '&body=' + encodeURIComponent(
+                    'Hi, please add me to the weekly update list.\n\nMy email: ' + email
+                );
+            window.location.href = mailtoUrl;
+
+            form.style.display = 'none';
+            successEl.style.display = '';
+            errorEl.style.display = 'none';
+        }
+    });
+})();

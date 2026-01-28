@@ -1,0 +1,32 @@
+name: Send Weekly Update Email
+
+on:
+  schedule:
+    # Every Monday at 7:00 AM UTC (after daily analysis at 6:15 AM)
+    - cron: '0 7 * * 1'
+  workflow_dispatch:
+    # Allow manual trigger for testing
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Send weekly update emails
+        env:
+          SMTP_HOST: smtp.hostinger.com
+          SMTP_PORT: '465'
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+        run: python scripts/send_weekly_update.py
+
+      - name: Summary
+        if: always()
+        run: echo "Weekly update email job completed at $(date -u)" >> $GITHUB_STEP_SUMMARY

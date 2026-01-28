@@ -1290,3 +1290,234 @@ a:hover {
     flex-shrink: 0;
     color: var(--accent-primary);
 }
+
+/* ===== Subscribe Button (Header) ===== */
+.subscribe-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--accent-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.subscribe-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.subscribe-btn:active {
+    transform: translateY(0);
+}
+
+.subscribe-btn svg {
+    flex-shrink: 0;
+}
+
+/* ===== Subscribe Modal Overlay ===== */
+.subscribe-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.subscribe-overlay.open {
+    display: flex;
+}
+
+/* ===== Subscribe Modal ===== */
+.subscribe-modal {
+    position: relative;
+    width: 100%;
+    max-width: 440px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 36px 32px 28px;
+    text-align: center;
+    animation: modalFadeIn 0.25s ease;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(16px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.subscribe-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.subscribe-close:hover {
+    color: var(--text-primary);
+    border-color: var(--border-light);
+    background: var(--bg-secondary);
+}
+
+.subscribe-icon-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: var(--accent-primary-bg);
+    color: var(--accent-primary);
+    border-radius: 14px;
+    margin-bottom: 16px;
+}
+
+.subscribe-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.subscribe-desc {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 24px;
+}
+
+/* ===== Subscribe Form ===== */
+.subscribe-input-row {
+    display: flex;
+    gap: 10px;
+}
+
+.subscribe-input {
+    flex: 1;
+    padding: 10px 14px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+
+.subscribe-input::placeholder {
+    color: var(--text-muted);
+}
+
+.subscribe-input:focus {
+    border-color: var(--accent-primary);
+}
+
+.subscribe-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 22px;
+    background: var(--accent-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    min-width: 110px;
+}
+
+.subscribe-submit:hover {
+    background: #2563eb;
+}
+
+.subscribe-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Spinner animation */
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ===== Subscribe Success / Error States ===== */
+.subscribe-success {
+    padding: 12px 0;
+}
+
+.success-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: var(--accent-success-bg);
+    color: var(--accent-success);
+    border-radius: 50%;
+    margin-bottom: 12px;
+}
+
+.success-text {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--accent-success);
+}
+
+.subscribe-error {
+    padding: 12px 0;
+}
+
+.error-text {
+    font-size: 14px;
+    color: var(--accent-danger);
+}
+
+.subscribe-footer-note {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ===== Subscribe Modal Responsive ===== */
+@media (max-width: 500px) {
+    .subscribe-modal {
+        padding: 28px 20px 24px;
+    }
+
+    .subscribe-input-row {
+        flex-direction: column;
+    }
+
+    .subscribe-submit {
+        width: 100%;
+    }
+}
