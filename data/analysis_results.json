@@ -1,5 +1,5 @@
 {
-  "analysis_date": "2026-01-28T04:23:43.526357",
+  "analysis_date": "2026-01-28T04:31:13.137632",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "incident_count": 580,
@@ -5326,45 +5326,35 @@
     "best_fit": {
       "type": "polynomial_deg2",
       "coefficients": [
-        0.1659121734097664,
-        -6.142070154792478,
+        0.16591217340976644,
+        -6.1420701547924725,
         1793.9342127902207
       ],
-      "r_squared": 0.017869881417308164,
+      "r_squared": 0.017869881417308275,
       "interpretation": "accelerating",
-      "current_trend": "worsening"
+      "current_trend": "improving"
     },
     "all_models": {
       "linear": {
         "type": "linear",
-        "slope": 16.698904225096133,
-        "intercept": 1380.6868199413452,
-        "r_squared": 0.01494490884199506,
-        "p_value": 0.007208827908488882,
+        "slope": 16.69890422509624,
+        "intercept": 1380.6868199413423,
+        "r_squared": 0.014944908841995067,
+        "p_value": null,
         "interpretation": "improving",
-        "daily_change": 16.698904225096133,
-        "monthly_change": 500.967126752884
-      },
-      "exponential": {
-        "type": "exponential",
-        "a": 1381.3038185290268,
-        "b": 0.00769104001229982,
-        "r_squared": 0.017122828181664884,
-        "interpretation": "improving",
-        "growth_rate_per_day": 0.00769104001229982,
-        "doubling_time_days": 90.12398576154025,
-        "halving_time_days": null
+        "daily_change": 16.69890422509624,
+        "monthly_change": 500.96712675288717
       },
       "quadratic": {
         "type": "polynomial_deg2",
         "coefficients": [
-          0.1659121734097664,
-          -6.142070154792478,
+          0.16591217340976644,
+          -6.1420701547924725,
           1793.9342127902207
         ],
-        "r_squared": 0.017869881417308164,
+        "r_squared": 0.017869881417308275,
         "interpretation": "accelerating",
-        "current_trend": "worsening"
+        "current_trend": "improving"
       }
     }
   },
