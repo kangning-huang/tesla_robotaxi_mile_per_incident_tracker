@@ -60,7 +60,7 @@
         <div class="container">
             <div class="hero-content">
                 <p class="hero-label">Independent Safety Tracking</p>
-                <h1 class="hero-title">Tesla Robotaxi Safety is<br>Doubling Every 69 Days</h1>
+                <h1 class="hero-title">Tesla Robotaxi Safety is<br>Doubling Every <span id="hero-doubling-time">69</span> Days</h1>
                 <p class="hero-subtitle">Improving from <span class="highlight-number">14,100</span> to <span class="highlight-number">107,500</span> miles between incidents—on track to match human drivers</p>
 
                 <div class="hero-streak-card">
@@ -106,7 +106,7 @@
                         </div>
                         <div class="legend-item">
                             <span class="legend-line" style="background: #3b82f6;"></span>
-                            Projected Trend (R² = 0.955)
+                            Projected Trend (<span id="legend-r-squared">R² = 0.955</span>)
                         </div>
                         <div class="legend-item">
                             <span class="legend-line dashed" style="--dash-color: #22c55e;"></span>
@@ -165,8 +165,8 @@
                     </div>
                     <div class="stat-content">
                         <div class="stat-label">Best Fit Model</div>
-                        <div class="stat-value">Exponential</div>
-                        <div class="stat-detail">R² = 0.955</div>
+                        <div class="stat-value" id="stat-best-model">Exponential</div>
+                        <div class="stat-detail" id="stat-r-squared">R² = 0.955</div>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -178,8 +178,8 @@
                     </div>
                     <div class="stat-content">
                         <div class="stat-label">Doubling Time</div>
-                        <div class="stat-value">69 days</div>
-                        <div class="stat-detail">Safety doubles every ~2 months</div>
+                        <div class="stat-value" id="stat-doubling-time">69 days</div>
+                        <div class="stat-detail" id="stat-doubling-detail">Safety doubles every ~2 months</div>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -192,7 +192,7 @@
                     </div>
                     <div class="stat-content">
                         <div class="stat-label">Daily Growth</div>
-                        <div class="stat-value">+1.0%</div>
+                        <div class="stat-value" id="stat-daily-growth">+1.0%</div>
                         <div class="stat-detail">Compound daily rate</div>
                     </div>
                 </div>
@@ -204,7 +204,7 @@
                     </div>
                     <div class="stat-content">
                         <div class="stat-label">30-Day Forecast</div>
-                        <div class="stat-value">137,400</div>
+                        <div class="stat-value" id="stat-forecast">137,400</div>
                         <div class="stat-detail">Projected miles/incident</div>
                     </div>
                 </div>
