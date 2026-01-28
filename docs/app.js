@@ -744,15 +744,73 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// ===== Fetch Latest Data (for future use) =====
+// ===== Fetch Latest Data =====
 async function fetchLatestData() {
     try {
-        const response = await fetch('../data/analysis_results.json');
-        if (response.ok) {
-            const data = await response.json();
-            console.log('Latest analysis data:', data);
-            // Could update charts with live data here
+        const response = await fetch('data.json');
+        if (!response.ok) return;
+        const data = await response.json();
+
+        const trend = data.trend_analysis || {};
+        const expModel = (trend.all_models || {}).exponential || {};
+        const bestFit = trend.best_fit || {};
+        const bestModel = trend.best_model || null;
+
+        // Update trendParams from live data
+        if (expModel.a != null && expModel.b != null) {
+            trendParams.exponential.a = expModel.a;
+            trendParams.exponential.b = expModel.b;
         }
+        if (expModel.r_squared != null) trendParams.rSquared = expModel.r_squared;
+        if (expModel.doubling_time_days != null) trendParams.doublingTime = Math.round(expModel.doubling_time_days);
+        if (expModel.growth_rate_per_day != null) trendParams.dailyGrowth = expModel.growth_rate_per_day;
+
+        // Calculate 30-day forecast from exponential model
+        if (incidentData.length > 0 && expModel.a != null && expModel.b != null) {
+            const startDate = new Date(incidentData[0].date);
+            const today = new Date();
+            const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+            trendParams.forecast30Day = Math.round(expModel.a * Math.exp(expModel.b * (daysSinceStart + 30)));
+        }
+
+        // Update DOM elements
+        const heroEl = document.getElementById('hero-doubling-time');
+        const statDoublingEl = document.getElementById('stat-doubling-time');
+        const statDoublingDetailEl = document.getElementById('stat-doubling-detail');
+        const statModelEl = document.getElementById('stat-best-model');
+        const statRSquaredEl = document.getElementById('stat-r-squared');
+        const statGrowthEl = document.getElementById('stat-daily-growth');
+        const statForecastEl = document.getElementById('stat-forecast');
+
+        if (expModel.doubling_time_days != null) {
+            const dt = Math.round(expModel.doubling_time_days);
+            if (heroEl) heroEl.textContent = dt;
+            if (statDoublingEl) statDoublingEl.textContent = dt + ' days';
+            if (statDoublingDetailEl) {
+                const months = (dt / 30).toFixed(1);
+                statDoublingDetailEl.textContent = 'Safety doubles every ~' + months + ' months';
+            }
+        }
+
+        if (bestModel && statModelEl) {
+            statModelEl.textContent = bestModel.charAt(0).toUpperCase() + bestModel.slice(1);
+        }
+        if (bestFit.r_squared != null && statRSquaredEl) {
+            statRSquaredEl.textContent = 'R\u00B2 = ' + bestFit.r_squared.toFixed(3);
+        }
+        const legendRSquaredEl = document.getElementById('legend-r-squared');
+        if (expModel.r_squared != null && legendRSquaredEl) {
+            legendRSquaredEl.textContent = 'R\u00B2 = ' + expModel.r_squared.toFixed(3);
+        }
+        if (expModel.growth_rate_per_day != null && statGrowthEl) {
+            statGrowthEl.textContent = '+' + (expModel.growth_rate_per_day * 100).toFixed(1) + '%';
+        }
+        if (trendParams.forecast30Day && statForecastEl) {
+            statForecastEl.textContent = trendParams.forecast30Day.toLocaleString();
+        }
+
+        // Reinitialize chart with updated trendParams
+        initMPIChart();
     } catch (error) {
         console.log('Using embedded data (JSON fetch not available)');
     }
