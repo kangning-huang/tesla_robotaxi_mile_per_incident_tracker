@@ -90,13 +90,59 @@ const fleetData = [
     { date: '2026-01-24', size: 72 },
 ];
 
-// Trend analysis parameters (from Python analysis, updated for 115 mi/day)
+// Compute exponential trend parameters via log-linear regression on incidentData
+// Fits MPI = a * exp(b * t) by regressing ln(MPI) = ln(a) + b * t
+function computeExponentialFit(data) {
+    const startDate = new Date(data[0].date);
+    const n = data.length;
+    const x = []; // days since first incident
+    const Y = []; // ln(MPI)
+
+    for (const d of data) {
+        const days = Math.floor((new Date(d.date) - startDate) / (1000 * 60 * 60 * 24));
+        x.push(days);
+        Y.push(Math.log(d.mpi));
+    }
+
+    // Linear regression on (x, Y)
+    let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+    for (let i = 0; i < n; i++) {
+        sumX += x[i];
+        sumY += Y[i];
+        sumXY += x[i] * Y[i];
+        sumX2 += x[i] * x[i];
+    }
+    const meanX = sumX / n;
+    const meanY = sumY / n;
+    const b = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const A = meanY - b * meanX;
+    const a = Math.exp(A);
+
+    // R² on original scale (non-linear)
+    const meanMPI = data.reduce((s, d) => s + d.mpi, 0) / n;
+    let ssRes = 0, ssTot = 0;
+    for (let i = 0; i < n; i++) {
+        const pred = a * Math.exp(b * x[i]);
+        ssRes += (data[i].mpi - pred) ** 2;
+        ssTot += (data[i].mpi - meanMPI) ** 2;
+    }
+    const rSquared = ssTot > 0 ? 1 - ssRes / ssTot : 0;
+
+    const doublingTime = b > 0 ? Math.round(Math.log(2) / b) : Infinity;
+    // 30-day forecast from last data point
+    const lastDays = x[x.length - 1];
+    const forecast30Day = Math.round(a * Math.exp(b * (lastDays + 30)));
+
+    return { a, b, rSquared, doublingTime, dailyGrowth: b, forecast30Day };
+}
+
+const fit = computeExponentialFit(incidentData);
 const trendParams = {
-    exponential: { a: 20970, b: 0.009998 },
-    rSquared: 0.955,
-    doublingTime: 69,
-    dailyGrowth: 0.01,
-    forecast30Day: 137400
+    exponential: { a: fit.a, b: fit.b },
+    rSquared: fit.rSquared,
+    doublingTime: fit.doublingTime,
+    dailyGrowth: fit.dailyGrowth,
+    forecast30Day: fit.forecast30Day
 };
 
 // Service stoppage dates — days when Tesla Robotaxi was not operating (0 miles accumulated)
@@ -725,13 +771,34 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCurrentStreakComparison();
     animateComparisonBars();
 
-    // Set default equation display from hardcoded trendParams
+    // Set equation and R² display from computed trendParams
     const legendEquationEl = document.getElementById('legend-equation');
     if (legendEquationEl) {
         const aVal = Math.round(trendParams.exponential.a).toLocaleString();
         const bVal = trendParams.exponential.b.toFixed(4);
         legendEquationEl.innerHTML = 'MPI = ' + aVal + '·e<sup>' + bVal + 't</sup>';
     }
+    const legendRSquaredEl = document.getElementById('legend-r-squared');
+    if (legendRSquaredEl) {
+        legendRSquaredEl.textContent = 'R\u00B2 = ' + trendParams.rSquared.toFixed(3);
+    }
+
+    // Update stat cards from computed trendParams
+    const heroEl = document.getElementById('hero-doubling-time');
+    if (heroEl) heroEl.textContent = trendParams.doublingTime;
+    const statDoublingEl = document.getElementById('stat-doubling-time');
+    if (statDoublingEl) statDoublingEl.textContent = trendParams.doublingTime + ' days';
+    const statDoublingDetailEl = document.getElementById('stat-doubling-detail');
+    if (statDoublingDetailEl) {
+        const months = (trendParams.doublingTime / 30).toFixed(1);
+        statDoublingDetailEl.textContent = 'Safety doubles every ~' + months + ' months';
+    }
+    const statRSquaredEl = document.getElementById('stat-r-squared');
+    if (statRSquaredEl) statRSquaredEl.textContent = 'R\u00B2 = ' + trendParams.rSquared.toFixed(3);
+    const statGrowthEl = document.getElementById('stat-daily-growth');
+    if (statGrowthEl) statGrowthEl.textContent = '+' + (trendParams.dailyGrowth * 100).toFixed(1) + '%';
+    const statForecastEl = document.getElementById('stat-forecast');
+    if (statForecastEl) statForecastEl.textContent = trendParams.forecast30Day.toLocaleString();
 
     // Update date
     document.getElementById('last-updated').textContent = new Date().toLocaleDateString('en-US', {
@@ -753,78 +820,24 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===== Fetch Latest Data =====
+// Note: Trend parameters for the chart are computed in-browser from incidentData
+// via computeExponentialFit(). The data.json (from Python analysis of raw NHTSA
+// incidents) uses a different dataset and is NOT used for chart trend lines.
 async function fetchLatestData() {
     try {
         const response = await fetch('data.json');
         if (!response.ok) return;
         const data = await response.json();
 
+        // Update stat cards with NHTSA raw-analysis metadata (not chart trend)
         const trend = data.trend_analysis || {};
-        const expModel = (trend.all_models || {}).exponential || {};
         const bestFit = trend.best_fit || {};
         const bestModel = trend.best_model || null;
 
-        // Update trendParams from live data
-        if (expModel.a != null && expModel.b != null) {
-            trendParams.exponential.a = expModel.a;
-            trendParams.exponential.b = expModel.b;
-        }
-        if (expModel.r_squared != null) trendParams.rSquared = expModel.r_squared;
-        if (expModel.doubling_time_days != null) trendParams.doublingTime = Math.round(expModel.doubling_time_days);
-        if (expModel.growth_rate_per_day != null) trendParams.dailyGrowth = expModel.growth_rate_per_day;
-
-        // Calculate 30-day forecast from exponential model
-        if (incidentData.length > 0 && expModel.a != null && expModel.b != null) {
-            const startDate = new Date(incidentData[0].date);
-            const today = new Date();
-            const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-            trendParams.forecast30Day = Math.round(expModel.a * Math.exp(expModel.b * (daysSinceStart + 30)));
-        }
-
-        // Update DOM elements
-        const heroEl = document.getElementById('hero-doubling-time');
-        const statDoublingEl = document.getElementById('stat-doubling-time');
-        const statDoublingDetailEl = document.getElementById('stat-doubling-detail');
         const statModelEl = document.getElementById('stat-best-model');
-        const statRSquaredEl = document.getElementById('stat-r-squared');
-        const statGrowthEl = document.getElementById('stat-daily-growth');
-        const statForecastEl = document.getElementById('stat-forecast');
-
-        if (expModel.doubling_time_days != null) {
-            const dt = Math.round(expModel.doubling_time_days);
-            if (heroEl) heroEl.textContent = dt;
-            if (statDoublingEl) statDoublingEl.textContent = dt + ' days';
-            if (statDoublingDetailEl) {
-                const months = (dt / 30).toFixed(1);
-                statDoublingDetailEl.textContent = 'Safety doubles every ~' + months + ' months';
-            }
-        }
-
         if (bestModel && statModelEl) {
             statModelEl.textContent = bestModel.charAt(0).toUpperCase() + bestModel.slice(1);
         }
-        if (bestFit.r_squared != null && statRSquaredEl) {
-            statRSquaredEl.textContent = 'R\u00B2 = ' + bestFit.r_squared.toFixed(3);
-        }
-        const legendRSquaredEl = document.getElementById('legend-r-squared');
-        if (expModel.r_squared != null && legendRSquaredEl) {
-            legendRSquaredEl.textContent = 'R\u00B2 = ' + expModel.r_squared.toFixed(3);
-        }
-        const legendEquationEl = document.getElementById('legend-equation');
-        if (expModel.a != null && expModel.b != null && legendEquationEl) {
-            const aVal = Math.round(expModel.a).toLocaleString();
-            const bVal = expModel.b.toFixed(4);
-            legendEquationEl.innerHTML = 'MPI = ' + aVal + '·e<sup>' + bVal + 't</sup>';
-        }
-        if (expModel.growth_rate_per_day != null && statGrowthEl) {
-            statGrowthEl.textContent = '+' + (expModel.growth_rate_per_day * 100).toFixed(1) + '%';
-        }
-        if (trendParams.forecast30Day && statForecastEl) {
-            statForecastEl.textContent = trendParams.forecast30Day.toLocaleString();
-        }
-
-        // Reinitialize chart with updated trendParams
-        initMPIChart();
     } catch (error) {
         console.log('Using embedded data (JSON fetch not available)');
     }
