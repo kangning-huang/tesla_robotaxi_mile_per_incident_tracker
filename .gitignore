@@ -25,3 +25,6 @@ Thumbs.db
 
 # Scraper artifacts (screenshots are uploaded as GitHub Actions artifacts)
 data/screenshot_*.png
+
+# Environment variables (contains SMTP credentials)
+.env

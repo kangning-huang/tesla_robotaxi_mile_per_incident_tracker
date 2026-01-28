@@ -1,0 +1,72 @@
+name: Send Weekly Update Email
+
+on:
+  schedule:
+    # Every Monday at 7:00 AM UTC (after daily analysis at 6:15 AM)
+    - cron: '0 7 * * 1'
+  push:
+    branches:
+      - 'claude/add-subscribe-button-v5Zs0'
+    paths:
+      - '.github/workflows/weekly-email.yml'
+      - 'scripts/send_weekly_update.py'
+  workflow_dispatch:
+    inputs:
+      test_email:
+        description: 'Send a test email to this address (leave empty to send to all subscribers)'
+        required: false
+        default: ''
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Determine recipient
+        id: recipient
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "email=fytaso@gmail.com" >> $GITHUB_OUTPUT
+            echo "mode=test" >> $GITHUB_OUTPUT
+          elif [ -n "${{ github.event.inputs.test_email }}" ]; then
+            echo "email=${{ github.event.inputs.test_email }}" >> $GITHUB_OUTPUT
+            echo "mode=test" >> $GITHUB_OUTPUT
+          else
+            echo "email=" >> $GITHUB_OUTPUT
+            echo "mode=production" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Send weekly update emails
+        env:
+          SMTP_HOST: smtp.hostinger.com
+          SMTP_PORT: '465'
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+        run: |
+          if [ -n "${{ steps.recipient.outputs.email }}" ]; then
+            echo "Sending test email to ${{ steps.recipient.outputs.email }}"
+            python scripts/send_weekly_update.py --test-to "${{ steps.recipient.outputs.email }}"
+          else
+            echo "Sending to all subscribers"
+            python scripts/send_weekly_update.py
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Weekly Update Email" >> $GITHUB_STEP_SUMMARY
+          echo "- **Time:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Mode:** ${{ steps.recipient.outputs.mode }}" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ steps.recipient.outputs.email }}" ]; then
+            echo "- **Recipient:** ${{ steps.recipient.outputs.email }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Recipients:** All subscribers from data/subscribers.json" >> $GITHUB_STEP_SUMMARY
+          fi
