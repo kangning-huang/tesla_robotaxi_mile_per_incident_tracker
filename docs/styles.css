@@ -628,8 +628,22 @@ a:hover {
 .chart-legend {
     display: flex;
     justify-content: center;
-    gap: 24px;
+    align-items: center;
+    gap: 20px;
     margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.legend-group {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.legend-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--border-color, #e2e8f0);
 }
 
 .legend-item {
@@ -1232,7 +1246,18 @@ a:hover {
     .chart-legend {
         flex-direction: column;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
+    }
+
+    .legend-group {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .legend-divider {
+        width: 40px;
+        height: 1px;
     }
 
     .footer-content {
