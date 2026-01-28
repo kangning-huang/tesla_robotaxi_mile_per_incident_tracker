@@ -379,6 +379,58 @@ a:hover {
     font-weight: 600;
 }
 
+/* ===== Share Buttons ===== */
+.share-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.share-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.share-btn:hover {
+    border-color: var(--border-light);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.share-btn.share-x:hover {
+    border-color: #1da1f2;
+}
+
+.share-btn.share-reddit:hover {
+    border-color: #ff4500;
+}
+
+.share-btn svg {
+    flex-shrink: 0;
+}
+
 /* ===== Metrics Cards ===== */
 .metrics {
     padding: 40px 0;

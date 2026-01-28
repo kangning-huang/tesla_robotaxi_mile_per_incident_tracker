@@ -771,16 +771,12 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCurrentStreakComparison();
     animateComparisonBars();
 
-    // Set equation and R² display from computed trendParams
-    const legendEquationEl = document.getElementById('legend-equation');
-    if (legendEquationEl) {
+    // Update Best Fit Model card with equation and R² details
+    const statEquationEl = document.getElementById('stat-equation');
+    if (statEquationEl) {
         const aVal = Math.round(trendParams.exponential.a).toLocaleString();
         const bVal = trendParams.exponential.b.toFixed(4);
-        legendEquationEl.innerHTML = 'MPI = ' + aVal + '·e<sup>' + bVal + 't</sup>';
-    }
-    const legendRSquaredEl = document.getElementById('legend-r-squared');
-    if (legendRSquaredEl) {
-        legendRSquaredEl.textContent = 'R\u00B2 = ' + trendParams.rSquared.toFixed(3);
+        statEquationEl.innerHTML = 'MPI = ' + aVal + '·e<sup>' + bVal + 't</sup>';
     }
 
     // Update stat cards from computed trendParams
@@ -806,6 +802,21 @@ document.addEventListener('DOMContentLoaded', () => {
         day: 'numeric',
         year: 'numeric'
     });
+
+    // Set up share button URLs
+    const pageUrl = window.location.href;
+    const latestMPI = incidentData[incidentData.length - 1].mpi.toLocaleString();
+    const shareText = 'Tesla Robotaxi safety is doubling every ' + trendParams.doublingTime + ' days — now at ' + latestMPI + ' miles between incidents.';
+
+    const shareXEl = document.getElementById('share-x');
+    if (shareXEl) {
+        shareXEl.href = 'https://x.com/intent/tweet?text=' + encodeURIComponent(shareText) + '&url=' + encodeURIComponent(pageUrl);
+    }
+
+    const shareRedditEl = document.getElementById('share-reddit');
+    if (shareRedditEl) {
+        shareRedditEl.href = 'https://www.reddit.com/submit?url=' + encodeURIComponent(pageUrl) + '&title=' + encodeURIComponent(shareText);
+    }
 
     // Listen for system theme changes and reinitialize charts
     if (window.matchMedia) {
