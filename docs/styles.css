@@ -379,55 +379,40 @@ a:hover {
     font-weight: 600;
 }
 
-/* ===== Share Buttons ===== */
-.share-buttons {
+/* ===== Section Header with Share Icons ===== */
+.section-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.share-icons {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 24px;
+    gap: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
 }
 
-.share-label {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.share-btn {
+.share-icon {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
+    justify-content: center;
+    width: 32px;
+    height: 32px;
     border-radius: var(--radius-sm);
-    font-family: var(--font-sans);
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
+    color: var(--text-muted);
     text-decoration: none;
-    cursor: pointer;
     transition: all 0.2s ease;
 }
 
-.share-btn:hover {
-    border-color: var(--border-light);
+.share-icon:hover {
     color: var(--text-primary);
-    transform: translateY(-1px);
+    background: var(--bg-secondary);
 }
 
-.share-btn.share-x:hover {
-    border-color: #1da1f2;
-}
-
-.share-btn.share-reddit:hover {
-    border-color: #ff4500;
-}
-
-.share-btn svg {
+.share-icon svg {
     flex-shrink: 0;
 }
 
