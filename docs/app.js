@@ -637,7 +637,7 @@ function updateMetrics() {
 }
 
 // ===== Smooth Scroll =====
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+document.querySelectorAll('a[href^="#"]:not(.share-btn)').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
@@ -804,9 +804,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Set up share button URLs
-    const pageUrl = window.location.href;
-    const latestMPI = incidentData[incidentData.length - 1].mpi.toLocaleString();
-    const shareText = 'Tesla Robotaxi safety is doubling every ' + trendParams.doublingTime + ' days — now at ' + latestMPI + ' miles between incidents.';
+    const pageUrl = 'https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/';
+    const shareTitle = 'Tesla Robotaxi Safety is Doubling Every ' + trendParams.doublingTime + ' Days';
+    const shareText = shareTitle + '\n\nTracking Tesla\'s autonomous vehicle safety improvements with real NHTSA data.';
 
     const shareXEl = document.getElementById('share-x');
     if (shareXEl) {
@@ -815,7 +815,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const shareRedditEl = document.getElementById('share-reddit');
     if (shareRedditEl) {
-        shareRedditEl.href = 'https://www.reddit.com/submit?url=' + encodeURIComponent(pageUrl) + '&title=' + encodeURIComponent(shareText);
+        shareRedditEl.href = 'https://www.reddit.com/submit?url=' + encodeURIComponent(pageUrl) + '&title=' + encodeURIComponent(shareTitle);
     }
 
     // Listen for system theme changes and reinitialize charts
