@@ -241,12 +241,16 @@ class MPITrendAnalyzer:
             else:
                 acceleration = "linear"
 
+            # Evaluate derivative at the latest time point for current trend
+            deriv = np.polyder(poly)
+            current_slope = deriv(x[-1])
+
             return {
                 "type": f"polynomial_deg{degree}",
                 "coefficients": coeffs.tolist(),
                 "r_squared": r_squared,
                 "interpretation": acceleration,
-                "current_trend": "improving" if coeffs[-2] > 0 else "worsening"
+                "current_trend": "improving" if current_slope > 0 else "worsening"
             }
         except Exception as e:
             return {"error": f"Polynomial fit failed: {e}"}
