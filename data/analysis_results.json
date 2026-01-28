@@ -5334,16 +5334,6 @@
       "halving_time_days": null
     },
     "all_models": {
-      "linear": {
-        "type": "linear",
-        "slope": 16.698904225096133,
-        "intercept": 1380.6868199413452,
-        "r_squared": 0.01494490884199506,
-        "p_value": 0.007208827908488882,
-        "interpretation": "improving",
-        "daily_change": 16.698904225096133,
-        "monthly_change": 500.967126752884
-      },
       "exponential": {
         "type": "exponential",
         "a": 1381.3038185290268,
