@@ -1,5 +1,5 @@
 {
-  "analysis_date": "2026-01-28T04:31:13.137632",
+  "analysis_date": "2026-01-28T04:34:23.931408",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "incident_count": 580,
@@ -5337,13 +5337,23 @@
     "all_models": {
       "linear": {
         "type": "linear",
-        "slope": 16.69890422509624,
-        "intercept": 1380.6868199413423,
-        "r_squared": 0.014944908841995067,
-        "p_value": null,
+        "slope": 16.698904225096133,
+        "intercept": 1380.6868199413452,
+        "r_squared": 0.01494490884199506,
+        "p_value": 0.007208827908488882,
         "interpretation": "improving",
-        "daily_change": 16.69890422509624,
-        "monthly_change": 500.96712675288717
+        "daily_change": 16.698904225096133,
+        "monthly_change": 500.967126752884
+      },
+      "exponential": {
+        "type": "exponential",
+        "a": 1381.3038294935195,
+        "b": 0.007691039942951948,
+        "r_squared": 0.017122828181655336,
+        "interpretation": "improving",
+        "growth_rate_per_day": 0.007691039942951948,
+        "doubling_time_days": 90.12398657416203,
+        "halving_time_days": null
       },
       "quadratic": {
         "type": "polynomial_deg2",
