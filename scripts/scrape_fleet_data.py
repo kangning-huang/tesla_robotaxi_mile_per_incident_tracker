@@ -615,6 +615,9 @@ async def extract_data_via_mouse_hover(page) -> list:
                 let targetChart = null;
                 if (headingRect) {
                     // Find the chart closest (below) to the Fleet Growth heading
+                    // IMPORTANT: Only consider charts with reasonable dimensions
+                    // (height >= 100, width >= 200) to avoid selecting sparklines
+                    // or mini-charts that appear as stat decorations near the heading
                     let bestDist = Infinity;
                     for (const chart of charts) {
                         const rect = chart.getBoundingClientRect();
@@ -623,7 +626,8 @@ async def extract_data_via_mouse_hover(page) -> list:
                             top: rect.top, height: rect.height, width: rect.width,
                             distFromHeading: dist
                         });
-                        if (dist < bestDist && rect.top >= headingRect.top - 50) {
+                        if (rect.height >= 100 && rect.width >= 200 &&
+                            dist < bestDist && rect.top >= headingRect.top - 50) {
                             bestDist = dist;
                             targetChart = chart;
                         }
@@ -631,10 +635,11 @@ async def extract_data_via_mouse_hover(page) -> list:
                 }
 
                 if (!targetChart) {
-                    // Fallback: use the largest chart (by area)
+                    // Fallback: use the largest chart (by area) with minimum size
                     let bestArea = 0;
                     for (const chart of charts) {
                         const rect = chart.getBoundingClientRect();
+                        if (rect.height < 100 || rect.width < 200) continue;
                         const area = rect.width * rect.height;
                         if (area > bestArea) {
                             bestArea = area;
@@ -671,11 +676,12 @@ async def extract_data_via_mouse_hover(page) -> list:
         details = bbox.get("chartDetails", []) if bbox else []
         print(f"  Chart attempt {attempt + 1}/5: {charts_found} charts, "
               f"heading={'yes' if heading_found else 'no'}, "
-              f"best size={w:.0f}x{h:.0f}")
+              f"selected={w:.0f}x{h:.0f}")
         if details:
-            for i, d in enumerate(details[:3]):
+            for i, d in enumerate(details[:5]):
+                sized_ok = "OK" if d['height'] >= 100 and d['width'] >= 200 else "too small"
                 print(f"    chart[{i}]: {d['width']:.0f}x{d['height']:.0f}, "
-                      f"dist={d['distFromHeading']:.0f}")
+                      f"dist={d['distFromHeading']:.0f} ({sized_ok})")
 
         # Try scrolling to the section and waiting
         if fleet_section:
@@ -720,22 +726,29 @@ async def extract_data_via_mouse_hover(page) -> list:
         print(f"  Could not find properly-sized chart after retries "
               f"(charts={charts_found}, best={w:.0f}x{h:.0f})")
 
-        # Last resort: try ANY recharts-surface SVG directly
-        chart_element = await page.query_selector("svg.recharts-surface")
-        if chart_element:
+        # Last resort: try ANY recharts-surface SVG with proper dimensions
+        chart_elements = await page.query_selector_all("svg.recharts-surface")
+        found_fallback = False
+        for chart_element in chart_elements:
             await chart_element.scroll_into_view_if_needed()
-            await asyncio.sleep(2)
+            await asyncio.sleep(1)
             raw_bbox = await chart_element.bounding_box()
-            if raw_bbox and raw_bbox.get("height", 0) >= 100:
+            if raw_bbox and raw_bbox.get("height", 0) >= 100 and raw_bbox.get("width", 0) >= 200:
                 bbox = raw_bbox
                 chart_source = "direct-svg-fallback"
                 print(f"  Last resort: found chart SVG {raw_bbox['width']:.0f}x{raw_bbox['height']:.0f}")
+                found_fallback = True
+                break
             else:
                 h = raw_bbox.get("height", 0) if raw_bbox else 0
-                print(f"  Last resort SVG also too small: height={h:.0f}")
-                return historical
-        else:
-            print("  No recharts-surface SVG found at all")
+                w = raw_bbox.get("width", 0) if raw_bbox else 0
+                print(f"  Last resort: skipping SVG {w:.0f}x{h:.0f} (too small)")
+
+        if not found_fallback:
+            if chart_elements:
+                print(f"  All {len(chart_elements)} SVGs too small for tooltip extraction")
+            else:
+                print("  No recharts-surface SVG found at all")
             return historical
 
     print(f"  Chart bbox: x={bbox['x']:.0f}, y={bbox['y']:.0f}, "
@@ -744,63 +757,99 @@ async def extract_data_via_mouse_hover(page) -> list:
     # Calculate hover area - stay within the plot area (inside axes)
     chart_left = bbox['x'] + 60   # Skip y-axis labels
     chart_right = bbox['x'] + bbox['width'] - 20  # Skip right padding
-    chart_mid_y = bbox['y'] + bbox['height'] * 0.4  # Slightly above middle (hit bar area)
+
+    # Try multiple Y positions to hit bars at different heights (from PR #15 lesson)
+    chart_y_positions = [
+        bbox['y'] + bbox['height'] * 0.3,   # Upper third
+        bbox['y'] + bbox['height'] * 0.5,   # Middle
+        bbox['y'] + bbox['height'] * 0.7,   # Lower third
+    ]
 
     num_samples = 80  # More samples for better coverage
     step = (chart_right - chart_left) / num_samples
     seen_dates = set()
     debug_tooltip_count = 0
 
-    print(f"  Hovering across chart with {num_samples} positions using native mouse...")
+    print(f"  Hovering across chart with {num_samples} positions using native mouse + JS events...")
 
     # First move to chart area to activate it
-    await page.mouse.move(chart_left, chart_mid_y)
+    await page.mouse.move(chart_left, chart_y_positions[1])
     await asyncio.sleep(0.5)
 
     for i in range(num_samples + 1):
         x = chart_left + (i * step)
 
-        # Use Playwright's native mouse.move - this generates real browser events
-        # that Recharts' internal event handler on the SVG overlay will pick up
-        await page.mouse.move(x, chart_mid_y)
-        await asyncio.sleep(0.15)  # Give tooltip time to render
+        # Try each Y position for this X coordinate
+        for y_idx, y in enumerate(chart_y_positions):
+            # Use Playwright's native mouse.move - this generates real browser events
+            # that Recharts' internal event handler on the SVG overlay will pick up
+            await page.mouse.move(x, y)
 
-        # Check for tooltip content - use only Recharts-specific selector
-        tooltip_text = await page.evaluate("""
-            () => {
-                // Only look at Recharts tooltip wrapper (not generic tooltips)
-                const el = document.querySelector('.recharts-tooltip-wrapper');
-                if (!el) return null;
+            # Also dispatch JavaScript mouse events directly (from PR #15 lesson)
+            # Recharts may not respond to Playwright's synthetic mouse.move() alone;
+            # dispatching real DOM MouseEvents ensures tooltip activation
+            await page.evaluate("""
+                (coords) => {
+                    const element = document.elementFromPoint(coords.x, coords.y);
+                    if (element) {
+                        const events = ['mouseenter', 'mouseover', 'mousemove'];
+                        for (const eventType of events) {
+                            const evt = new MouseEvent(eventType, {
+                                bubbles: true,
+                                cancelable: true,
+                                clientX: coords.x,
+                                clientY: coords.y,
+                                view: window
+                            });
+                            element.dispatchEvent(evt);
+                        }
+                    }
+                }
+            """, {"x": x, "y": y})
 
-                const style = window.getComputedStyle(el);
-                // Recharts hides tooltip with visibility:hidden or opacity:0
-                if (style.visibility === 'hidden' || style.opacity === '0') {
+            await asyncio.sleep(0.12)  # Give tooltip time to render
+
+            # Check for tooltip content - use only Recharts-specific selector
+            tooltip_text = await page.evaluate("""
+                () => {
+                    // Only look at Recharts tooltip wrapper (not generic tooltips)
+                    const el = document.querySelector('.recharts-tooltip-wrapper');
+                    if (!el) return null;
+
+                    const style = window.getComputedStyle(el);
+                    // Recharts hides tooltip with visibility:hidden or opacity:0
+                    if (style.visibility === 'hidden' || style.opacity === '0') {
+                        return null;
+                    }
+
+                    // Also check if tooltip is positioned off-screen
+                    const rect = el.getBoundingClientRect();
+                    if (rect.width === 0 || rect.height === 0) return null;
+
+                    const text = el.textContent || '';
+                    if (text.trim().length > 0) {
+                        return text.trim();
+                    }
                     return null;
                 }
+            """)
 
-                const text = el.textContent || '';
-                if (text.trim().length > 0) {
-                    return text.trim();
-                }
-                return null;
-            }
-        """)
+            if tooltip_text:
+                # Debug: log first few raw tooltip texts
+                if debug_tooltip_count < 5:
+                    print(f"    [RAW TOOLTIP {debug_tooltip_count}] pos={i}/{num_samples} y={y_idx}: {repr(tooltip_text[:150])}")
+                    debug_tooltip_count += 1
 
-        if tooltip_text:
-            # Debug: log first few raw tooltip texts
-            if debug_tooltip_count < 5:
-                print(f"    [RAW TOOLTIP {debug_tooltip_count}] pos={i}/{num_samples}: {repr(tooltip_text[:150])}")
-                debug_tooltip_count += 1
-
-            data_point = parse_tooltip_text(tooltip_text)
-            if data_point and data_point.get("date") and data_point["date"] not in seen_dates:
-                seen_dates.add(data_point["date"])
-                historical.append(data_point)
-                if len(historical) <= 3 or len(historical) % 10 == 0:
-                    print(f"    [{len(historical)}] {data_point['date']} - "
-                          f"Austin: {data_point.get('austin')}, "
-                          f"Bay Area: {data_point.get('bayarea')}, "
-                          f"Total: {data_point.get('total')}")
+                data_point = parse_tooltip_text(tooltip_text)
+                if data_point and data_point.get("date") and data_point["date"] not in seen_dates:
+                    seen_dates.add(data_point["date"])
+                    historical.append(data_point)
+                    if len(historical) <= 3 or len(historical) % 10 == 0:
+                        print(f"    [{len(historical)}] {data_point['date']} - "
+                              f"Austin: {data_point.get('austin')}, "
+                              f"Bay Area: {data_point.get('bayarea')}, "
+                              f"Total: {data_point.get('total')}")
+                break  # Got tooltip for this X, move to next X position
 
     # Move mouse away to dismiss tooltip
     await page.mouse.move(0, 0)
