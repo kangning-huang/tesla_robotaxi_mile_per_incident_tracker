@@ -45,40 +45,33 @@ except ImportError:
 
 
 class FleetInterpolator:
-    """Interpolate fleet size for any given date based on snapshots.
+    """Interpolate fleet size for any given date based on active fleet snapshots.
 
-    Prefers active fleet counts (vehicles actually on the road) over total
-    fleet counts, since only active vehicles contribute to miles driven.
-    Falls back to total fleet counts when active data is not available.
+    Uses only active fleet counts (vehicles actually on the road), since only
+    active vehicles contribute to miles driven. Snapshots without active fleet
+    data are skipped. Missing days are filled via linear interpolation between
+    known active fleet data points.
     """
 
     def __init__(self, snapshots: list[dict]):
         """Initialize with fleet snapshots.
 
-        For each snapshot, uses austin_active_vehicles if available,
-        otherwise falls back to total_robotaxi / austin_vehicles.
+        Only uses austin_active_vehicles. Snapshots without active fleet
+        data are skipped entirely (total fleet is not used as fallback).
         """
         self.snapshots = []
-        active_count = 0
-        total_count = 0
+        skipped_count = 0
         for s in snapshots:
-            dt = datetime.strptime(s["date"], "%Y-%m-%d")
-            # Prefer active fleet size (vehicles actually driving)
             active = s.get("austin_active_vehicles")
             if active is not None:
-                count = active
-                active_count += 1
+                dt = datetime.strptime(s["date"], "%Y-%m-%d")
+                self.snapshots.append((dt, active))
             else:
-                count = s.get("total_robotaxi", s.get("austin_vehicles", 0))
-                total_count += 1
-            self.snapshots.append((dt, count))
+                skipped_count += 1
         self.snapshots.sort(key=lambda x: x[0])
 
-        if active_count > 0:
-            print(f"  FleetInterpolator: {active_count} active fleet snapshots, "
-                  f"{total_count} total fleet fallbacks")
-        else:
-            print(f"  FleetInterpolator: {total_count} snapshots (no active fleet data available, using total)")
+        print(f"  FleetInterpolator: {len(self.snapshots)} active fleet data points "
+              f"({skipped_count} total-only snapshots skipped, interpolating between known dates)")
 
     def get_fleet_size(self, target_date: datetime) -> int:
         """Get interpolated fleet size for a specific date."""
@@ -748,9 +741,8 @@ def main():
 
   MPI Calculation:
   - Miles between incident N and N+1 = Σ(daily_fleet_size × miles_per_day)
-  - Fleet size interpolated daily from {len(fleet_snapshots)} snapshots
-  - Uses active fleet size (vehicles actually on the road) when available
-  - Falls back to total fleet size when active data is not available
+  - Uses active fleet size only (vehicles actually on the road)
+  - Missing days interpolated linearly between known active fleet data points
   - Assumes {daily_miles} miles/vehicle/day (moderate estimate)
   - Service stoppage days excluded: {len(excluded_dates)} day(s) with 0 miles
 
@@ -761,7 +753,7 @@ def main():
 
   Caveats:
   - Tesla cited for delayed crash reporting to NHTSA
-  - Active fleet data may not cover all dates (falls back to total fleet)
+  - Active fleet data may not cover all dates (linearly interpolated)
   - Not all incidents are equal in severity
   - Small sample size limits trend reliability
     """)
@@ -781,9 +773,8 @@ def main():
             "reason": stoppage.get("reason", "Unknown")
         })
 
-    # Check if active fleet data was used
-    active_fleet_file = data_dir / "fleet_growth_active.json"
-    fleet_source = "active" if active_fleet_file.exists() else "total"
+    # Fleet source is always active (total fleet is not used for MPI calculations)
+    fleet_source = "active"
 
     output = {
         "analysis_date": datetime.now().isoformat(),
