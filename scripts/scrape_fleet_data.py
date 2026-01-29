@@ -188,134 +188,118 @@ async def extract_fleet_numbers(page) -> dict:
     return fleet_data
 
 
-async def extract_historical_data(page) -> list:
-    """Extract historical fleet data by hovering over chart bars to get tooltips."""
+async def extract_historical_from_api(api_responses: list) -> list:
+    """Extract historical fleet data from captured API responses."""
+    historical = []
+
+    for resp in api_responses:
+        data = resp.get('data')
+        if not data:
+            continue
+
+        # Handle array responses (direct chart data)
+        items = []
+        if isinstance(data, list):
+            items = data
+        elif isinstance(data, dict):
+            # Look for nested arrays that might contain chart data
+            for key in ['data', 'items', 'results', 'fleet', 'vehicles', 'history',
+                        'chartData', 'chart_data', 'fleetData', 'fleet_data', 'growth']:
+                val = data.get(key)
+                if isinstance(val, list) and len(val) > 5:
+                    items = val
+                    break
+            # Also check nested objects
+            if not items:
+                for val in data.values():
+                    if isinstance(val, list) and len(val) > 5:
+                        # Check if items look like fleet data (have date-like fields)
+                        sample = val[0] if val else {}
+                        if isinstance(sample, dict) and any(k in str(sample.keys()).lower()
+                                                            for k in ['date', 'time', 'day']):
+                            items = val
+                            break
+
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            # Look for date field
+            date_val = None
+            for key in ['date', 'Date', 'timestamp', 'time', 'day', 'created_at',
+                        'first_spotted', 'firstSpotted']:
+                if key in item:
+                    date_val = item[key]
+                    break
+            if not date_val:
+                continue
+
+            # Normalize date to YYYY-MM-DD
+            date_str = str(date_val)
+            if 'T' in date_str:
+                date_str = date_str.split('T')[0]
+            if len(date_str) == 10 and date_str[4] == '-':
+                # Already YYYY-MM-DD
+                pass
+            else:
+                continue
+
+            # Look for fleet count fields
+            austin = None
+            bayarea = None
+            total = None
+            for key, val in item.items():
+                key_lower = key.lower()
+                if isinstance(val, (int, float)) and val >= 0:
+                    if 'austin' in key_lower:
+                        austin = int(val)
+                    elif 'bay' in key_lower or 'sf' in key_lower:
+                        bayarea = int(val)
+                    elif 'total' in key_lower or 'count' in key_lower or 'fleet' in key_lower:
+                        total = int(val)
+
+            if austin is not None or bayarea is not None or total is not None:
+                historical.append({
+                    "date": date_str,
+                    "austin": austin,
+                    "bayarea": bayarea,
+                    "total": total,
+                })
+
+    if historical:
+        print(f"  [API] Extracted {len(historical)} data points from API responses")
+    return historical
+
+
+async def extract_historical_data(page, api_responses=None) -> list:
+    """Extract historical fleet data using multiple strategies."""
     historical = []
 
     try:
-        # First, scroll to the Fleet Growth section and ensure it's visible
-        fleet_section = await page.query_selector("text=Fleet Growth")
-        if fleet_section:
-            await fleet_section.scroll_into_view_if_needed()
-            await asyncio.sleep(2)
+        # Strategy 1: Check intercepted API responses (most reliable)
+        if api_responses:
+            historical = await extract_historical_from_api(api_responses)
+            if historical:
+                historical.sort(key=lambda x: x.get("date", ""))
+                print(f"  Extracted {len(historical)} historical data points from API")
+                return historical
 
-        # Find the chart container - Recharts uses svg.recharts-surface
-        chart_element = await page.query_selector("svg.recharts-surface")
-        if not chart_element:
-            # Try alternative selectors
-            for selector in ["canvas", ".recharts-wrapper", "[class*='chart']"]:
-                chart_element = await page.query_selector(selector)
-                if chart_element:
-                    print(f"  Found chart element with selector: {selector}")
-                    break
-        else:
-            print("  Found chart element with selector: svg.recharts-surface")
-
-        if not chart_element:
-            print("  Could not find chart element for tooltip extraction")
+        # Strategy 2: Try to extract from page JavaScript state / React internals
+        print("  No API data found, trying page scripts extraction...")
+        historical = await extract_chart_data_from_scripts(page)
+        if historical:
+            historical.sort(key=lambda x: x.get("date", ""))
+            print(f"  Extracted {len(historical)} historical data points from scripts")
             return historical
 
-        # Scroll chart into view and get bounding box
-        await chart_element.scroll_into_view_if_needed()
-        await asyncio.sleep(1)
-
-        bbox = await chart_element.bounding_box()
-        if not bbox:
-            print("  Could not get chart bounding box")
+        # Strategy 3: Hover over chart with native mouse events to trigger tooltips
+        print("  No script data found, trying chart tooltip hover...")
+        historical = await extract_from_chart_hover(page)
+        if historical:
+            historical.sort(key=lambda x: x.get("date", ""))
+            print(f"  Extracted {len(historical)} historical data points from tooltips")
             return historical
 
-        print(f"  Chart bounding box: x={bbox['x']:.0f}, y={bbox['y']:.0f}, w={bbox['width']:.0f}, h={bbox['height']:.0f}")
-
-        # For Recharts, we need to find the actual bar elements and hover on them
-        # Look for rect elements (bars) within the chart
-        bars = await page.query_selector_all("svg.recharts-surface rect.recharts-bar-rectangle")
-        if not bars:
-            bars = await page.query_selector_all("svg.recharts-surface rect")
-
-        print(f"  Found {len(bars)} bar elements in chart")
-
-        # Calculate hover positions across the chart
-        chart_left = bbox['x'] + 60  # Skip y-axis
-        chart_right = bbox['x'] + bbox['width'] - 20
-        # Hover at multiple y positions to ensure we hit the bars
-        chart_y_positions = [
-            bbox['y'] + bbox['height'] * 0.3,  # Upper third
-            bbox['y'] + bbox['height'] * 0.5,  # Middle
-            bbox['y'] + bbox['height'] * 0.7,  # Lower third
-        ]
-
-        num_samples = 60
-        step = (chart_right - chart_left) / num_samples
-        seen_dates = set()
-
-        print(f"  Scanning chart with {num_samples} hover positions...")
-
-        for i in range(num_samples + 1):
-            x = chart_left + (i * step)
-
-            # Try multiple y positions
-            for y in chart_y_positions:
-                # Use JavaScript to dispatch proper mouse events
-                await page.evaluate(f"""
-                    (coords) => {{
-                        const element = document.elementFromPoint(coords.x, coords.y);
-                        if (element) {{
-                            const mouseEnter = new MouseEvent('mouseenter', {{
-                                bubbles: true, clientX: coords.x, clientY: coords.y
-                            }});
-                            const mouseMove = new MouseEvent('mousemove', {{
-                                bubbles: true, clientX: coords.x, clientY: coords.y
-                            }});
-                            const mouseOver = new MouseEvent('mouseover', {{
-                                bubbles: true, clientX: coords.x, clientY: coords.y
-                            }});
-                            element.dispatchEvent(mouseEnter);
-                            element.dispatchEvent(mouseOver);
-                            element.dispatchEvent(mouseMove);
-                        }}
-                    }}
-                """, {"x": x, "y": y})
-
-                await asyncio.sleep(0.1)
-
-                # Try to find tooltip - Recharts uses various tooltip containers
-                tooltip_selectors = [
-                    ".recharts-tooltip-wrapper:not([style*='visibility: hidden'])",
-                    ".recharts-tooltip-wrapper",
-                    ".recharts-default-tooltip",
-                    "[class*='tooltip']",
-                    "[role='tooltip']",
-                ]
-
-                for tooltip_selector in tooltip_selectors:
-                    try:
-                        tooltip = await page.query_selector(tooltip_selector)
-                        if tooltip:
-                            # Check if tooltip is visible
-                            is_visible = await tooltip.is_visible()
-                            if not is_visible:
-                                continue
-
-                            tooltip_text = await tooltip.text_content()
-                            if tooltip_text and tooltip_text.strip():
-                                # Parse the tooltip text
-                                data_point = parse_tooltip_text(tooltip_text)
-                                if data_point and data_point.get("date") and data_point.get("date") not in seen_dates:
-                                    seen_dates.add(data_point["date"])
-                                    historical.append(data_point)
-                                    print(f"    Found: {data_point['date']} - Bay Area: {data_point.get('bayarea')}, Austin: {data_point.get('austin')}")
-                                break
-                    except Exception:
-                        pass
-
-        # If still no data, try to extract from the page's JavaScript data
-        if not historical:
-            print("  No tooltips found, trying to extract chart data from page scripts...")
-            historical = await extract_chart_data_from_scripts(page)
-
-        # Sort by date
-        historical.sort(key=lambda x: x.get("date", ""))
-        print(f"  Extracted {len(historical)} historical data points")
+        print("  Could not extract historical data from any source")
 
     except Exception as e:
         print(f"Warning: Could not extract historical data: {e}")
@@ -325,52 +309,256 @@ async def extract_historical_data(page) -> list:
     return historical
 
 
+async def extract_from_chart_hover(page) -> list:
+    """Extract historical fleet data by hovering over chart to trigger tooltips.
+
+    Uses Playwright's native page.mouse.move() instead of synthetic JS events,
+    which is required for Recharts tooltip activation.
+    """
+    historical = []
+
+    # First, scroll to the Fleet Growth section and ensure it's visible
+    fleet_section = await page.query_selector("text=Fleet Growth")
+    if fleet_section:
+        await fleet_section.scroll_into_view_if_needed()
+        await asyncio.sleep(2)
+
+    # Find the chart container - works for both line and bar charts
+    chart_selectors = [
+        "svg.recharts-surface",
+        ".recharts-wrapper svg",
+        ".recharts-wrapper",
+        "[class*='chart'] svg",
+        "[class*='chart']",
+        "canvas",
+    ]
+
+    chart_element = None
+    for selector in chart_selectors:
+        chart_element = await page.query_selector(selector)
+        if chart_element:
+            print(f"  Found chart element with selector: {selector}")
+            break
+
+    if not chart_element:
+        print("  Could not find chart element for tooltip extraction")
+        return historical
+
+    # Scroll chart into view and get bounding box
+    await chart_element.scroll_into_view_if_needed()
+    await asyncio.sleep(1)
+
+    bbox = await chart_element.bounding_box()
+    if not bbox:
+        print("  Could not get chart bounding box")
+        return historical
+
+    print(f"  Chart bounding box: x={bbox['x']:.0f}, y={bbox['y']:.0f}, w={bbox['width']:.0f}, h={bbox['height']:.0f}")
+
+    # Calculate hover positions across the chart
+    chart_left = bbox['x'] + 60  # Skip y-axis area
+    chart_right = bbox['x'] + bbox['width'] - 20
+    # For Recharts, tooltip triggers based on x-position within the plot area
+    # The y-position just needs to be within the chart bounds
+    chart_y_center = bbox['y'] + bbox['height'] * 0.5
+
+    num_samples = 80  # More samples for better coverage
+    step = (chart_right - chart_left) / num_samples
+    seen_dates = set()
+
+    print(f"  Scanning chart with {num_samples} hover positions using native mouse events...")
+
+    # First, click on the chart area to ensure it's focused/interactive
+    await page.mouse.click(bbox['x'] + bbox['width'] / 2, chart_y_center)
+    await asyncio.sleep(0.5)
+
+    for i in range(num_samples + 1):
+        x = chart_left + (i * step)
+
+        # Use Playwright's native mouse.move() - this sends real browser-level
+        # pointer events that Recharts correctly detects (unlike synthetic JS events)
+        await page.mouse.move(x, chart_y_center)
+        await asyncio.sleep(0.12)
+
+        # Try to find tooltip - check multiple possible selectors
+        tooltip_selectors = [
+            ".recharts-tooltip-wrapper:not([style*='visibility: hidden'])",
+            ".recharts-tooltip-wrapper",
+            ".recharts-default-tooltip",
+            "[class*='Tooltip']:not(button):not(a)",
+            "[class*='tooltip']:not(button):not(a)",
+            "[role='tooltip']",
+        ]
+
+        for tooltip_selector in tooltip_selectors:
+            try:
+                tooltip = await page.query_selector(tooltip_selector)
+                if tooltip:
+                    is_visible = await tooltip.is_visible()
+                    if not is_visible:
+                        continue
+
+                    tooltip_text = await tooltip.text_content()
+                    if tooltip_text and tooltip_text.strip():
+                        data_point = parse_tooltip_text(tooltip_text)
+                        if data_point and data_point.get("date") and data_point.get("date") not in seen_dates:
+                            seen_dates.add(data_point["date"])
+                            historical.append(data_point)
+                            print(f"    Found: {data_point['date']} - Bay Area: {data_point.get('bayarea')}, Austin: {data_point.get('austin')}")
+                        break
+            except Exception:
+                pass
+
+    return historical
+
+
 async def extract_chart_data_from_scripts(page) -> list:
     """Try to extract chart data directly from page scripts or React state."""
     historical = []
 
     try:
-        # Try to access React component state or chart data
+        # Comprehensive extraction from page JavaScript state
         chart_data = await page.evaluate("""
             () => {
-                // Try to find chart data in window or React state
                 const results = [];
 
-                // Method 1: Look for data in window object
-                for (const key of Object.keys(window)) {
-                    if (key.includes('chart') || key.includes('fleet') || key.includes('data')) {
-                        const val = window[key];
-                        if (Array.isArray(val) && val.length > 0 && val[0].date) {
-                            return val;
-                        }
-                    }
+                // Helper: check if an array looks like fleet chart data
+                function isFleetData(arr) {
+                    if (!Array.isArray(arr) || arr.length < 3) return false;
+                    const sample = arr[0];
+                    if (typeof sample !== 'object' || sample === null) return false;
+                    const keys = Object.keys(sample).map(k => k.toLowerCase());
+                    return keys.some(k => k.includes('date') || k.includes('time') || k.includes('day'));
                 }
 
-                // Method 2: Try to find Recharts internal data
-                const rechartsWrapper = document.querySelector('.recharts-wrapper');
-                if (rechartsWrapper && rechartsWrapper.__reactFiber$) {
-                    // React fiber might have props with data
-                    let fiber = rechartsWrapper.__reactFiber$;
-                    while (fiber) {
-                        if (fiber.memoizedProps && fiber.memoizedProps.data) {
-                            return fiber.memoizedProps.data;
+                // Method 1: Check __NEXT_DATA__ (Next.js server-side rendered data)
+                try {
+                    const nextDataEl = document.getElementById('__NEXT_DATA__');
+                    if (nextDataEl) {
+                        const nextData = JSON.parse(nextDataEl.textContent);
+                        // Recursively search for fleet data arrays
+                        function searchObj(obj, depth) {
+                            if (depth > 8 || !obj || typeof obj !== 'object') return null;
+                            if (Array.isArray(obj) && isFleetData(obj)) return obj;
+                            for (const val of Object.values(obj)) {
+                                const found = searchObj(val, depth + 1);
+                                if (found) return found;
+                            }
+                            return null;
                         }
-                        fiber = fiber.return;
+                        const found = searchObj(nextData, 0);
+                        if (found) return found;
                     }
-                }
+                } catch(e) {}
 
-                // Method 3: Parse script tags for data
-                const scripts = document.querySelectorAll('script');
-                for (const script of scripts) {
-                    const text = script.textContent || '';
-                    // Look for array patterns with dates
-                    const match = text.match(/\\[\\s*\\{[^\\]]*"date"[^\\]]*\\}\\s*\\]/);
-                    if (match) {
+                // Method 2: Look for data in window/global object
+                try {
+                    for (const key of Object.keys(window)) {
                         try {
-                            return JSON.parse(match[0]);
+                            const val = window[key];
+                            if (Array.isArray(val) && isFleetData(val)) return val;
+                            if (val && typeof val === 'object' && !Array.isArray(val)) {
+                                for (const v of Object.values(val)) {
+                                    if (Array.isArray(v) && isFleetData(v)) return v;
+                                }
+                            }
                         } catch(e) {}
                     }
-                }
+                } catch(e) {}
+
+                // Method 3: React fiber tree traversal (works for Recharts and other React charts)
+                try {
+                    // Find React root fibers
+                    const allElements = document.querySelectorAll('*');
+                    for (const el of allElements) {
+                        const fiberKey = Object.keys(el).find(k =>
+                            k.startsWith('__reactFiber$') ||
+                            k.startsWith('__reactInternalInstance$')
+                        );
+                        if (!fiberKey) continue;
+
+                        let fiber = el[fiberKey];
+                        const visited = new Set();
+                        let depth = 0;
+
+                        while (fiber && depth < 50) {
+                            depth++;
+                            const fiberId = fiber.stateNode ? fiber.stateNode.toString() : String(depth);
+                            if (visited.has(fiber)) break;
+                            visited.add(fiber);
+
+                            // Check memoizedProps for chart data
+                            const props = fiber.memoizedProps;
+                            if (props) {
+                                if (Array.isArray(props.data) && isFleetData(props.data)) {
+                                    return props.data;
+                                }
+                                // Check nested props
+                                for (const val of Object.values(props)) {
+                                    if (Array.isArray(val) && isFleetData(val)) return val;
+                                }
+                            }
+
+                            // Check memoizedState
+                            let state = fiber.memoizedState;
+                            let stateDepth = 0;
+                            while (state && stateDepth < 10) {
+                                stateDepth++;
+                                if (state.memoizedState) {
+                                    const ms = state.memoizedState;
+                                    if (Array.isArray(ms) && isFleetData(ms)) return ms;
+                                    if (ms && typeof ms === 'object' && !Array.isArray(ms)) {
+                                        for (const val of Object.values(ms)) {
+                                            if (Array.isArray(val) && isFleetData(val)) return val;
+                                        }
+                                    }
+                                }
+                                if (state.queue && state.queue.lastRenderedState) {
+                                    const lrs = state.queue.lastRenderedState;
+                                    if (Array.isArray(lrs) && isFleetData(lrs)) return lrs;
+                                }
+                                state = state.next;
+                            }
+
+                            fiber = fiber.return;
+                        }
+                    }
+                } catch(e) {}
+
+                // Method 4: Parse script tags for embedded data
+                try {
+                    const scripts = document.querySelectorAll('script');
+                    for (const script of scripts) {
+                        const text = script.textContent || '';
+                        if (text.length < 50 || text.length > 500000) continue;
+                        // Look for JSON arrays with date-like objects
+                        const matches = text.matchAll(/\\[\\s*\\{[^\\]]{10,}?"(?:date|Date|time|timestamp)"[^\\]]*?\\}\\s*\\]/g);
+                        for (const match of matches) {
+                            try {
+                                const parsed = JSON.parse(match[0]);
+                                if (isFleetData(parsed)) return parsed;
+                            } catch(e) {}
+                        }
+                    }
+                } catch(e) {}
+
+                // Method 5: Check for Zustand/Redux/MobX stores
+                try {
+                    // Zustand stores often attached to window
+                    for (const key of Object.keys(window)) {
+                        try {
+                            const val = window[key];
+                            if (val && typeof val === 'object' && typeof val.getState === 'function') {
+                                const state = val.getState();
+                                if (state && typeof state === 'object') {
+                                    for (const sv of Object.values(state)) {
+                                        if (Array.isArray(sv) && isFleetData(sv)) return sv;
+                                    }
+                                }
+                            }
+                        } catch(e) {}
+                    }
+                } catch(e) {}
 
                 return results;
             }
@@ -378,16 +566,48 @@ async def extract_chart_data_from_scripts(page) -> list:
 
         if chart_data and isinstance(chart_data, list):
             for item in chart_data:
-                if isinstance(item, dict) and item.get("date"):
-                    historical.append({
-                        "date": item.get("date"),
-                        "bayarea": item.get("bayArea") or item.get("bayarea") or item.get("Bay Area"),
-                        "austin": item.get("austin") or item.get("Austin"),
-                        "total": item.get("total") or item.get("Total"),
-                    })
-            print(f"  Found {len(historical)} data points from scripts")
+                if isinstance(item, dict):
+                    # Find date field (flexible key matching)
+                    date_val = None
+                    for key in ['date', 'Date', 'timestamp', 'time', 'day',
+                                'created_at', 'firstSpotted', 'first_spotted']:
+                        if key in item:
+                            date_val = str(item[key])
+                            break
+                    if not date_val:
+                        continue
+
+                    # Normalize date
+                    if 'T' in date_val:
+                        date_val = date_val.split('T')[0]
+
+                    # Find fleet count fields (flexible key matching)
+                    austin = None
+                    bayarea = None
+                    total = None
+                    for key, val in item.items():
+                        if not isinstance(val, (int, float)):
+                            continue
+                        key_lower = key.lower()
+                        if 'austin' in key_lower:
+                            austin = int(val)
+                        elif 'bay' in key_lower or 'sf' in key_lower:
+                            bayarea = int(val)
+                        elif 'total' in key_lower or 'count' in key_lower or 'fleet' in key_lower:
+                            total = int(val)
+
+                    if austin is not None or bayarea is not None or total is not None:
+                        historical.append({
+                            "date": date_val,
+                            "bayarea": bayarea,
+                            "austin": austin,
+                            "total": total,
+                        })
+            print(f"  Found {len(historical)} data points from scripts/React state")
     except Exception as e:
         print(f"  Could not extract chart data from scripts: {e}")
+        import traceback
+        traceback.print_exc()
 
     return historical
 
@@ -584,6 +804,25 @@ async def scrape_robotaxi_tracker():
 
         page = await context.new_page()
 
+        # Set up network interception to capture API responses with fleet data
+        api_responses = []
+
+        async def capture_response(response):
+            """Capture API/JSON responses that might contain fleet chart data."""
+            url = response.url
+            content_type = response.headers.get('content-type', '')
+            if response.ok and ('json' in content_type or 'api' in url.lower() or
+                               'fleet' in url.lower() or 'vehicle' in url.lower() or
+                               'graphql' in url.lower() or 'trpc' in url.lower()):
+                try:
+                    body = await response.json()
+                    api_responses.append({'url': url, 'data': body})
+                    print(f"  [API] Captured response: {url[:120]}")
+                except Exception:
+                    pass
+
+        page.on("response", capture_response)
+
         try:
             # Navigate to main page
             print(f"\nNavigating to {ROBOTAXI_TRACKER_URL}...")
@@ -618,7 +857,8 @@ async def scrape_robotaxi_tracker():
 
             # Extract historical data
             print("\nExtracting historical data...")
-            historical = await extract_historical_data(page)
+            print(f"  Captured {len(api_responses)} API responses during page load")
+            historical = await extract_historical_data(page, api_responses)
             print(f"  Found {len(historical)} historical data points")
 
             # Extract NHTSA incidents
