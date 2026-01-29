@@ -81,13 +81,14 @@ async def scroll_and_wait_for_charts(page):
     except Exception as e:
         print(f"  Could not scroll to Fleet Growth: {e}")
 
-    # Wait specifically for Recharts SVG to render with proper dimensions
+    # Wait specifically for chart SVG to render with proper dimensions
     # Generic 'svg path' picks up icons and decorative SVGs - we need the actual chart
     chart_ready = False
     for attempt in range(6):  # Poll up to ~12 seconds total
         try:
             chart_info = await page.evaluate("""
                 () => {
+                    // Check Recharts-specific selectors first
                     const surfaces = document.querySelectorAll('svg.recharts-surface');
                     for (const svg of surfaces) {
                         const rect = svg.getBoundingClientRect();
@@ -95,16 +96,34 @@ async def scroll_and_wait_for_charts(page):
                             return {width: rect.width, height: rect.height, count: surfaces.length};
                         }
                     }
-                    // Also check wrapper as fallback
-                    const wrappers = document.querySelectorAll('.recharts-wrapper');
-                    for (const w of wrappers) {
-                        const rect = w.getBoundingClientRect();
-                        if (rect.height >= 100 && rect.width >= 200) {
-                            return {width: rect.width, height: rect.height, count: wrappers.length,
-                                    source: 'wrapper'};
+                    // Check wrappers (Recharts and generic)
+                    const wrapperSelectors = [
+                        '.recharts-wrapper',
+                        '.recharts-responsive-container',
+                        '[class*="chart-container"]',
+                        '[class*="ChartContainer"]',
+                    ];
+                    for (const sel of wrapperSelectors) {
+                        const wrappers = document.querySelectorAll(sel);
+                        for (const w of wrappers) {
+                            const rect = w.getBoundingClientRect();
+                            if (rect.height >= 100 && rect.width >= 200) {
+                                return {width: rect.width, height: rect.height, count: wrappers.length,
+                                        source: sel};
+                            }
                         }
                     }
-                    return {count: surfaces.length, wrapperCount: wrappers.length};
+                    // Fall back to any large SVG
+                    const allSvgs = document.querySelectorAll('svg');
+                    for (const svg of allSvgs) {
+                        const rect = svg.getBoundingClientRect();
+                        if (rect.height >= 150 && rect.width >= 300) {
+                            return {width: rect.width, height: rect.height, count: 1,
+                                    source: 'large-svg'};
+                        }
+                    }
+                    return {count: surfaces.length,
+                            wrapperCount: document.querySelectorAll('.recharts-wrapper').length};
                 }
             """)
             if chart_info and chart_info.get("height") and chart_info["height"] >= 100:
@@ -269,13 +288,31 @@ async def ensure_fleet_chart_visible(page) -> bool:
                         return {width: rect.width, height: rect.height, top: rect.top};
                     }
                 }
-                // Also check wrappers
-                const wrappers = document.querySelectorAll('.recharts-wrapper');
-                for (const w of wrappers) {
-                    const rect = w.getBoundingClientRect();
-                    if (rect.height >= 100 && rect.width >= 200) {
+                // Also check wrappers (Recharts and generic)
+                const wrapperSelectors = [
+                    '.recharts-wrapper',
+                    '.recharts-responsive-container',
+                    '[class*="chart-container"]',
+                    '[class*="ChartContainer"]',
+                ];
+                for (const sel of wrapperSelectors) {
+                    const wrappers = document.querySelectorAll(sel);
+                    for (const w of wrappers) {
+                        const rect = w.getBoundingClientRect();
+                        if (rect.height >= 100 && rect.width >= 200) {
+                            return {width: rect.width, height: rect.height, top: rect.top,
+                                    source: sel};
+                        }
+                    }
+                }
+                // Last resort: check for large SVGs
+                const svgs = document.querySelectorAll('svg');
+                for (const svg of svgs) {
+                    const rect = svg.getBoundingClientRect();
+                    if (rect.height >= 150 && rect.width >= 300 &&
+                        rect.top >= 0 && rect.bottom <= window.innerHeight + 100) {
                         return {width: rect.width, height: rect.height, top: rect.top,
-                                source: 'wrapper'};
+                                source: 'large-svg'};
                     }
                 }
                 return null;
@@ -602,8 +639,36 @@ async def extract_data_via_mouse_hover(page) -> list:
                     }
                 }
 
-                // Find all recharts charts
-                const charts = document.querySelectorAll('.recharts-wrapper');
+                // Find charts using multiple selectors (Recharts and generic)
+                const chartSelectors = [
+                    '.recharts-wrapper',
+                    '.recharts-responsive-container',
+                    '[class*="chart-container"]',
+                    '[class*="ChartContainer"]',
+                    '[class*="chart-wrapper"]',
+                    '[class*="ChartWrapper"]',
+                ];
+                let charts = [];
+                for (const sel of chartSelectors) {
+                    const found = document.querySelectorAll(sel);
+                    if (found.length > 0) {
+                        charts = Array.from(found);
+                        break;
+                    }
+                }
+
+                // Also look for SVG charts directly if no wrappers found
+                if (charts.length === 0) {
+                    // Find large SVGs that could be chart containers
+                    const svgs = document.querySelectorAll('svg');
+                    for (const svg of svgs) {
+                        const rect = svg.getBoundingClientRect();
+                        if (rect.height >= 150 && rect.width >= 300) {
+                            charts.push(svg);
+                        }
+                    }
+                }
+
                 const result = {
                     chartsFound: charts.length,
                     headingFound: !!headingRect,
@@ -651,7 +716,8 @@ async def extract_data_via_mouse_hover(page) -> list:
                 if (!targetChart) return result;
 
                 // Prefer the SVG surface inside the chart (more precise for hovering)
-                const svg = targetChart.querySelector('svg.recharts-surface');
+                const svg = targetChart.querySelector('svg.recharts-surface') ||
+                            targetChart.querySelector('svg');
                 const target = svg || targetChart;
                 const rect = target.getBoundingClientRect();
 
@@ -659,7 +725,8 @@ async def extract_data_via_mouse_hover(page) -> list:
                 result.y = rect.y;
                 result.width = rect.width;
                 result.height = rect.height;
-                result.source = svg ? 'recharts-surface' : 'recharts-wrapper';
+                result.source = svg ? (svg.classList.contains('recharts-surface')
+                    ? 'recharts-surface' : 'svg-in-chart') : 'chart-wrapper';
                 return result;
             }
         """)
@@ -726,29 +793,36 @@ async def extract_data_via_mouse_hover(page) -> list:
         print(f"  Could not find properly-sized chart after retries "
               f"(charts={charts_found}, best={w:.0f}x{h:.0f})")
 
-        # Last resort: try ANY recharts-surface SVG with proper dimensions
-        chart_elements = await page.query_selector_all("svg.recharts-surface")
-        found_fallback = False
-        for chart_element in chart_elements:
-            await chart_element.scroll_into_view_if_needed()
-            await asyncio.sleep(1)
-            raw_bbox = await chart_element.bounding_box()
-            if raw_bbox and raw_bbox.get("height", 0) >= 100 and raw_bbox.get("width", 0) >= 200:
-                bbox = raw_bbox
-                chart_source = "direct-svg-fallback"
-                print(f"  Last resort: found chart SVG {raw_bbox['width']:.0f}x{raw_bbox['height']:.0f}")
-                found_fallback = True
+        # Last resort: try ANY large SVG with proper dimensions
+        # First try Recharts-specific, then fall back to any large SVG
+        for svg_selector in ["svg.recharts-surface", "svg"]:
+            chart_elements = await page.query_selector_all(svg_selector)
+            found_fallback = False
+            for chart_element in chart_elements:
+                try:
+                    await chart_element.scroll_into_view_if_needed()
+                    await asyncio.sleep(1)
+                    raw_bbox = await chart_element.bounding_box()
+                    if raw_bbox and raw_bbox.get("height", 0) >= 100 and raw_bbox.get("width", 0) >= 200:
+                        bbox = raw_bbox
+                        chart_source = f"direct-{svg_selector}-fallback"
+                        print(f"  Last resort: found chart {svg_selector} "
+                              f"{raw_bbox['width']:.0f}x{raw_bbox['height']:.0f}")
+                        found_fallback = True
+                        break
+                    else:
+                        h = raw_bbox.get("height", 0) if raw_bbox else 0
+                        w = raw_bbox.get("width", 0) if raw_bbox else 0
+                        if h > 50 or w > 100:  # Only log if somewhat sizeable
+                            print(f"  Last resort: skipping {svg_selector} {w:.0f}x{h:.0f} (too small)")
+                except Exception:
+                    continue
+
+            if found_fallback:
                 break
-            else:
-                h = raw_bbox.get("height", 0) if raw_bbox else 0
-                w = raw_bbox.get("width", 0) if raw_bbox else 0
-                print(f"  Last resort: skipping SVG {w:.0f}x{h:.0f} (too small)")
 
         if not found_fallback:
-            if chart_elements:
-                print(f"  All {len(chart_elements)} SVGs too small for tooltip extraction")
-            else:
-                print("  No recharts-surface SVG found at all")
+            print("  No suitable chart SVG found at all for tooltip extraction")
             return historical
 
     print(f"  Chart bbox: x={bbox['x']:.0f}, y={bbox['y']:.0f}, "
@@ -809,26 +883,40 @@ async def extract_data_via_mouse_hover(page) -> list:
 
             await asyncio.sleep(0.12)  # Give tooltip time to render
 
-            # Check for tooltip content - use only Recharts-specific selector
+            # Check for tooltip content - try Recharts-specific and broader selectors
             tooltip_text = await page.evaluate("""
                 () => {
-                    // Only look at Recharts tooltip wrapper (not generic tooltips)
-                    const el = document.querySelector('.recharts-tooltip-wrapper');
-                    if (!el) return null;
+                    // Try multiple tooltip selectors in order of specificity
+                    const selectors = [
+                        '.recharts-tooltip-wrapper',
+                        '[class*="tooltip"]',
+                        '[class*="Tooltip"]',
+                        '[role="tooltip"]',
+                    ];
 
-                    const style = window.getComputedStyle(el);
-                    // Recharts hides tooltip with visibility:hidden or opacity:0
-                    if (style.visibility === 'hidden' || style.opacity === '0') {
-                        return null;
-                    }
+                    for (const selector of selectors) {
+                        const elements = document.querySelectorAll(selector);
+                        for (const el of elements) {
+                            const style = window.getComputedStyle(el);
+                            // Skip hidden tooltips
+                            if (style.visibility === 'hidden' || style.opacity === '0' ||
+                                style.display === 'none') {
+                                continue;
+                            }
 
-                    // Also check if tooltip is positioned off-screen
-                    const rect = el.getBoundingClientRect();
-                    if (rect.width === 0 || rect.height === 0) return null;
+                            const rect = el.getBoundingClientRect();
+                            if (rect.width === 0 || rect.height === 0) continue;
 
-                    const text = el.textContent || '';
-                    if (text.trim().length > 0) {
-                        return text.trim();
+                            const text = el.textContent || '';
+                            if (text.trim().length > 0) {
+                                // Verify this looks like chart data (has a date or number)
+                                const hasDate = /\d{4}|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec/i.test(text);
+                                const hasNumber = /\d{2,}/.test(text);
+                                if (hasDate || hasNumber) {
+                                    return text.trim();
+                                }
+                            }
+                        }
                     }
                     return null;
                 }
@@ -1354,6 +1442,257 @@ async def click_fleet_tab(page, tab_name: str) -> bool:
     return False
 
 
+async def click_bar_chart_mode(page) -> bool:
+    """Switch the Fleet Growth chart to bar chart display mode.
+
+    The Fleet Growth section has toggle icons for line chart and bar chart views.
+    Bar chart mode provides much better tooltip hit targets (each bar is a large
+    hover area) compared to line chart mode where you need to hit exact data points.
+
+    Returns:
+        True if bar chart mode was activated, False otherwise.
+    """
+    # First scroll to Fleet Growth section
+    try:
+        fleet_section = await page.query_selector("text=Fleet Growth")
+        if not fleet_section:
+            fleet_section = await page.query_selector("text=车队增长")
+        if fleet_section:
+            await fleet_section.scroll_into_view_if_needed()
+            await asyncio.sleep(1)
+    except Exception:
+        pass
+
+    # Strategy 1: Find the bar chart toggle button near Fleet Growth heading
+    # The UI shows two icon buttons (line chart / bar chart) next to Active/Total tabs
+    try:
+        clicked = await page.evaluate("""
+            () => {
+                // Find the Fleet Growth heading
+                const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, div, span, p');
+                let fleetHeading = null;
+                for (const el of headings) {
+                    const text = (el.textContent || '').trim();
+                    if ((text === 'Fleet Growth' || text === '车队增长' ||
+                         text === 'Flottenentwicklung' || text === 'Croissance de la flotte') &&
+                        el.children.length < 5) {
+                        fleetHeading = el;
+                        break;
+                    }
+                }
+                if (!fleetHeading) return {found: false, reason: 'no heading'};
+
+                // Look for the chart type toggle container near the heading
+                // Walk up to find the section containing the heading and chart controls
+                let section = fleetHeading.parentElement;
+                for (let i = 0; i < 8 && section; i++) {
+                    // Look for buttons/icons that could be chart type toggles
+                    const buttons = section.querySelectorAll('button, [role="button"], [class*="toggle"], [class*="icon"], svg');
+                    const candidates = [];
+
+                    for (const btn of buttons) {
+                        const rect = btn.getBoundingClientRect();
+                        if (rect.width === 0 || rect.height === 0) continue;
+
+                        // Check if this button contains an SVG with bar chart paths
+                        // Bar chart icons typically have vertical rectangle paths
+                        const svgs = btn.tagName === 'svg' ? [btn] : btn.querySelectorAll('svg');
+                        for (const svg of svgs) {
+                            const paths = svg.querySelectorAll('path, rect, line');
+                            const svgContent = svg.innerHTML || '';
+                            // Bar chart SVG icons typically contain multiple vertical rectangles
+                            // or paths that look like bars
+                            const isBarChart = (
+                                svgContent.includes('rect') ||
+                                // Common bar chart icon patterns
+                                (paths.length >= 2 && paths.length <= 10)
+                            );
+                            if (isBarChart) {
+                                candidates.push({
+                                    element: btn.tagName === 'svg' ? btn.parentElement || btn : btn,
+                                    svg: svg,
+                                    pathCount: paths.length,
+                                    rect: rect,
+                                    text: (btn.textContent || '').trim(),
+                                    ariaLabel: btn.getAttribute('aria-label') || '',
+                                    title: btn.getAttribute('title') || '',
+                                });
+                            }
+                        }
+                    }
+
+                    if (candidates.length >= 2) {
+                        // Found toggle pair - the second one is typically the bar chart
+                        // Sort by horizontal position (left to right)
+                        candidates.sort((a, b) => a.rect.left - b.rect.left);
+
+                        // Try to identify the bar chart button:
+                        // 1. Check aria-label or title for "bar" keyword
+                        // 2. If no labels, take the second button (bar chart is usually after line chart)
+                        let barBtn = null;
+                        for (const c of candidates) {
+                            const label = (c.ariaLabel + ' ' + c.title + ' ' + c.text).toLowerCase();
+                            if (label.includes('bar')) {
+                                barBtn = c;
+                                break;
+                            }
+                        }
+                        if (!barBtn && candidates.length >= 2) {
+                            barBtn = candidates[1]; // Second icon is usually bar chart
+                        }
+
+                        if (barBtn) {
+                            barBtn.element.click();
+                            return {found: true, method: 'svg-toggle-pair',
+                                    candidates: candidates.length};
+                        }
+                    }
+
+                    section = section.parentElement;
+                }
+
+                return {found: false, reason: 'no toggle buttons found'};
+            }
+        """)
+
+        if clicked and clicked.get("found"):
+            print(f"  Switched to bar chart mode ({clicked.get('method')}, "
+                  f"{clicked.get('candidates', 0)} candidates)")
+            await asyncio.sleep(2)  # Wait for chart to re-render
+            return True
+        else:
+            reason = clicked.get("reason", "unknown") if clicked else "evaluation failed"
+            print(f"  Bar chart toggle Strategy 1 failed: {reason}")
+    except Exception as e:
+        print(f"  Bar chart toggle Strategy 1 error: {e}")
+
+    # Strategy 2: Look for buttons near Fleet Growth heading by position
+    # Find all small buttons/clickable elements in the Fleet Growth header area
+    try:
+        clicked = await page.evaluate("""
+            () => {
+                // Find Fleet Growth heading position
+                const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, div, span, p');
+                let headingRect = null;
+                for (const el of headings) {
+                    const text = (el.textContent || '').trim();
+                    if ((text === 'Fleet Growth' || text === '车队增长') &&
+                        el.children.length < 5) {
+                        headingRect = el.getBoundingClientRect();
+                        break;
+                    }
+                }
+                if (!headingRect) return {found: false, reason: 'no heading rect'};
+
+                // Find all clickable elements near the heading (within 200px vertically)
+                const allClickable = document.querySelectorAll(
+                    'button, [role="button"], [role="tab"], [tabindex="0"]'
+                );
+                const nearby = [];
+
+                for (const el of allClickable) {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.width === 0 || rect.height === 0) continue;
+                    // Must be near the heading vertically
+                    const vertDist = Math.abs(rect.top - headingRect.top);
+                    if (vertDist > 200) continue;
+                    // Must be to the right of heading or on the same line
+                    nearby.push({
+                        element: el,
+                        rect: rect,
+                        text: (el.textContent || '').trim().substring(0, 50),
+                        vertDist: vertDist,
+                        left: rect.left,
+                    });
+                }
+
+                // Sort by position (left to right, same line as heading first)
+                nearby.sort((a, b) => a.vertDist - b.vertDist || a.left - b.left);
+
+                // Look for the bar chart button - it's typically a small icon button
+                // that is NOT "Active" or "Total" text
+                const iconButtons = nearby.filter(n => {
+                    const text = n.text.toLowerCase();
+                    return text !== 'active' && text !== 'total' &&
+                           text !== '活跃' && text !== '总计' &&
+                           n.rect.width < 100 && n.rect.height < 100;
+                });
+
+                if (iconButtons.length >= 2) {
+                    // Click the second icon button (bar chart is typically second)
+                    iconButtons[1].element.click();
+                    return {found: true, method: 'position-based',
+                            total: nearby.length, icons: iconButtons.length};
+                } else if (iconButtons.length === 1) {
+                    // Only one icon - try clicking it
+                    iconButtons[0].element.click();
+                    return {found: true, method: 'position-based-single',
+                            total: nearby.length, icons: 1};
+                }
+
+                return {found: false, reason: 'no icon buttons',
+                        nearby: nearby.length,
+                        texts: nearby.map(n => n.text).slice(0, 10)};
+            }
+        """)
+
+        if clicked and clicked.get("found"):
+            print(f"  Switched to bar chart mode ({clicked.get('method')}, "
+                  f"{clicked.get('icons', 0)} icon buttons)")
+            await asyncio.sleep(2)
+            return True
+        else:
+            reason = clicked.get("reason", "unknown") if clicked else "evaluation failed"
+            texts = clicked.get("texts", []) if clicked else []
+            print(f"  Bar chart toggle Strategy 2 failed: {reason}")
+            if texts:
+                print(f"    Nearby elements: {texts}")
+    except Exception as e:
+        print(f"  Bar chart toggle Strategy 2 error: {e}")
+
+    # Strategy 3: Use Playwright to find and click elements with bar chart-like SVG
+    try:
+        # Look for all SVG elements near Fleet Growth that could be toggle icons
+        svg_elements = await page.query_selector_all("svg")
+        fleet_section = await page.query_selector("text=Fleet Growth")
+        if fleet_section:
+            fleet_bbox = await fleet_section.bounding_box()
+            if fleet_bbox:
+                icon_svgs = []
+                for svg in svg_elements:
+                    try:
+                        svg_bbox = await svg.bounding_box()
+                        if not svg_bbox:
+                            continue
+                        # Small icon SVG near the heading
+                        if (svg_bbox["width"] < 50 and svg_bbox["height"] < 50 and
+                                abs(svg_bbox["y"] - fleet_bbox["y"]) < 100):
+                            icon_svgs.append((svg, svg_bbox))
+                    except Exception:
+                        continue
+
+                if len(icon_svgs) >= 2:
+                    # Sort by x position, click the second one (bar chart)
+                    icon_svgs.sort(key=lambda x: x[1]["x"])
+                    await icon_svgs[1][0].click()
+                    print(f"  Switched to bar chart mode (SVG direct click, "
+                          f"{len(icon_svgs)} icon SVGs)")
+                    await asyncio.sleep(2)
+                    return True
+                elif len(icon_svgs) == 1:
+                    await icon_svgs[0][0].click()
+                    print(f"  Clicked single icon SVG near Fleet Growth")
+                    await asyncio.sleep(2)
+                    return True
+                else:
+                    print(f"  Bar chart toggle Strategy 3: no icon SVGs found near heading")
+    except Exception as e:
+        print(f"  Bar chart toggle Strategy 3 error: {e}")
+
+    print(f"  Warning: Could not switch to bar chart mode (all strategies failed)")
+    return False
+
+
 async def extract_active_fleet_numbers(page) -> dict:
     """Extract active fleet numbers after clicking the Active tab.
 
@@ -1603,6 +1942,11 @@ async def scrape_robotaxi_tracker():
             # Take full page screenshot after all content loaded
             await take_screenshot(page, "main_page_full")
 
+            # Switch to bar chart mode for better tooltip hit targets
+            # Bar charts have large hover areas per data point vs line charts
+            print("\nSwitching to bar chart mode for reliable tooltip extraction...")
+            bar_chart_active = await click_bar_chart_mode(page)
+
             # Extract historical data (Total fleet - default view)
             print(f"\n  Captured {len(captured_api_responses)} API responses during page load")
             print("\nExtracting historical data (Total fleet)...")
@@ -1627,6 +1971,8 @@ async def scrape_robotaxi_tracker():
             # Click the "Active" tab on Fleet Growth chart
             active_tab_clicked = await click_fleet_tab(page, "Active")
             if active_tab_clicked:
+                # Re-enable bar chart mode after tab switch (tab switch may reset chart type)
+                await click_bar_chart_mode(page)
                 await take_screenshot(page, "fleet_growth_active")
 
                 # Extract active fleet numbers
