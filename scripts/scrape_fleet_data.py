@@ -68,92 +68,20 @@ async def scroll_and_wait_for_charts(page):
     # Now scroll specifically to Fleet Growth section and wait
     try:
         fleet_section = await page.query_selector("text=Fleet Growth")
-        if not fleet_section:
-            fleet_section = await page.query_selector("text=车队增长")
         if fleet_section:
             await fleet_section.scroll_into_view_if_needed()
             print("  Found Fleet Growth section, waiting for chart...")
             await asyncio.sleep(2)  # Wait for chart animation to complete
-        else:
-            print("  Fleet Growth heading not found, scrolling to middle of page...")
-            await page.evaluate(f"window.scrollTo(0, {page_height // 3})")
-            await asyncio.sleep(2)
     except Exception as e:
         print(f"  Could not scroll to Fleet Growth: {e}")
 
-    # Wait specifically for chart SVG to render with proper dimensions
-    # Generic 'svg path' picks up icons and decorative SVGs - we need the actual chart
-    chart_ready = False
-    for attempt in range(6):  # Poll up to ~12 seconds total
-        try:
-            chart_info = await page.evaluate("""
-                () => {
-                    // Check Recharts-specific selectors first
-                    const surfaces = document.querySelectorAll('svg.recharts-surface');
-                    for (const svg of surfaces) {
-                        const rect = svg.getBoundingClientRect();
-                        if (rect.height >= 100 && rect.width >= 200) {
-                            return {width: rect.width, height: rect.height, count: surfaces.length};
-                        }
-                    }
-                    // Check wrappers (Recharts and generic)
-                    const wrapperSelectors = [
-                        '.recharts-wrapper',
-                        '.recharts-responsive-container',
-                        '[class*="chart-container"]',
-                        '[class*="ChartContainer"]',
-                    ];
-                    for (const sel of wrapperSelectors) {
-                        const wrappers = document.querySelectorAll(sel);
-                        for (const w of wrappers) {
-                            const rect = w.getBoundingClientRect();
-                            if (rect.height >= 100 && rect.width >= 200) {
-                                return {width: rect.width, height: rect.height, count: wrappers.length,
-                                        source: sel};
-                            }
-                        }
-                    }
-                    // Fall back to any large SVG
-                    const allSvgs = document.querySelectorAll('svg');
-                    for (const svg of allSvgs) {
-                        const rect = svg.getBoundingClientRect();
-                        if (rect.height >= 150 && rect.width >= 300) {
-                            return {width: rect.width, height: rect.height, count: 1,
-                                    source: 'large-svg'};
-                        }
-                    }
-                    return {count: surfaces.length,
-                            wrapperCount: document.querySelectorAll('.recharts-wrapper').length};
-                }
-            """)
-            if chart_info and chart_info.get("height") and chart_info["height"] >= 100:
-                print(f"  Chart rendered: {chart_info['width']:.0f}x{chart_info['height']:.0f} "
-                      f"({chart_info['count']} charts found, attempt {attempt + 1})")
-                chart_ready = True
-                await asyncio.sleep(1)  # Extra wait for chart data to populate
-                break
-            else:
-                svg_count = chart_info.get('count', 0) if chart_info else 0
-                wrapper_count = chart_info.get('wrapperCount', 0) if chart_info else 0
-                print(f"  Waiting for chart render (attempt {attempt + 1}/6, "
-                      f"svgs={svg_count}, wrappers={wrapper_count})...")
-                await asyncio.sleep(2)
-        except Exception:
-            await asyncio.sleep(2)
-
-    if not chart_ready:
-        print("  WARNING: No properly-sized Recharts chart found after waiting")
-        # Try one more scroll to Fleet Growth to trigger rendering
-        try:
-            fleet_section = await page.query_selector("text=Fleet Growth")
-            if not fleet_section:
-                fleet_section = await page.query_selector("text=车队增长")
-            if fleet_section:
-                await fleet_section.scroll_into_view_if_needed()
-                await asyncio.sleep(3)
-                print("  Re-scrolled to Fleet Growth, waiting additional time...")
-        except Exception:
-            pass
+    # Wait for any canvas or SVG charts to render
+    try:
+        await page.wait_for_selector("canvas, svg path", timeout=5000)
+        print("  Chart elements detected")
+        await asyncio.sleep(1)  # Extra wait for chart data to populate
+    except Exception:
+        print("  No chart canvas/SVG found within timeout")
 
 
 async def extract_fleet_numbers(page) -> dict:
@@ -260,74 +188,6 @@ async def extract_fleet_numbers(page) -> dict:
     return fleet_data
 
 
-async def ensure_fleet_chart_visible(page) -> bool:
-    """Scroll to Fleet Growth chart and wait for it to render with proper dimensions.
-
-    Returns True if a properly-sized chart was found.
-    """
-    # Scroll to Fleet Growth heading
-    fleet_section = await page.query_selector("text=Fleet Growth")
-    if not fleet_section:
-        fleet_section = await page.query_selector("text=车队增长")
-    if fleet_section:
-        await fleet_section.scroll_into_view_if_needed()
-        await asyncio.sleep(1)
-    else:
-        print("  [chart-wait] Fleet Growth heading not found")
-        return False
-
-    # Wait for chart SVG to render with proper dimensions
-    for attempt in range(8):  # Up to ~16 seconds
-        chart_info = await page.evaluate("""
-            () => {
-                const surfaces = document.querySelectorAll('svg.recharts-surface');
-                for (const svg of surfaces) {
-                    const rect = svg.getBoundingClientRect();
-                    if (rect.height >= 100 && rect.width >= 200 &&
-                        rect.top >= 0 && rect.bottom <= window.innerHeight + 100) {
-                        return {width: rect.width, height: rect.height, top: rect.top};
-                    }
-                }
-                // Also check wrappers (Recharts and generic)
-                const wrapperSelectors = [
-                    '.recharts-wrapper',
-                    '.recharts-responsive-container',
-                    '[class*="chart-container"]',
-                    '[class*="ChartContainer"]',
-                ];
-                for (const sel of wrapperSelectors) {
-                    const wrappers = document.querySelectorAll(sel);
-                    for (const w of wrappers) {
-                        const rect = w.getBoundingClientRect();
-                        if (rect.height >= 100 && rect.width >= 200) {
-                            return {width: rect.width, height: rect.height, top: rect.top,
-                                    source: sel};
-                        }
-                    }
-                }
-                // Last resort: check for large SVGs
-                const svgs = document.querySelectorAll('svg');
-                for (const svg of svgs) {
-                    const rect = svg.getBoundingClientRect();
-                    if (rect.height >= 150 && rect.width >= 300 &&
-                        rect.top >= 0 && rect.bottom <= window.innerHeight + 100) {
-                        return {width: rect.width, height: rect.height, top: rect.top,
-                                source: 'large-svg'};
-                    }
-                }
-                return null;
-            }
-        """)
-        if chart_info:
-            print(f"  [chart-wait] Chart visible: {chart_info['width']:.0f}x{chart_info['height']:.0f} "
-                  f"(attempt {attempt + 1})")
-            return True
-        await asyncio.sleep(2)
-
-    print("  [chart-wait] Chart did not render with proper dimensions")
-    return False
-
-
 async def extract_historical_data(page, captured_api_responses=None) -> list:
     """Extract historical fleet data using multiple strategies.
 
@@ -353,11 +213,6 @@ async def extract_historical_data(page, captured_api_responses=None) -> list:
                 historical = []
         print("  -> No valid fleet data found in API responses")
 
-    # Ensure chart is visible and rendered before extraction
-    chart_visible = await ensure_fleet_chart_visible(page)
-    if not chart_visible:
-        print("  WARNING: Fleet Growth chart may not be rendered yet")
-
     # Strategy 2: Extract from React/Next.js page state
     print("  Strategy 2: Extracting from React/Next.js state...")
     historical = await extract_chart_data_from_scripts(page)
@@ -372,32 +227,13 @@ async def extract_historical_data(page, captured_api_responses=None) -> list:
             historical = []
     print("  -> No valid data found in page state")
 
-    # Strategy 3: Direct bar element hover (most reliable for bar chart mode)
-    print("  Strategy 3: Hovering individual bar elements...")
-    try:
-        historical = await extract_data_via_bar_click(page)
-        if historical:
-            historical = deduplicate_by_date(historical)
-            if validate_historical_data(historical, "Strategy 3"):
-                print(f"  -> Found {len(historical)} valid data points from bar hovering")
-                historical.sort(key=lambda x: x.get("date", ""))
-                return historical
-            else:
-                print(f"  -> Bar hover data rejected by validation")
-                historical = []
-        print("  -> No bars found or no tooltips captured")
-    except Exception as e:
-        print(f"  -> Bar hover failed: {e}")
-        import traceback
-        traceback.print_exc()
-
-    # Strategy 4: Native mouse hover sweep for tooltip extraction (fallback)
-    print("  Strategy 4: Using native mouse hover sweep for tooltips...")
+    # Strategy 3: Native mouse hover for tooltip extraction
+    print("  Strategy 3: Using native mouse hover for tooltips...")
     try:
         historical = await extract_data_via_mouse_hover(page)
         if historical:
             historical = deduplicate_by_date(historical)
-            if validate_historical_data(historical, "Strategy 4"):
+            if validate_historical_data(historical, "Strategy 3"):
                 print(f"  -> Found {len(historical)} valid data points from tooltips")
                 historical.sort(key=lambda x: x.get("date", ""))
                 return historical
@@ -625,302 +461,144 @@ async def extract_data_via_mouse_hover(page) -> list:
     """
     historical = []
 
-    # Scroll to Fleet Growth section first
+    # Scroll to Fleet Growth section
     fleet_section = await page.query_selector("text=Fleet Growth")
     if not fleet_section:
         fleet_section = await page.query_selector("text=车队增长")
     if fleet_section:
         await fleet_section.scroll_into_view_if_needed()
         await asyncio.sleep(2)
-    else:
-        print("  Fleet Growth heading not found for mouse hover")
 
-    # Find the Fleet Growth chart with proper dimensions
-    # Retry multiple times since chart may be lazy-rendering
-    bbox = None
-    chart_source = "unknown"
-
-    for attempt in range(5):
-        bbox = await page.evaluate("""
-            () => {
-                // Find Fleet Growth heading
-                const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, div, span, p');
-                let headingRect = null;
-                let headingEl = null;
-                for (const el of headings) {
-                    const text = (el.textContent || '').trim();
-                    if ((text === 'Fleet Growth' || text === '车队增长' ||
-                         text === 'Flottenentwicklung' || text === 'Croissance de la flotte') &&
-                        el.children.length < 5) {
-                        headingRect = el.getBoundingClientRect();
-                        headingEl = el;
-                        break;
-                    }
+    # Find the Fleet Growth chart specifically (not any chart on the page)
+    # Use JS to find the chart closest to the Fleet Growth heading
+    bbox = await page.evaluate("""
+        () => {
+            // Find Fleet Growth heading
+            const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, div, span, p');
+            let headingRect = null;
+            for (const el of headings) {
+                const text = (el.textContent || '').trim();
+                if ((text === 'Fleet Growth' || text === '车队增长' ||
+                     text === 'Flottenentwicklung' || text === 'Croissance de la flotte') &&
+                    el.children.length < 5) {
+                    headingRect = el.getBoundingClientRect();
+                    break;
                 }
-
-                // Find charts using multiple selectors (Recharts and generic)
-                const chartSelectors = [
-                    '.recharts-wrapper',
-                    '.recharts-responsive-container',
-                    '[class*="chart-container"]',
-                    '[class*="ChartContainer"]',
-                    '[class*="chart-wrapper"]',
-                    '[class*="ChartWrapper"]',
-                ];
-                let charts = [];
-                for (const sel of chartSelectors) {
-                    const found = document.querySelectorAll(sel);
-                    if (found.length > 0) {
-                        charts = Array.from(found);
-                        break;
-                    }
-                }
-
-                // Also look for SVG charts directly if no wrappers found
-                if (charts.length === 0) {
-                    // Find large SVGs that could be chart containers
-                    const svgs = document.querySelectorAll('svg');
-                    for (const svg of svgs) {
-                        const rect = svg.getBoundingClientRect();
-                        if (rect.height >= 150 && rect.width >= 300) {
-                            charts.push(svg);
-                        }
-                    }
-                }
-
-                const result = {
-                    chartsFound: charts.length,
-                    headingFound: !!headingRect,
-                    chartDetails: []
-                };
-
-                if (charts.length === 0) return result;
-
-                let targetChart = null;
-                if (headingRect) {
-                    // Find the chart closest (below) to the Fleet Growth heading
-                    // IMPORTANT: Only consider charts with reasonable dimensions
-                    // (height >= 100, width >= 200) to avoid selecting sparklines
-                    // or mini-charts that appear as stat decorations near the heading
-                    let bestDist = Infinity;
-                    for (const chart of charts) {
-                        const rect = chart.getBoundingClientRect();
-                        const dist = Math.abs(rect.top - headingRect.bottom);
-                        result.chartDetails.push({
-                            top: rect.top, height: rect.height, width: rect.width,
-                            distFromHeading: dist
-                        });
-                        if (rect.height >= 100 && rect.width >= 200 &&
-                            dist < bestDist && rect.top >= headingRect.top - 50) {
-                            bestDist = dist;
-                            targetChart = chart;
-                        }
-                    }
-                }
-
-                if (!targetChart) {
-                    // Fallback: use the largest chart (by area) with minimum size
-                    let bestArea = 0;
-                    for (const chart of charts) {
-                        const rect = chart.getBoundingClientRect();
-                        if (rect.height < 100 || rect.width < 200) continue;
-                        const area = rect.width * rect.height;
-                        if (area > bestArea) {
-                            bestArea = area;
-                            targetChart = chart;
-                        }
-                    }
-                }
-
-                if (!targetChart) return result;
-
-                // Prefer the SVG surface inside the chart (more precise for hovering)
-                const svg = targetChart.querySelector('svg.recharts-surface') ||
-                            targetChart.querySelector('svg');
-                const target = svg || targetChart;
-                const rect = target.getBoundingClientRect();
-
-                result.x = rect.x;
-                result.y = rect.y;
-                result.width = rect.width;
-                result.height = rect.height;
-                result.source = svg ? (svg.classList.contains('recharts-surface')
-                    ? 'recharts-surface' : 'svg-in-chart') : 'chart-wrapper';
-                return result;
             }
-        """)
 
-        if bbox and bbox.get("height") and bbox["height"] >= 100 and bbox.get("width", 0) >= 200:
-            chart_source = bbox.get("source", "unknown")
-            break
+            // Find all recharts charts
+            const charts = document.querySelectorAll('.recharts-wrapper');
+            if (charts.length === 0) return null;
 
-        # Chart too small or not found - log diagnostics and retry
-        charts_found = bbox.get("chartsFound", 0) if bbox else 0
-        heading_found = bbox.get("headingFound", False) if bbox else False
-        h = bbox.get("height", 0) if bbox else 0
-        w = bbox.get("width", 0) if bbox else 0
-        details = bbox.get("chartDetails", []) if bbox else []
-        print(f"  Chart attempt {attempt + 1}/5: {charts_found} charts, "
-              f"heading={'yes' if heading_found else 'no'}, "
-              f"selected={w:.0f}x{h:.0f}")
-        if details:
-            for i, d in enumerate(details[:5]):
-                sized_ok = "OK" if d['height'] >= 100 and d['width'] >= 200 else "too small"
-                print(f"    chart[{i}]: {d['width']:.0f}x{d['height']:.0f}, "
-                      f"dist={d['distFromHeading']:.0f} ({sized_ok})")
-
-        # Try scrolling to the section and waiting
-        if fleet_section:
-            await fleet_section.scroll_into_view_if_needed()
-        await asyncio.sleep(2)
-
-        # If charts exist but are small, try clicking to expand or trigger render
-        if charts_found > 0 and h < 100:
-            # The chart container exists but is collapsed - try clicking nearby
-            # to trigger tab activation or container expansion
-            try:
-                await page.evaluate("""
-                    () => {
-                        const wrappers = document.querySelectorAll('.recharts-wrapper');
-                        for (const w of wrappers) {
-                            // Check for any tab or toggle nearby that might expand the chart
-                            const parent = w.closest('section, div[class*="card"], div[class*="panel"]');
-                            if (parent) {
-                                const tabs = parent.querySelectorAll(
-                                    'button, [role="tab"], [class*="tab"]'
-                                );
-                                for (const tab of tabs) {
-                                    const rect = tab.getBoundingClientRect();
-                                    if (rect.height > 0 && rect.width > 0) {
-                                        tab.click();
-                                        break;
-                                    }
-                                }
-                            }
-                        }
+            let targetChart = null;
+            if (headingRect) {
+                // Find the chart closest (below) to the Fleet Growth heading
+                let bestDist = Infinity;
+                for (const chart of charts) {
+                    const rect = chart.getBoundingClientRect();
+                    const dist = Math.abs(rect.top - headingRect.bottom);
+                    if (dist < bestDist && rect.top >= headingRect.top - 50) {
+                        bestDist = dist;
+                        targetChart = chart;
                     }
-                """)
-                await asyncio.sleep(2)
-            except Exception:
-                pass
+                }
+            }
 
-    # Validate we got a usable bbox
-    if not bbox or not bbox.get("height") or bbox["height"] < 100 or bbox.get("width", 0) < 200:
-        charts_found = bbox.get("chartsFound", 0) if bbox else 0
-        h = bbox.get("height", 0) if bbox else 0
-        w = bbox.get("width", 0) if bbox else 0
-        print(f"  Could not find properly-sized chart after retries "
-              f"(charts={charts_found}, best={w:.0f}x{h:.0f})")
+            if (!targetChart) {
+                // Fallback: use the first chart
+                targetChart = charts[0];
+            }
 
-        # Last resort: try ANY large SVG with proper dimensions
-        # First try Recharts-specific, then fall back to any large SVG
-        for svg_selector in ["svg.recharts-surface", "svg"]:
-            chart_elements = await page.query_selector_all(svg_selector)
-            found_fallback = False
-            for chart_element in chart_elements:
-                try:
-                    await chart_element.scroll_into_view_if_needed()
-                    await asyncio.sleep(1)
-                    raw_bbox = await chart_element.bounding_box()
-                    if raw_bbox and raw_bbox.get("height", 0) >= 100 and raw_bbox.get("width", 0) >= 200:
-                        bbox = raw_bbox
-                        chart_source = f"direct-{svg_selector}-fallback"
-                        print(f"  Last resort: found chart {svg_selector} "
-                              f"{raw_bbox['width']:.0f}x{raw_bbox['height']:.0f}")
-                        found_fallback = True
-                        break
-                    else:
-                        h = raw_bbox.get("height", 0) if raw_bbox else 0
-                        w = raw_bbox.get("width", 0) if raw_bbox else 0
-                        if h > 50 or w > 100:  # Only log if somewhat sizeable
-                            print(f"  Last resort: skipping {svg_selector} {w:.0f}x{h:.0f} (too small)")
-                except Exception:
-                    continue
+            const svg = targetChart.querySelector('svg.recharts-surface');
+            const target = svg || targetChart;
+            const rect = target.getBoundingClientRect();
+            return {x: rect.x, y: rect.y, width: rect.width, height: rect.height};
+        }
+    """)
 
-            if found_fallback:
+    if not bbox:
+        # Fallback: try simple selectors
+        chart_selectors = ["svg.recharts-surface", ".recharts-wrapper"]
+        chart_element = None
+        for selector in chart_selectors:
+            chart_element = await page.query_selector(selector)
+            if chart_element:
+                print(f"  Fallback: found chart via {selector}")
                 break
-
-        if not found_fallback:
-            print("  No suitable chart SVG found at all for tooltip extraction")
+        if not chart_element:
+            print("  Could not find any chart element")
             return historical
+        await chart_element.scroll_into_view_if_needed()
+        await asyncio.sleep(1)
+        bbox = await chart_element.bounding_box()
+
+    if not bbox:
+        print("  Could not get chart bounding box")
+        return historical
 
     print(f"  Chart bbox: x={bbox['x']:.0f}, y={bbox['y']:.0f}, "
-          f"w={bbox['width']:.0f}, h={bbox['height']:.0f} (source: {chart_source})")
+          f"w={bbox['width']:.0f}, h={bbox['height']:.0f}")
 
     # Calculate hover area - stay within the plot area (inside axes)
     chart_left = bbox['x'] + 60   # Skip y-axis labels
     chart_right = bbox['x'] + bbox['width'] - 20  # Skip right padding
-
-    # Try multiple Y positions to hit bars at different heights (from PR #15 lesson)
-    chart_y_positions = [
-        bbox['y'] + bbox['height'] * 0.3,   # Upper third
-        bbox['y'] + bbox['height'] * 0.5,   # Middle
-        bbox['y'] + bbox['height'] * 0.7,   # Lower third
-    ]
+    chart_mid_y = bbox['y'] + bbox['height'] * 0.4  # Slightly above middle (hit bar area)
 
     num_samples = 80  # More samples for better coverage
     step = (chart_right - chart_left) / num_samples
     seen_dates = set()
     debug_tooltip_count = 0
 
-    print(f"  Hovering across chart with {num_samples} positions using native mouse + JS events...")
+    print(f"  Hovering across chart with {num_samples} positions using native mouse...")
 
     # First move to chart area to activate it
-    await page.mouse.move(chart_left, chart_y_positions[1])
+    await page.mouse.move(chart_left, chart_mid_y)
     await asyncio.sleep(0.5)
 
     for i in range(num_samples + 1):
         x = chart_left + (i * step)
 
-        # Try each Y position for this X coordinate
-        for y_idx, y in enumerate(chart_y_positions):
-            # Use Playwright's native mouse.move - this generates real browser events
-            # that Recharts' internal event handler on the SVG overlay will pick up
-            await page.mouse.move(x, y)
+        # Use Playwright's native mouse.move - this generates real browser events
+        # that Recharts' internal event handler on the SVG overlay will pick up
+        await page.mouse.move(x, chart_mid_y)
+        await asyncio.sleep(0.15)  # Give tooltip time to render
 
-            # Also dispatch JavaScript mouse events directly (from PR #15 lesson)
-            # Recharts may not respond to Playwright's synthetic mouse.move() alone;
-            # dispatching real DOM MouseEvents ensures tooltip activation
-            await page.evaluate("""
-                (coords) => {
-                    const element = document.elementFromPoint(coords.x, coords.y);
-                    if (element) {
-                        const events = ['mouseenter', 'mouseover', 'mousemove'];
-                        for (const eventType of events) {
-                            const evt = new MouseEvent(eventType, {
-                                bubbles: true,
-                                cancelable: true,
-                                clientX: coords.x,
-                                clientY: coords.y,
-                                view: window
-                            });
-                            element.dispatchEvent(evt);
-                        }
-                    }
+        # Check for tooltip content - use only Recharts-specific selector
+        tooltip_text = await page.evaluate("""
+            () => {
+                // Only look at Recharts tooltip wrapper (not generic tooltips)
+                const el = document.querySelector('.recharts-tooltip-wrapper');
+                if (!el) return null;
+
+                const style = window.getComputedStyle(el);
+                // Recharts hides tooltip with visibility:hidden or opacity:0
+                if (style.visibility === 'hidden' || style.opacity === '0') {
+                    return null;
                 }
-            """, {"x": x, "y": y})
 
-            await asyncio.sleep(0.12)  # Give tooltip time to render
+                const text = el.textContent || '';
+                if (text.trim().length > 0) {
+                    return text.trim();
+                }
+                return null;
+            }
+        """)
 
-            # Check for tooltip content using shared helper
-            tooltip_text = await get_visible_tooltip_text(page)
+        if tooltip_text:
+            # Debug: log first few raw tooltip texts
+            if debug_tooltip_count < 5:
+                print(f"    [RAW TOOLTIP {debug_tooltip_count}] pos={i}/{num_samples}: {repr(tooltip_text[:150])}")
+                debug_tooltip_count += 1
 
-            if tooltip_text:
-                # Debug: log first few raw tooltip texts
-                if debug_tooltip_count < 5:
-                    print(f"    [RAW TOOLTIP {debug_tooltip_count}] pos={i}/{num_samples} y={y_idx}: {repr(tooltip_text[:150])}")
-                    debug_tooltip_count += 1
-
-                data_point = parse_tooltip_text(tooltip_text)
-                if data_point and data_point.get("date") and data_point["date"] not in seen_dates:
-                    seen_dates.add(data_point["date"])
-                    historical.append(data_point)
-                    if len(historical) <= 3 or len(historical) % 10 == 0:
-                        print(f"    [{len(historical)}] {data_point['date']} - "
-                              f"Austin: {data_point.get('austin')}, "
-                              f"Bay Area: {data_point.get('bayarea')}, "
-                              f"Total: {data_point.get('total')}")
-                break  # Got tooltip for this X, move to next X position
+            data_point = parse_tooltip_text(tooltip_text)
+            if data_point and data_point.get("date") and data_point["date"] not in seen_dates:
+                seen_dates.add(data_point["date"])
+                historical.append(data_point)
+                if len(historical) <= 3 or len(historical) % 10 == 0:
+                    print(f"    [{len(historical)}] {data_point['date']} - "
+                          f"Austin: {data_point.get('austin')}, "
+                          f"Bay Area: {data_point.get('bayarea')}, "
+                          f"Total: {data_point.get('total')}")
 
     # Move mouse away to dismiss tooltip
     await page.mouse.move(0, 0)
@@ -1167,74 +845,9 @@ async def extract_chart_data_from_scripts(page) -> list:
                     };
                 }
 
-                // Diagnostic: if no candidates, report what we found in Recharts containers
-                const diagInfo = {
-                    candidateCount: 0,
-                    fleetSectionFound: !!fleetSection,
-                    chartContainerCount: chartContainers ? chartContainers.length : 0,
-                    fiberDataShapes: [],
-                    nearMissArrays: [],
-                };
-
-                // Scan Recharts containers for any data arrays (even non-fleet ones)
-                for (const container of chartContainers) {
-                    const fiberKeys = Object.keys(container).filter(k =>
-                        k.startsWith('__reactFiber$') || k.startsWith('__reactInternalInstance$') ||
-                        k.startsWith('__reactProps$')
-                    );
-                    for (const fiberKey of fiberKeys) {
-                        let fiber = container[fiberKey];
-                        let visited = 0;
-                        while (fiber && visited < 30) {
-                            visited++;
-                            if (fiber.memoizedProps && fiber.memoizedProps.data &&
-                                Array.isArray(fiber.memoizedProps.data) &&
-                                fiber.memoizedProps.data.length > 2) {
-                                const sample = fiber.memoizedProps.data[0];
-                                const keys = typeof sample === 'object' && sample
-                                    ? Object.keys(sample) : [];
-                                diagInfo.fiberDataShapes.push({
-                                    keys: keys.slice(0, 10),
-                                    size: fiber.memoizedProps.data.length,
-                                    sampleValues: keys.slice(0, 5).map(k => typeof sample[k]),
-                                });
-                                // Check if this is a "near miss" - has numeric values
-                                // but didn't pass isFleetData
-                                const hasNumeric = keys.some(k =>
-                                    typeof sample[k] === 'number');
-                                if (hasNumeric && keys.length >= 2) {
-                                    diagInfo.nearMissArrays.push({
-                                        keys: keys,
-                                        size: fiber.memoizedProps.data.length,
-                                        sample: JSON.stringify(sample).substring(0, 200),
-                                    });
-                                }
-                            }
-                            fiber = fiber.return;
-                        }
-                    }
-                }
-
-                return {diagnostic: true, ...diagInfo};
+                return null;
             }
         """)
-
-        if chart_data and chart_data.get("diagnostic"):
-            print(f"    [Strategy 2 diagnostic] Fleet section: {chart_data.get('fleetSectionFound')}, "
-                  f"chart containers: {chart_data.get('chartContainerCount')}")
-            shapes = chart_data.get("fiberDataShapes", [])
-            if shapes:
-                print(f"    Found {len(shapes)} data arrays in Recharts fibers:")
-                for s in shapes[:5]:
-                    print(f"      keys={s['keys']}, size={s['size']}, types={s['sampleValues']}")
-            near_misses = chart_data.get("nearMissArrays", [])
-            if near_misses:
-                print(f"    Near-miss arrays (have numbers but not fleet keys):")
-                for nm in near_misses[:3]:
-                    print(f"      keys={nm['keys']}, size={nm['size']}")
-                    print(f"      sample: {nm['sample'][:150]}")
-            if not shapes and not near_misses:
-                print(f"    No data arrays found in any Recharts container fibers")
 
         if chart_data and chart_data.get("data"):
             source = chart_data.get("source", "unknown")
@@ -1406,271 +1019,6 @@ def parse_tooltip_text(text: str) -> dict:
     return result
 
 
-async def get_visible_tooltip_text(page) -> str:
-    """Get the text content of any visible tooltip on the page.
-
-    Searches multiple tooltip selectors (Recharts-specific and generic) and returns
-    the first one that is visible and contains date-like or numeric content.
-    Returns None if no tooltip is found.
-    """
-    return await page.evaluate("""
-        () => {
-            const selectors = [
-                '.recharts-tooltip-wrapper',
-                '.recharts-default-tooltip',
-                '.recharts-tooltip-content',
-                '[class*="tooltip"]',
-                '[class*="Tooltip"]',
-                '[class*="TooltipContent"]',
-                '[role="tooltip"]',
-                '[data-radix-popper-content-wrapper]',
-            ];
-
-            for (const selector of selectors) {
-                const elements = document.querySelectorAll(selector);
-                for (const el of elements) {
-                    const style = window.getComputedStyle(el);
-                    if (style.visibility === 'hidden' || style.opacity === '0' ||
-                        style.display === 'none') {
-                        continue;
-                    }
-
-                    const rect = el.getBoundingClientRect();
-                    if (rect.width === 0 || rect.height === 0) continue;
-
-                    const text = el.textContent || '';
-                    if (text.trim().length > 0) {
-                        // Check for date or number (including CJK date chars)
-                        const hasDate = /\\d{4}|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|年|월/i.test(text);
-                        const hasNumber = /\\d{2,}/.test(text);
-                        if (hasDate || hasNumber) {
-                            return text.trim();
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-    """)
-
-
-async def extract_data_via_bar_click(page) -> list:
-    """Extract historical data by finding and hovering individual chart bar elements.
-
-    This strategy directly locates SVG <rect> elements within the Fleet Growth
-    chart (Recharts bar rectangles) and hovers over each one's center point.
-    This is much more targeted than the generic mouse sweep approach, as each
-    bar is a large, distinct hover target.
-
-    Works for both stacked bars (Total mode) and single bars (Active mode).
-    """
-    historical = []
-    seen_dates = set()
-
-    # Ensure chart is visible
-    chart_visible = await ensure_fleet_chart_visible(page)
-    if not chart_visible:
-        print("  [bar-click] Chart not visible, trying anyway...")
-
-    # Find all bar elements in the Fleet Growth chart
-    bar_data = await page.evaluate("""
-        () => {
-            const result = {bars: [], surfaces: 0, validCharts: 0, debug: '', allRectCount: 0};
-
-            // Find the Fleet Growth section heading
-            const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, div, span, p');
-            let sectionEl = null;
-            for (const el of headings) {
-                const text = (el.textContent || '').trim();
-                if ((text === 'Fleet Growth' || text === '车队增长' ||
-                     text === 'Flottenentwicklung' || text === 'Croissance de la flotte') &&
-                    el.children.length < 5) {
-                    // Walk up to find the parent section containing a chart
-                    let parent = el.parentElement;
-                    for (let i = 0; i < 15 && parent; i++) {
-                        const hasSurface = parent.querySelector('svg.recharts-surface');
-                        const hasChart = parent.querySelector('.recharts-wrapper, .recharts-responsive-container');
-                        const hasLargeSvg = (() => {
-                            const svgs = parent.querySelectorAll('svg');
-                            for (const s of svgs) {
-                                const r = s.getBoundingClientRect();
-                                if (r.height >= 100 && r.width >= 200) return true;
-                            }
-                            return false;
-                        })();
-                        if (hasSurface || hasChart || hasLargeSvg) {
-                            sectionEl = parent;
-                            break;
-                        }
-                        parent = parent.parentElement;
-                    }
-                    break;
-                }
-            }
-
-            const searchRoot = sectionEl || document;
-            result.debug = sectionEl ? 'Found Fleet Growth section' : 'Using document root';
-
-            // Find chart SVGs
-            const surfaces = searchRoot.querySelectorAll('svg.recharts-surface, svg');
-            result.surfaces = surfaces.length;
-
-            for (const svg of surfaces) {
-                const svgRect = svg.getBoundingClientRect();
-                if (svgRect.height < 100 || svgRect.width < 200) continue;
-                result.validCharts++;
-
-                // Try Recharts-specific bar selectors first
-                const rechartsSelectors = [
-                    '.recharts-bar-rectangle rect',
-                    '.recharts-bar-rectangles rect',
-                    '.recharts-bar rect',
-                    'g[class*="recharts-bar"] rect',
-                ];
-
-                let barRects = [];
-                let matchedSelector = '';
-                for (const sel of rechartsSelectors) {
-                    const found = svg.querySelectorAll(sel);
-                    if (found.length > 0) {
-                        barRects = Array.from(found);
-                        matchedSelector = sel;
-                        break;
-                    }
-                }
-
-                // If no Recharts bars found, look for bar-like rects
-                if (barRects.length === 0) {
-                    const allRects = svg.querySelectorAll('rect');
-                    result.allRectCount = allRects.length;
-                    const barLike = [];
-                    for (const r of allRects) {
-                        const b = r.getBoundingClientRect();
-                        // Bar-like: has meaningful height, narrow width, positioned within chart
-                        if (b.height > 5 && b.width > 2 && b.width < 60 &&
-                            b.y + b.height > svgRect.y && b.y < svgRect.y + svgRect.height) {
-                            barLike.push(r);
-                        }
-                    }
-                    if (barLike.length > 3) {
-                        barRects = barLike;
-                        matchedSelector = 'bar-like-rects';
-                    }
-                }
-
-                result.debug += ` | ${matchedSelector}: ${barRects.length} bars`;
-
-                if (barRects.length === 0) continue;
-
-                // Group bars by x-position (each date has bars at similar x)
-                // Use the tallest bar at each x-position for hovering
-                const xGroups = new Map();
-                for (const rect of barRects) {
-                    const b = rect.getBoundingClientRect();
-                    if (b.height < 3 || b.width < 1) continue;
-
-                    // Round x center to group bars at the same date
-                    const xKey = Math.round(b.x + b.width / 2);
-                    if (!xGroups.has(xKey)) {
-                        xGroups.set(xKey, {
-                            x: b.x + b.width / 2,
-                            y: b.y + b.height * 0.3,  // Hover upper portion of tallest bar
-                            width: b.width,
-                            height: b.height,
-                        });
-                    } else {
-                        const existing = xGroups.get(xKey);
-                        // Keep the one with larger area (likely the stacked total)
-                        if (b.height * b.width > existing.height * existing.width) {
-                            xGroups.set(xKey, {
-                                x: b.x + b.width / 2,
-                                y: b.y + b.height * 0.3,
-                                width: b.width,
-                                height: b.height,
-                            });
-                        }
-                    }
-                }
-
-                // Sort by x position (left to right = chronological)
-                const sortedBars = Array.from(xGroups.values())
-                    .sort((a, b) => a.x - b.x);
-
-                result.bars = sortedBars;
-                if (sortedBars.length > 0) break;
-            }
-
-            return result;
-        }
-    """)
-
-    bars = bar_data.get("bars", [])
-    print(f"  [bar-click] {bar_data.get('debug', '')}")
-    print(f"  [bar-click] Found {len(bars)} unique bar x-positions from "
-          f"{bar_data.get('surfaces', 0)} SVGs, "
-          f"{bar_data.get('validCharts', 0)} valid charts "
-          f"(total rects scanned: {bar_data.get('allRectCount', 0)})")
-
-    if not bars:
-        return historical
-
-    # First move to the chart area to activate it
-    mid_bar = bars[len(bars) // 2]
-    await page.mouse.move(mid_bar['x'], mid_bar['y'])
-    await asyncio.sleep(0.5)
-
-    debug_tooltip_count = 0
-    for i, bar in enumerate(bars):
-        # Use Playwright's native mouse.move for real browser events
-        await page.mouse.move(bar['x'], bar['y'])
-
-        # Also dispatch JavaScript events directly for Recharts compatibility
-        await page.evaluate("""
-            (coords) => {
-                const element = document.elementFromPoint(coords.x, coords.y);
-                if (element) {
-                    const events = ['mouseenter', 'mouseover', 'mousemove'];
-                    for (const eventType of events) {
-                        const evt = new MouseEvent(eventType, {
-                            bubbles: true,
-                            cancelable: true,
-                            clientX: coords.x,
-                            clientY: coords.y,
-                            view: window
-                        });
-                        element.dispatchEvent(evt);
-                    }
-                }
-            }
-        """, {"x": bar['x'], "y": bar['y']})
-
-        await asyncio.sleep(0.15)
-
-        # Read tooltip
-        tooltip_text = await get_visible_tooltip_text(page)
-
-        if tooltip_text:
-            if debug_tooltip_count < 5:
-                print(f"    [bar {i}/{len(bars)}] tooltip: {repr(tooltip_text[:120])}")
-                debug_tooltip_count += 1
-
-            data_point = parse_tooltip_text(tooltip_text)
-            if data_point and data_point.get("date") and data_point["date"] not in seen_dates:
-                seen_dates.add(data_point["date"])
-                historical.append(data_point)
-                if len(historical) <= 3 or len(historical) % 20 == 0:
-                    print(f"    [{len(historical)}] {data_point['date']} - "
-                          f"Austin: {data_point.get('austin')}, "
-                          f"Bay Area: {data_point.get('bayarea')}, "
-                          f"Total: {data_point.get('total')}")
-
-    # Move mouse away to dismiss tooltip
-    await page.mouse.move(0, 0)
-
-    print(f"  [bar-click] Captured {len(historical)} data points from {len(bars)} bar positions")
-    return historical
-
-
 async def click_fleet_tab(page, tab_name: str) -> bool:
     """Click the 'Active' or 'Total' tab on the Fleet Growth chart.
 
@@ -1755,385 +1103,6 @@ async def click_fleet_tab(page, tab_name: str) -> bool:
     return False
 
 
-async def click_bar_chart_mode(page) -> bool:
-    """Switch the Fleet Growth chart to bar chart display mode.
-
-    The Fleet Growth section has toggle icons for line chart and bar chart views.
-    Bar chart mode provides much better tooltip hit targets (each bar is a large
-    hover area) compared to line chart mode where you need to hit exact data points.
-
-    Uses the Active/Total tab buttons as anchor points (known to be findable by
-    Playwright) to locate the nearby chart type icon toggle buttons.
-
-    Returns:
-        True if bar chart mode was activated, False otherwise.
-    """
-    # First scroll to Fleet Growth section
-    try:
-        fleet_section = await page.query_selector("text=Fleet Growth")
-        if not fleet_section:
-            fleet_section = await page.query_selector("text=车队增长")
-        if fleet_section:
-            await fleet_section.scroll_into_view_if_needed()
-            await asyncio.sleep(1)
-    except Exception:
-        pass
-
-    # Strategy 1: Anchor-based approach using known Active/Total buttons
-    # Since click_fleet_tab() successfully finds Active/Total buttons, use them
-    # as anchor points to locate the nearby chart type toggle icons.
-    print("  Bar chart toggle: Strategy 1 (anchor-based)...")
-    try:
-        anchor_bbox = None
-        anchor_text = None
-
-        # Find Active or Total button as anchor (we know these exist)
-        for text in ["Active", "Total"]:
-            for sel in [
-                f"button:has-text('{text}')",
-                f"[role='tab']:has-text('{text}')",
-                f"text='{text}'",
-            ]:
-                try:
-                    btn = await page.query_selector(sel)
-                    if btn:
-                        visible = await btn.is_visible()
-                        if visible:
-                            bbox = await btn.bounding_box()
-                            if bbox:
-                                anchor_bbox = bbox
-                                anchor_text = text
-                                print(f"    Anchor: '{text}' button at ({bbox['x']:.0f},{bbox['y']:.0f}) "
-                                      f"{bbox['width']:.0f}x{bbox['height']:.0f}")
-                                break
-                except Exception:
-                    continue
-            if anchor_bbox:
-                break
-
-        if not anchor_bbox:
-            print("    Could not find Active/Total button as anchor")
-        else:
-            # Find ALL buttons on the page
-            all_buttons = await page.query_selector_all("button")
-            icon_buttons = []
-
-            for btn in all_buttons:
-                try:
-                    bbox = await btn.bounding_box()
-                    if not bbox or bbox["width"] == 0 or bbox["height"] == 0:
-                        continue
-
-                    # Must be on the same row (within 30px vertically of anchor)
-                    if abs(bbox["y"] - anchor_bbox["y"]) > 30:
-                        continue
-
-                    # Must be small-ish (icon button, not a large action button)
-                    if bbox["width"] > 80 or bbox["height"] > 60:
-                        continue
-
-                    # Get text content - icon buttons have no or very short text
-                    text_content = await btn.text_content()
-                    text_content = (text_content or "").strip()
-
-                    # Skip text buttons (Active, Total, etc.)
-                    if len(text_content) > 3:
-                        continue
-
-                    # Check if it contains an SVG (icon button indicator)
-                    has_svg = await btn.query_selector("svg")
-
-                    icon_buttons.append({
-                        "element": btn,
-                        "bbox": bbox,
-                        "text": text_content,
-                        "has_svg": has_svg is not None,
-                    })
-                except Exception:
-                    continue
-
-            # Sort by x position (left to right)
-            icon_buttons.sort(key=lambda b: b["bbox"]["x"])
-
-            icon_info = []
-            for b in icon_buttons:
-                bx = b["bbox"]["x"]
-                by = b["bbox"]["y"]
-                icon_info.append(f"({bx:.0f},{by:.0f}) svg={b['has_svg']} text={b['text']!r}")
-            print(f"    Found {len(icon_buttons)} icon buttons on same row: {icon_info}")
-
-            if len(icon_buttons) >= 2:
-                # The second icon button is the bar chart toggle
-                target = icon_buttons[1]["element"]
-                await target.click()
-                print(f"    Clicked bar chart toggle (2nd of {len(icon_buttons)} icon buttons)")
-                await asyncio.sleep(2)
-                return True
-            elif len(icon_buttons) == 1:
-                await icon_buttons[0]["element"].click()
-                print(f"    Clicked single icon button")
-                await asyncio.sleep(2)
-                return True
-            else:
-                print(f"    No icon buttons found on same row as anchor")
-
-    except Exception as e:
-        print(f"    Strategy 1 error: {e}")
-
-    # Strategy 2: Use JavaScript to find icon buttons near Active/Total buttons
-    print("  Bar chart toggle: Strategy 2 (JS anchor-based)...")
-    try:
-        result = await page.evaluate("""
-            () => {
-                // Find Active or Total button
-                const allBtns = document.querySelectorAll('button, [role="tab"], [role="button"]');
-                let anchorRect = null;
-                let anchorText = '';
-                const textButtons = [];
-
-                for (const btn of allBtns) {
-                    const text = (btn.textContent || '').trim();
-                    const rect = btn.getBoundingClientRect();
-                    if (rect.width === 0 || rect.height === 0) continue;
-
-                    if (text === 'Active' || text === 'Total' ||
-                        text === '活跃' || text === '总计') {
-                        textButtons.push({el: btn, rect, text});
-                        if (!anchorRect) {
-                            anchorRect = rect;
-                            anchorText = text;
-                        }
-                    }
-                }
-
-                if (!anchorRect) {
-                    return {found: false, reason: 'no anchor button found'};
-                }
-
-                // Find the rightmost text button (Active or Total) to know where icons start
-                let maxRight = 0;
-                for (const tb of textButtons) {
-                    const right = tb.rect.left + tb.rect.width;
-                    if (Math.abs(tb.rect.top - anchorRect.top) < 30 && right > maxRight) {
-                        maxRight = right;
-                    }
-                }
-
-                // Find icon buttons: on same row, to the right of text buttons,
-                // small, and with short/no text content
-                const iconButtons = [];
-                for (const btn of allBtns) {
-                    const rect = btn.getBoundingClientRect();
-                    if (rect.width === 0 || rect.height === 0) continue;
-
-                    // Same row as anchor (within 30px vertically)
-                    if (Math.abs(rect.top - anchorRect.top) > 30) continue;
-
-                    // To the right of all text buttons
-                    if (rect.left < maxRight) continue;
-
-                    // Small button (icon-sized)
-                    if (rect.width > 80 || rect.height > 60) continue;
-
-                    // Short/no text
-                    const text = (btn.textContent || '').trim();
-                    if (text.length > 3) continue;
-
-                    // Check for SVG child
-                    const hasSvg = btn.querySelector('svg') !== null;
-
-                    iconButtons.push({
-                        el: btn, rect, text, hasSvg,
-                        x: rect.left,
-                    });
-                }
-
-                // Sort by x position
-                iconButtons.sort((a, b) => a.x - b.x);
-
-                const debug = {
-                    anchor: anchorText,
-                    anchorX: Math.round(anchorRect.left),
-                    anchorY: Math.round(anchorRect.top),
-                    maxRight: Math.round(maxRight),
-                    iconCount: iconButtons.length,
-                    icons: iconButtons.map(b => ({
-                        x: Math.round(b.x),
-                        w: Math.round(b.rect.width),
-                        h: Math.round(b.rect.height),
-                        text: b.text,
-                        svg: b.hasSvg,
-                    })),
-                };
-
-                if (iconButtons.length >= 2) {
-                    iconButtons[1].el.click();
-                    return {found: true, method: 'js-anchor-2nd', ...debug};
-                } else if (iconButtons.length === 1) {
-                    iconButtons[0].el.click();
-                    return {found: true, method: 'js-anchor-single', ...debug};
-                }
-
-                // Fallback: look for ANY small buttons on same row (even to the left)
-                const allSameRow = [];
-                for (const btn of allBtns) {
-                    const rect = btn.getBoundingClientRect();
-                    if (rect.width === 0 || rect.height === 0) continue;
-                    if (Math.abs(rect.top - anchorRect.top) > 30) continue;
-                    if (rect.width > 80 || rect.height > 60) continue;
-                    const text = (btn.textContent || '').trim();
-                    if (text.length > 3) continue;
-                    allSameRow.push({
-                        el: btn, rect, text,
-                        hasSvg: btn.querySelector('svg') !== null,
-                        x: rect.left,
-                    });
-                }
-                allSameRow.sort((a, b) => a.x - b.x);
-
-                debug.allSameRowCount = allSameRow.length;
-                debug.allSameRow = allSameRow.map(b => ({
-                    x: Math.round(b.x), text: b.text, svg: b.hasSvg,
-                }));
-
-                if (allSameRow.length >= 2) {
-                    allSameRow[allSameRow.length - 1].el.click();
-                    return {found: true, method: 'js-samerow-last', ...debug};
-                }
-
-                return {found: false, reason: 'no icon buttons', ...debug};
-            }
-        """)
-
-        if result and result.get("found"):
-            print(f"    Clicked bar chart toggle ({result.get('method')}, "
-                  f"anchor={result.get('anchor')}, icons={result.get('iconCount')})")
-            if result.get("icons"):
-                print(f"    Icon details: {result['icons']}")
-            await asyncio.sleep(2)
-            return True
-        else:
-            reason = result.get("reason", "unknown") if result else "eval failed"
-            print(f"    Strategy 2 failed: {reason}")
-            if result:
-                print(f"    Debug: anchor={result.get('anchor')}, "
-                      f"anchorX={result.get('anchorX')}, maxRight={result.get('maxRight')}, "
-                      f"icons={result.get('iconCount')}, "
-                      f"sameRow={result.get('allSameRowCount')}")
-                if result.get("allSameRow"):
-                    print(f"    Same-row elements: {result['allSameRow']}")
-    except Exception as e:
-        print(f"    Strategy 2 error: {e}")
-
-    # Strategy 3: Direct Playwright SVG search near Fleet Growth text
-    print("  Bar chart toggle: Strategy 3 (Playwright SVG search)...")
-    try:
-        fleet_text = await page.query_selector("text=Fleet Growth")
-        if not fleet_text:
-            fleet_text = await page.query_selector("text=车队增长")
-
-        if fleet_text:
-            fleet_bbox = await fleet_text.bounding_box()
-            if fleet_bbox:
-                # Find all SVG elements and filter by proximity
-                all_svgs = await page.query_selector_all("svg")
-                icon_svgs = []
-
-                for svg in all_svgs:
-                    try:
-                        svg_bbox = await svg.bounding_box()
-                        if not svg_bbox:
-                            continue
-                        # Small icon SVG on the same line as heading
-                        if (svg_bbox["width"] < 50 and svg_bbox["height"] < 50 and
-                                abs(svg_bbox["y"] - fleet_bbox["y"]) < 40):
-                            # Try to get the parent button if it exists
-                            parent = await svg.evaluate_handle("el => el.parentElement")
-                            parent_tag = await parent.evaluate("el => el.tagName") if parent else ""
-                            icon_svgs.append({
-                                "svg": svg,
-                                "parent": parent if parent_tag == "BUTTON" else svg,
-                                "bbox": svg_bbox,
-                                "is_button_child": parent_tag == "BUTTON",
-                            })
-                    except Exception:
-                        continue
-
-                # Sort by x position
-                icon_svgs.sort(key=lambda s: s["bbox"]["x"])
-                print(f"    Found {len(icon_svgs)} small SVGs near heading "
-                      f"(y_range={fleet_bbox['y']:.0f}±40)")
-
-                if len(icon_svgs) >= 2:
-                    target = icon_svgs[1]["parent"] if icon_svgs[1]["is_button_child"] else icon_svgs[1]["svg"]
-                    await target.click()
-                    print(f"    Clicked 2nd SVG icon (bar chart)")
-                    await asyncio.sleep(2)
-                    return True
-                elif len(icon_svgs) == 1:
-                    target = icon_svgs[0]["parent"] if icon_svgs[0]["is_button_child"] else icon_svgs[0]["svg"]
-                    await target.click()
-                    print(f"    Clicked single SVG icon")
-                    await asyncio.sleep(2)
-                    return True
-                else:
-                    # Try wider vertical range
-                    wide_svgs = []
-                    for svg in all_svgs:
-                        try:
-                            svg_bbox = await svg.bounding_box()
-                            if not svg_bbox:
-                                continue
-                            if (svg_bbox["width"] < 50 and svg_bbox["height"] < 50 and
-                                    abs(svg_bbox["y"] - fleet_bbox["y"]) < 100):
-                                wide_svgs.append((svg, svg_bbox))
-                        except Exception:
-                            continue
-                    print(f"    Wider search: {len(wide_svgs)} SVGs within 100px")
-    except Exception as e:
-        print(f"    Strategy 3 error: {e}")
-
-    # Strategy 4: Diagnostic dump + keyboard-based approach
-    print("  Bar chart toggle: Strategy 4 (diagnostic + keyboard)...")
-    try:
-        # Dump all buttons near Fleet Growth for diagnostic purposes
-        diag = await page.evaluate("""
-            () => {
-                const allBtns = document.querySelectorAll('button, [role="button"], [role="tab"]');
-                const btns = [];
-                for (const btn of allBtns) {
-                    const rect = btn.getBoundingClientRect();
-                    if (rect.width === 0 || rect.height === 0) continue;
-                    if (rect.top > 600) continue; // Only top portion of page
-                    btns.push({
-                        tag: btn.tagName,
-                        text: (btn.textContent || '').trim().substring(0, 30),
-                        x: Math.round(rect.left),
-                        y: Math.round(rect.top),
-                        w: Math.round(rect.width),
-                        h: Math.round(rect.height),
-                        hasSvg: btn.querySelector('svg') !== null,
-                        classes: (btn.className || '').toString().substring(0, 80),
-                        dataState: btn.getAttribute('data-state') || '',
-                        role: btn.getAttribute('role') || '',
-                    });
-                }
-                return btns;
-            }
-        """)
-        print(f"    All buttons in top 600px ({len(diag)} total):")
-        for b in diag:
-            svg_str = " [SVG]" if b.get("hasSvg") else ""
-            state = f" data-state={b['dataState']}" if b.get("dataState") else ""
-            print(f"      [{b['tag']}] '{b['text']}' at ({b['x']},{b['y']}) "
-                  f"{b['w']}x{b['h']}{svg_str}{state} class='{b['classes'][:50]}'")
-    except Exception as e:
-        print(f"    Diagnostic dump error: {e}")
-
-    print(f"  Warning: Could not switch to bar chart mode (all strategies failed)")
-    return False
-
-
 async def extract_active_fleet_numbers(page) -> dict:
     """Extract active fleet numbers after clicking the Active tab.
 
@@ -2206,11 +1175,6 @@ async def extract_active_historical_data(page, captured_api_responses=None) -> l
     since they contain Total fleet data, not Active fleet data.
     """
     # After clicking Active tab, the React state should now hold active data.
-    # Ensure the chart has re-rendered after tab switch
-    chart_visible = await ensure_fleet_chart_visible(page)
-    if not chart_visible:
-        print("  WARNING: Active chart may not be rendered yet")
-
     # Re-run extraction strategies on the updated page state.
     print("  Extracting active chart data from page state...")
     historical = await extract_chart_data_from_scripts(page)
@@ -2224,27 +1188,8 @@ async def extract_active_historical_data(page, captured_api_responses=None) -> l
             print(f"  -> Active state data rejected by validation")
             historical = []
 
-    # Fallback 1: Direct bar element hover on active chart
-    print("  -> Trying bar element hover on active chart...")
-    try:
-        historical = await extract_data_via_bar_click(page)
-        if historical:
-            historical = deduplicate_by_date(historical)
-            if validate_historical_data(historical, "Active-BarClick"):
-                print(f"  -> Found {len(historical)} valid active data points from bar hovering")
-                historical.sort(key=lambda x: x.get("date", ""))
-                return historical
-            else:
-                print(f"  -> Active bar hover data rejected by validation")
-                historical = []
-        print("  -> No active bar elements or tooltips found")
-    except Exception as e:
-        print(f"  -> Bar hover failed: {e}")
-        import traceback
-        traceback.print_exc()
-
-    # Fallback 2: Native mouse hover sweep on active chart
-    print("  -> Trying native mouse hover sweep on active chart...")
+    # Fallback: native mouse hover on active chart
+    print("  -> Trying native mouse hover on active chart...")
     try:
         historical = await extract_data_via_mouse_hover(page)
         if historical:
@@ -2402,50 +1347,6 @@ async def scrape_robotaxi_tracker():
             # Take full page screenshot after all content loaded
             await take_screenshot(page, "main_page_full")
 
-            # Switch to bar chart mode for better tooltip hit targets
-            # Bar charts have large hover areas per data point vs line charts
-            print("\nSwitching to bar chart mode for reliable tooltip extraction...")
-            bar_chart_active = await click_bar_chart_mode(page)
-
-            # Diagnostic: take screenshot after bar chart toggle to verify chart state
-            await take_screenshot(page, "after_bar_chart_toggle")
-
-            # Diagnostic: dump chart element info for debugging
-            try:
-                chart_diag = await page.evaluate("""
-                    () => {
-                        const surfaces = document.querySelectorAll('svg.recharts-surface');
-                        const info = {surfaceCount: surfaces.length, charts: []};
-                        for (const svg of surfaces) {
-                            const r = svg.getBoundingClientRect();
-                            const barRects = svg.querySelectorAll(
-                                '.recharts-bar-rectangle rect, .recharts-bar-rectangles rect, .recharts-bar rect'
-                            );
-                            const allRects = svg.querySelectorAll('rect');
-                            const barLike = Array.from(allRects).filter(rect => {
-                                const b = rect.getBoundingClientRect();
-                                return b.height > 5 && b.width > 2 && b.width < 60;
-                            });
-                            info.charts.push({
-                                width: Math.round(r.width),
-                                height: Math.round(r.height),
-                                top: Math.round(r.top),
-                                rechartsBarRects: barRects.length,
-                                totalRects: allRects.length,
-                                barLikeRects: barLike.length,
-                            });
-                        }
-                        return info;
-                    }
-                """)
-                print(f"\n  [Chart diagnostic] {chart_diag.get('surfaceCount', 0)} SVG surfaces found:")
-                for i, c in enumerate(chart_diag.get('charts', [])):
-                    print(f"    chart[{i}]: {c['width']}x{c['height']} at y={c['top']}, "
-                          f"recharts-bars={c['rechartsBarRects']}, "
-                          f"total-rects={c['totalRects']}, bar-like={c['barLikeRects']}")
-            except Exception as e:
-                print(f"  Chart diagnostic failed: {e}")
-
             # Extract historical data (Total fleet - default view)
             print(f"\n  Captured {len(captured_api_responses)} API responses during page load")
             print("\nExtracting historical data (Total fleet)...")
@@ -2470,8 +1371,6 @@ async def scrape_robotaxi_tracker():
             # Click the "Active" tab on Fleet Growth chart
             active_tab_clicked = await click_fleet_tab(page, "Active")
             if active_tab_clicked:
-                # Re-enable bar chart mode after tab switch (tab switch may reset chart type)
-                await click_bar_chart_mode(page)
                 await take_screenshot(page, "fleet_growth_active")
 
                 # Extract active fleet numbers
