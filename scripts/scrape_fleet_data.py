@@ -75,13 +75,28 @@ async def scroll_and_wait_for_charts(page):
     except Exception as e:
         print(f"  Could not scroll to Fleet Growth: {e}")
 
-    # Wait for any canvas or SVG charts to render
-    try:
-        await page.wait_for_selector("canvas, svg path", timeout=5000)
-        print("  Chart elements detected")
-        await asyncio.sleep(1)  # Extra wait for chart data to populate
-    except Exception:
-        print("  No chart canvas/SVG found within timeout")
+    # Wait for a properly-sized Recharts chart to render (not sparklines)
+    # Sparklines are ~40px tall; the main Fleet Growth chart is 200-400px
+    for attempt in range(6):
+        has_chart = await page.evaluate("""
+            () => {
+                const charts = document.querySelectorAll('.recharts-wrapper');
+                for (const chart of charts) {
+                    const rect = chart.getBoundingClientRect();
+                    if (rect.height >= 100 && rect.width >= 200) {
+                        return {height: rect.height, width: rect.width};
+                    }
+                }
+                return null;
+            }
+        """)
+        if has_chart:
+            print(f"  Recharts chart detected ({has_chart['width']:.0f}x{has_chart['height']:.0f})")
+            await asyncio.sleep(1)  # Extra wait for chart data to populate
+            break
+        await asyncio.sleep(2)
+    else:
+        print("  No properly-sized Recharts chart found after waiting")
 
 
 async def extract_fleet_numbers(page) -> dict:
@@ -470,7 +485,7 @@ async def extract_data_via_mouse_hover(page) -> list:
         await asyncio.sleep(2)
 
     # Find the Fleet Growth chart specifically (not any chart on the page)
-    # Use JS to find the chart closest to the Fleet Growth heading
+    # Use JS to find the chart closest to the Fleet Growth heading, skipping sparklines
     bbox = await page.evaluate("""
         () => {
             // Find Fleet Growth heading
@@ -486,13 +501,43 @@ async def extract_data_via_mouse_hover(page) -> list:
                 }
             }
 
-            // Find all recharts charts
-            const charts = document.querySelectorAll('.recharts-wrapper');
-            if (charts.length === 0) return null;
+            // Find all recharts charts, filtering out sparklines (height < 100)
+            const allCharts = document.querySelectorAll('.recharts-wrapper');
+            if (allCharts.length === 0) return null;
+
+            const charts = [];
+            for (const chart of allCharts) {
+                const rect = chart.getBoundingClientRect();
+                if (rect.height >= 100 && rect.width >= 200) {
+                    charts.push(chart);
+                }
+            }
+
+            // Log for diagnostics
+            console.log(`Found ${allCharts.length} total charts, ${charts.length} full-sized`);
+
+            if (charts.length === 0) {
+                // If no full-sized charts, fall back to largest chart available
+                let largest = null;
+                let largestArea = 0;
+                for (const chart of allCharts) {
+                    const rect = chart.getBoundingClientRect();
+                    const area = rect.width * rect.height;
+                    if (area > largestArea) {
+                        largestArea = area;
+                        largest = chart;
+                    }
+                }
+                if (!largest) return null;
+                const svg = largest.querySelector('svg.recharts-surface');
+                const target = svg || largest;
+                const rect = target.getBoundingClientRect();
+                return {x: rect.x, y: rect.y, width: rect.width, height: rect.height, fallback: 'largest'};
+            }
 
             let targetChart = null;
             if (headingRect) {
-                // Find the chart closest (below) to the Fleet Growth heading
+                // Find the full-sized chart closest (below) to the Fleet Growth heading
                 let bestDist = Infinity;
                 for (const chart of charts) {
                     const rect = chart.getBoundingClientRect();
@@ -505,7 +550,7 @@ async def extract_data_via_mouse_hover(page) -> list:
             }
 
             if (!targetChart) {
-                // Fallback: use the first chart
+                // Fallback: use the first full-sized chart
                 targetChart = charts[0];
             }
 
@@ -536,8 +581,16 @@ async def extract_data_via_mouse_hover(page) -> list:
         print("  Could not get chart bounding box")
         return historical
 
+    if bbox.get('fallback') == 'largest':
+        print(f"  WARNING: No full-sized chart found, using largest available")
+
     print(f"  Chart bbox: x={bbox['x']:.0f}, y={bbox['y']:.0f}, "
           f"w={bbox['width']:.0f}, h={bbox['height']:.0f}")
+
+    if bbox['height'] < 100:
+        print(f"  WARNING: Chart too small (height={bbox['height']:.0f}px), likely a sparkline")
+        print("  The main Fleet Growth chart may not have loaded. Skipping hover.")
+        return historical
 
     # Calculate hover area - stay within the plot area (inside axes)
     chart_left = bbox['x'] + 60   # Skip y-axis labels
