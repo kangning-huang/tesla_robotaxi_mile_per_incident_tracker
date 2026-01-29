@@ -38,9 +38,9 @@ jobs:
         if: always()
         run: |
           echo "=== Output files ==="
-          ls -la scripts/fleet_growth_* 2>/dev/null || echo "No output files found"
+          ls -la data/fleet_growth_* 2>/dev/null || echo "No output files found"
           echo ""
-          for f in scripts/fleet_growth_*.json; do
+          for f in data/fleet_growth_*.json; do
             if [ -f "$f" ]; then
               echo "=== $f ==="
               python -c "
@@ -69,9 +69,9 @@ jobs:
         with:
           name: fleet-growth-data
           path: |
-            scripts/fleet_growth_active.json
-            scripts/fleet_growth_active.csv
-            scripts/fleet_growth_total.json
-            scripts/fleet_growth_total.csv
+            data/fleet_growth_active.json
+            data/fleet_growth_active.csv
+            data/fleet_growth_total.json
+            data/fleet_growth_total.csv
           retention-days: 7
           if-no-files-found: warn
