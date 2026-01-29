@@ -68,20 +68,73 @@ async def scroll_and_wait_for_charts(page):
     # Now scroll specifically to Fleet Growth section and wait
     try:
         fleet_section = await page.query_selector("text=Fleet Growth")
+        if not fleet_section:
+            fleet_section = await page.query_selector("text=车队增长")
         if fleet_section:
             await fleet_section.scroll_into_view_if_needed()
             print("  Found Fleet Growth section, waiting for chart...")
             await asyncio.sleep(2)  # Wait for chart animation to complete
+        else:
+            print("  Fleet Growth heading not found, scrolling to middle of page...")
+            await page.evaluate(f"window.scrollTo(0, {page_height // 3})")
+            await asyncio.sleep(2)
     except Exception as e:
         print(f"  Could not scroll to Fleet Growth: {e}")
 
-    # Wait for any canvas or SVG charts to render
-    try:
-        await page.wait_for_selector("canvas, svg path", timeout=5000)
-        print("  Chart elements detected")
-        await asyncio.sleep(1)  # Extra wait for chart data to populate
-    except Exception:
-        print("  No chart canvas/SVG found within timeout")
+    # Wait specifically for Recharts SVG to render with proper dimensions
+    # Generic 'svg path' picks up icons and decorative SVGs - we need the actual chart
+    chart_ready = False
+    for attempt in range(6):  # Poll up to ~12 seconds total
+        try:
+            chart_info = await page.evaluate("""
+                () => {
+                    const surfaces = document.querySelectorAll('svg.recharts-surface');
+                    for (const svg of surfaces) {
+                        const rect = svg.getBoundingClientRect();
+                        if (rect.height >= 100 && rect.width >= 200) {
+                            return {width: rect.width, height: rect.height, count: surfaces.length};
+                        }
+                    }
+                    // Also check wrapper as fallback
+                    const wrappers = document.querySelectorAll('.recharts-wrapper');
+                    for (const w of wrappers) {
+                        const rect = w.getBoundingClientRect();
+                        if (rect.height >= 100 && rect.width >= 200) {
+                            return {width: rect.width, height: rect.height, count: wrappers.length,
+                                    source: 'wrapper'};
+                        }
+                    }
+                    return {count: surfaces.length, wrapperCount: wrappers.length};
+                }
+            """)
+            if chart_info and chart_info.get("height") and chart_info["height"] >= 100:
+                print(f"  Chart rendered: {chart_info['width']:.0f}x{chart_info['height']:.0f} "
+                      f"({chart_info['count']} charts found, attempt {attempt + 1})")
+                chart_ready = True
+                await asyncio.sleep(1)  # Extra wait for chart data to populate
+                break
+            else:
+                svg_count = chart_info.get('count', 0) if chart_info else 0
+                wrapper_count = chart_info.get('wrapperCount', 0) if chart_info else 0
+                print(f"  Waiting for chart render (attempt {attempt + 1}/6, "
+                      f"svgs={svg_count}, wrappers={wrapper_count})...")
+                await asyncio.sleep(2)
+        except Exception:
+            await asyncio.sleep(2)
+
+    if not chart_ready:
+        print("  WARNING: No properly-sized Recharts chart found after waiting")
+        # Try one more scroll to Fleet Growth to trigger rendering
+        try:
+            fleet_section = await page.query_selector("text=Fleet Growth")
+            if not fleet_section:
+                fleet_section = await page.query_selector("text=车队增长")
+            if fleet_section:
+                await fleet_section.scroll_into_view_if_needed()
+                await asyncio.sleep(3)
+                print("  Re-scrolled to Fleet Growth, waiting additional time...")
+        except Exception:
+            pass
 
 
 async def extract_fleet_numbers(page) -> dict:
@@ -188,6 +241,56 @@ async def extract_fleet_numbers(page) -> dict:
     return fleet_data
 
 
+async def ensure_fleet_chart_visible(page) -> bool:
+    """Scroll to Fleet Growth chart and wait for it to render with proper dimensions.
+
+    Returns True if a properly-sized chart was found.
+    """
+    # Scroll to Fleet Growth heading
+    fleet_section = await page.query_selector("text=Fleet Growth")
+    if not fleet_section:
+        fleet_section = await page.query_selector("text=车队增长")
+    if fleet_section:
+        await fleet_section.scroll_into_view_if_needed()
+        await asyncio.sleep(1)
+    else:
+        print("  [chart-wait] Fleet Growth heading not found")
+        return False
+
+    # Wait for chart SVG to render with proper dimensions
+    for attempt in range(8):  # Up to ~16 seconds
+        chart_info = await page.evaluate("""
+            () => {
+                const surfaces = document.querySelectorAll('svg.recharts-surface');
+                for (const svg of surfaces) {
+                    const rect = svg.getBoundingClientRect();
+                    if (rect.height >= 100 && rect.width >= 200 &&
+                        rect.top >= 0 && rect.bottom <= window.innerHeight + 100) {
+                        return {width: rect.width, height: rect.height, top: rect.top};
+                    }
+                }
+                // Also check wrappers
+                const wrappers = document.querySelectorAll('.recharts-wrapper');
+                for (const w of wrappers) {
+                    const rect = w.getBoundingClientRect();
+                    if (rect.height >= 100 && rect.width >= 200) {
+                        return {width: rect.width, height: rect.height, top: rect.top,
+                                source: 'wrapper'};
+                    }
+                }
+                return null;
+            }
+        """)
+        if chart_info:
+            print(f"  [chart-wait] Chart visible: {chart_info['width']:.0f}x{chart_info['height']:.0f} "
+                  f"(attempt {attempt + 1})")
+            return True
+        await asyncio.sleep(2)
+
+    print("  [chart-wait] Chart did not render with proper dimensions")
+    return False
+
+
 async def extract_historical_data(page, captured_api_responses=None) -> list:
     """Extract historical fleet data using multiple strategies.
 
@@ -212,6 +315,11 @@ async def extract_historical_data(page, captured_api_responses=None) -> list:
                 print(f"  -> API data rejected by validation, trying next strategy...")
                 historical = []
         print("  -> No valid fleet data found in API responses")
+
+    # Ensure chart is visible and rendered before extraction
+    chart_visible = await ensure_fleet_chart_visible(page)
+    if not chart_visible:
+        print("  WARNING: Fleet Growth chart may not be rendered yet")
 
     # Strategy 2: Extract from React/Next.js page state
     print("  Strategy 2: Extracting from React/Next.js state...")
@@ -461,83 +569,177 @@ async def extract_data_via_mouse_hover(page) -> list:
     """
     historical = []
 
-    # Scroll to Fleet Growth section
+    # Scroll to Fleet Growth section first
     fleet_section = await page.query_selector("text=Fleet Growth")
     if not fleet_section:
         fleet_section = await page.query_selector("text=车队增长")
     if fleet_section:
         await fleet_section.scroll_into_view_if_needed()
         await asyncio.sleep(2)
+    else:
+        print("  Fleet Growth heading not found for mouse hover")
 
-    # Find the Fleet Growth chart specifically (not any chart on the page)
-    # Use JS to find the chart closest to the Fleet Growth heading
-    bbox = await page.evaluate("""
-        () => {
-            // Find Fleet Growth heading
-            const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, div, span, p');
-            let headingRect = null;
-            for (const el of headings) {
-                const text = (el.textContent || '').trim();
-                if ((text === 'Fleet Growth' || text === '车队增长' ||
-                     text === 'Flottenentwicklung' || text === 'Croissance de la flotte') &&
-                    el.children.length < 5) {
-                    headingRect = el.getBoundingClientRect();
-                    break;
-                }
-            }
+    # Find the Fleet Growth chart with proper dimensions
+    # Retry multiple times since chart may be lazy-rendering
+    bbox = None
+    chart_source = "unknown"
 
-            // Find all recharts charts
-            const charts = document.querySelectorAll('.recharts-wrapper');
-            if (charts.length === 0) return null;
-
-            let targetChart = null;
-            if (headingRect) {
-                // Find the chart closest (below) to the Fleet Growth heading
-                let bestDist = Infinity;
-                for (const chart of charts) {
-                    const rect = chart.getBoundingClientRect();
-                    const dist = Math.abs(rect.top - headingRect.bottom);
-                    if (dist < bestDist && rect.top >= headingRect.top - 50) {
-                        bestDist = dist;
-                        targetChart = chart;
+    for attempt in range(5):
+        bbox = await page.evaluate("""
+            () => {
+                // Find Fleet Growth heading
+                const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, div, span, p');
+                let headingRect = null;
+                let headingEl = null;
+                for (const el of headings) {
+                    const text = (el.textContent || '').trim();
+                    if ((text === 'Fleet Growth' || text === '车队增长' ||
+                         text === 'Flottenentwicklung' || text === 'Croissance de la flotte') &&
+                        el.children.length < 5) {
+                        headingRect = el.getBoundingClientRect();
+                        headingEl = el;
+                        break;
                     }
                 }
+
+                // Find all recharts charts
+                const charts = document.querySelectorAll('.recharts-wrapper');
+                const result = {
+                    chartsFound: charts.length,
+                    headingFound: !!headingRect,
+                    chartDetails: []
+                };
+
+                if (charts.length === 0) return result;
+
+                let targetChart = null;
+                if (headingRect) {
+                    // Find the chart closest (below) to the Fleet Growth heading
+                    let bestDist = Infinity;
+                    for (const chart of charts) {
+                        const rect = chart.getBoundingClientRect();
+                        const dist = Math.abs(rect.top - headingRect.bottom);
+                        result.chartDetails.push({
+                            top: rect.top, height: rect.height, width: rect.width,
+                            distFromHeading: dist
+                        });
+                        if (dist < bestDist && rect.top >= headingRect.top - 50) {
+                            bestDist = dist;
+                            targetChart = chart;
+                        }
+                    }
+                }
+
+                if (!targetChart) {
+                    // Fallback: use the largest chart (by area)
+                    let bestArea = 0;
+                    for (const chart of charts) {
+                        const rect = chart.getBoundingClientRect();
+                        const area = rect.width * rect.height;
+                        if (area > bestArea) {
+                            bestArea = area;
+                            targetChart = chart;
+                        }
+                    }
+                }
+
+                if (!targetChart) return result;
+
+                // Prefer the SVG surface inside the chart (more precise for hovering)
+                const svg = targetChart.querySelector('svg.recharts-surface');
+                const target = svg || targetChart;
+                const rect = target.getBoundingClientRect();
+
+                result.x = rect.x;
+                result.y = rect.y;
+                result.width = rect.width;
+                result.height = rect.height;
+                result.source = svg ? 'recharts-surface' : 'recharts-wrapper';
+                return result;
             }
+        """)
 
-            if (!targetChart) {
-                // Fallback: use the first chart
-                targetChart = charts[0];
-            }
+        if bbox and bbox.get("height") and bbox["height"] >= 100 and bbox.get("width", 0) >= 200:
+            chart_source = bbox.get("source", "unknown")
+            break
 
-            const svg = targetChart.querySelector('svg.recharts-surface');
-            const target = svg || targetChart;
-            const rect = target.getBoundingClientRect();
-            return {x: rect.x, y: rect.y, width: rect.width, height: rect.height};
-        }
-    """)
+        # Chart too small or not found - log diagnostics and retry
+        charts_found = bbox.get("chartsFound", 0) if bbox else 0
+        heading_found = bbox.get("headingFound", False) if bbox else False
+        h = bbox.get("height", 0) if bbox else 0
+        w = bbox.get("width", 0) if bbox else 0
+        details = bbox.get("chartDetails", []) if bbox else []
+        print(f"  Chart attempt {attempt + 1}/5: {charts_found} charts, "
+              f"heading={'yes' if heading_found else 'no'}, "
+              f"best size={w:.0f}x{h:.0f}")
+        if details:
+            for i, d in enumerate(details[:3]):
+                print(f"    chart[{i}]: {d['width']:.0f}x{d['height']:.0f}, "
+                      f"dist={d['distFromHeading']:.0f}")
 
-    if not bbox:
-        # Fallback: try simple selectors
-        chart_selectors = ["svg.recharts-surface", ".recharts-wrapper"]
-        chart_element = None
-        for selector in chart_selectors:
-            chart_element = await page.query_selector(selector)
-            if chart_element:
-                print(f"  Fallback: found chart via {selector}")
-                break
-        if not chart_element:
-            print("  Could not find any chart element")
+        # Try scrolling to the section and waiting
+        if fleet_section:
+            await fleet_section.scroll_into_view_if_needed()
+        await asyncio.sleep(2)
+
+        # If charts exist but are small, try clicking to expand or trigger render
+        if charts_found > 0 and h < 100:
+            # The chart container exists but is collapsed - try clicking nearby
+            # to trigger tab activation or container expansion
+            try:
+                await page.evaluate("""
+                    () => {
+                        const wrappers = document.querySelectorAll('.recharts-wrapper');
+                        for (const w of wrappers) {
+                            // Check for any tab or toggle nearby that might expand the chart
+                            const parent = w.closest('section, div[class*="card"], div[class*="panel"]');
+                            if (parent) {
+                                const tabs = parent.querySelectorAll(
+                                    'button, [role="tab"], [class*="tab"]'
+                                );
+                                for (const tab of tabs) {
+                                    const rect = tab.getBoundingClientRect();
+                                    if (rect.height > 0 && rect.width > 0) {
+                                        tab.click();
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                """)
+                await asyncio.sleep(2)
+            except Exception:
+                pass
+
+    # Validate we got a usable bbox
+    if not bbox or not bbox.get("height") or bbox["height"] < 100 or bbox.get("width", 0) < 200:
+        charts_found = bbox.get("chartsFound", 0) if bbox else 0
+        h = bbox.get("height", 0) if bbox else 0
+        w = bbox.get("width", 0) if bbox else 0
+        print(f"  Could not find properly-sized chart after retries "
+              f"(charts={charts_found}, best={w:.0f}x{h:.0f})")
+
+        # Last resort: try ANY recharts-surface SVG directly
+        chart_element = await page.query_selector("svg.recharts-surface")
+        if chart_element:
+            await chart_element.scroll_into_view_if_needed()
+            await asyncio.sleep(2)
+            raw_bbox = await chart_element.bounding_box()
+            if raw_bbox and raw_bbox.get("height", 0) >= 100:
+                bbox = raw_bbox
+                chart_source = "direct-svg-fallback"
+                print(f"  Last resort: found chart SVG {raw_bbox['width']:.0f}x{raw_bbox['height']:.0f}")
+            else:
+                h = raw_bbox.get("height", 0) if raw_bbox else 0
+                print(f"  Last resort SVG also too small: height={h:.0f}")
+                return historical
+        else:
+            print("  No recharts-surface SVG found at all")
             return historical
-        await chart_element.scroll_into_view_if_needed()
-        await asyncio.sleep(1)
-        bbox = await chart_element.bounding_box()
-
-    if not bbox:
-        print("  Could not get chart bounding box")
-        return historical
 
     print(f"  Chart bbox: x={bbox['x']:.0f}, y={bbox['y']:.0f}, "
-          f"w={bbox['width']:.0f}, h={bbox['height']:.0f}")
+          f"w={bbox['width']:.0f}, h={bbox['height']:.0f} (source: {chart_source})")
 
     # Calculate hover area - stay within the plot area (inside axes)
     chart_left = bbox['x'] + 60   # Skip y-axis labels
@@ -1175,6 +1377,11 @@ async def extract_active_historical_data(page, captured_api_responses=None) -> l
     since they contain Total fleet data, not Active fleet data.
     """
     # After clicking Active tab, the React state should now hold active data.
+    # Ensure the chart has re-rendered after tab switch
+    chart_visible = await ensure_fleet_chart_visible(page)
+    if not chart_visible:
+        print("  WARNING: Active chart may not be rendered yet")
+
     # Re-run extraction strategies on the updated page state.
     print("  Extracting active chart data from page state...")
     historical = await extract_chart_data_from_scripts(page)
