@@ -646,10 +646,29 @@ async def extract_data_via_mouse_hover(page) -> list:
     debug_tooltip_count = 0
 
     print(f"  Hovering across chart with {num_samples} positions using native mouse...")
+    print(f"  Hover area: x=[{chart_left:.0f}..{chart_right:.0f}], y={chart_mid_y:.0f}")
 
     # First move to chart area to activate it
     await page.mouse.move(chart_left, chart_mid_y)
     await asyncio.sleep(0.5)
+
+    # Diagnostic: check if tooltip wrapper exists at all after initial hover
+    tooltip_diag = await page.evaluate("""
+        () => {
+            const wrapper = document.querySelector('.recharts-tooltip-wrapper');
+            const customTooltip = document.querySelector('[class*="tooltip"], [class*="Tooltip"]');
+            return {
+                wrapperExists: !!wrapper,
+                wrapperHTML: wrapper ? wrapper.outerHTML.slice(0, 300) : null,
+                customTooltipExists: !!customTooltip,
+                customTooltipClass: customTooltip ? customTooltip.className : null
+            };
+        }
+    """)
+    print(f"  Tooltip diagnostic: wrapper={tooltip_diag.get('wrapperExists')}, "
+          f"custom={tooltip_diag.get('customTooltipExists')}")
+    if tooltip_diag.get('wrapperHTML'):
+        print(f"  Tooltip wrapper HTML: {tooltip_diag['wrapperHTML'][:200]}")
 
     for i in range(num_samples + 1):
         x = chart_left + (i * step)
@@ -659,10 +678,10 @@ async def extract_data_via_mouse_hover(page) -> list:
         await page.mouse.move(x, chart_mid_y)
         await asyncio.sleep(0.15)  # Give tooltip time to render
 
-        # Check for tooltip content - use only Recharts-specific selector
+        # Check for tooltip content - use Recharts-specific and custom tooltip selectors
         tooltip_text = await page.evaluate("""
             () => {
-                // Only look at Recharts tooltip wrapper (not generic tooltips)
+                // Look at Recharts tooltip wrapper
                 const el = document.querySelector('.recharts-tooltip-wrapper');
                 if (!el) return null;
 
@@ -699,6 +718,46 @@ async def extract_data_via_mouse_hover(page) -> list:
     # Move mouse away to dismiss tooltip
     await page.mouse.move(0, 0)
 
+    if not historical and debug_tooltip_count == 0:
+        print("  DIAGNOSTIC: No tooltips appeared during hover. Possible causes:")
+        print("    - Chart may use custom tooltip not matching .recharts-tooltip-wrapper")
+        print("    - Hover Y coordinate may miss the data area")
+        print("    - Chart may need a click/interaction to activate tooltips")
+        # Try a diagnostic click + hover to see if tooltips activate
+        try:
+            center_x = (chart_left + chart_right) / 2
+            await page.mouse.click(center_x, chart_mid_y)
+            await asyncio.sleep(0.3)
+            await page.mouse.move(center_x + 10, chart_mid_y)
+            await asyncio.sleep(0.3)
+            diag_tooltip = await page.evaluate("""
+                () => {
+                    const wrapper = document.querySelector('.recharts-tooltip-wrapper');
+                    if (wrapper) {
+                        const style = window.getComputedStyle(wrapper);
+                        return {
+                            exists: true,
+                            visible: style.visibility !== 'hidden' && style.opacity !== '0',
+                            text: wrapper.textContent?.slice(0, 200),
+                            html: wrapper.innerHTML?.slice(0, 300)
+                        };
+                    }
+                    // Check for any tooltip-like element that appeared
+                    const tips = document.querySelectorAll('[class*="tooltip"], [class*="Tooltip"], [role="tooltip"]');
+                    if (tips.length > 0) {
+                        return {
+                            exists: true,
+                            selector: tips[0].className,
+                            text: tips[0].textContent?.slice(0, 200)
+                        };
+                    }
+                    return {exists: false};
+                }
+            """)
+            print(f"    Post-click tooltip check: {diag_tooltip}")
+        except Exception as e:
+            print(f"    Post-click tooltip check failed: {e}")
+
     return historical
 
 
@@ -719,7 +778,7 @@ async def extract_chart_data_from_scripts(page) -> list:
             () => {
                 const candidates = [];
 
-                // Helper: check if an array looks like fleet data
+                // Helper: check if an array looks like fleet data (strict)
                 function isFleetData(arr) {
                     if (!Array.isArray(arr) || arr.length < 3) return false;
                     const sample = arr[0];
@@ -736,6 +795,30 @@ async def extract_chart_data_from_scripts(page) -> list:
                         k.includes('sanfran') || k.includes('fleet') || k.includes('vehicle')
                     );
                     return hasDate && hasFleetKey;
+                }
+
+                // Helper: check if an array looks like chart data (lenient)
+                // Used only when we KNOW we're looking at the Fleet Growth chart
+                function isChartLikeData(arr) {
+                    if (!Array.isArray(arr) || arr.length < 3) return false;
+                    const sample = arr[0];
+                    if (typeof sample !== 'object' || sample === null) return false;
+                    const keys = Object.keys(sample);
+                    // Must have at least 2 keys (date + value)
+                    if (keys.length < 2) return false;
+                    // Must have some date-like key OR a string value that looks like a date
+                    const hasDate = keys.some(k => {
+                        const kl = k.toLowerCase();
+                        if (kl.includes('date') || kl.includes('time') || kl.includes('day') ||
+                            kl.includes('month') || kl.includes('week') || kl.includes('year') ||
+                            kl === 'x' || kl === 'label' || kl === 'name') return true;
+                        // Check if the value looks like a date
+                        const val = String(sample[k]);
+                        return /^\d{4}[-\/]\d{1,2}/.test(val) || /^\d{1,2}\/\d{1,2}\/\d{2,4}/.test(val);
+                    });
+                    // Must have some numeric values
+                    const hasNumber = keys.some(k => typeof sample[k] === 'number');
+                    return hasDate && hasNumber;
                 }
 
                 // Helper: recursively search object for fleet data arrays
@@ -784,17 +867,23 @@ async def extract_chart_data_from_scripts(page) -> list:
                     return null;
                 })();
 
+                const isFleetSectionTarget = !!fleetSection;
                 const chartContainers = fleetSection
                     ? fleetSection.querySelectorAll('.recharts-wrapper, .recharts-responsive-container')
                     : document.querySelectorAll('.recharts-wrapper, .recharts-responsive-container, [class*="chart"], [class*="Chart"]');
                 console.log('[scraper] Targeting ' + (fleetSection ? 'Fleet Growth section' : 'all charts') +
                     ': found ' + chartContainers.length + ' chart containers');
+
+                // Diagnostic: log all arrays found in fiber, even non-matching
+                const diagnosticArrays = [];
+
                 for (const container of chartContainers) {
                     // React fiber keys are randomized per build, find them dynamically
                     const fiberKeys = Object.keys(container).filter(k =>
                         k.startsWith('__reactFiber$') || k.startsWith('__reactInternalInstance$') ||
                         k.startsWith('__reactProps$')
                     );
+                    console.log('[scraper] Container fiber keys: ' + fiberKeys.join(', '));
                     for (const fiberKey of fiberKeys) {
                         let fiber = container[fiberKey];
                         let visited = 0;
@@ -803,12 +892,35 @@ async def extract_chart_data_from_scripts(page) -> list:
                             // Check memoizedProps.data (Recharts passes data as prop)
                             if (fiber.memoizedProps) {
                                 const props = fiber.memoizedProps;
-                                if (props.data && isFleetData(props.data)) {
-                                    candidates.push({
-                                        data: props.data,
-                                        source: 'fiber.memoizedProps.data',
-                                        size: props.data.length
-                                    });
+                                if (props.data && Array.isArray(props.data) && props.data.length > 0) {
+                                    const sample = props.data[0];
+                                    const keys = typeof sample === 'object' && sample ? Object.keys(sample) : [];
+                                    console.log('[scraper] Found props.data: ' + props.data.length +
+                                        ' items, keys: ' + keys.join(',') +
+                                        ', sample: ' + JSON.stringify(sample).slice(0, 200));
+
+                                    if (isFleetData(props.data)) {
+                                        candidates.push({
+                                            data: props.data,
+                                            source: 'fiber.memoizedProps.data',
+                                            size: props.data.length
+                                        });
+                                    } else if (isFleetSectionTarget && isChartLikeData(props.data)) {
+                                        // When targeting Fleet Growth section, accept chart-like data
+                                        candidates.push({
+                                            data: props.data,
+                                            source: 'fiber.memoizedProps.data(fleet-section-lenient)',
+                                            size: props.data.length
+                                        });
+                                    } else {
+                                        diagnosticArrays.push({
+                                            keys: keys.slice(0, 10),
+                                            size: props.data.length,
+                                            sample: JSON.stringify(sample).slice(0, 200),
+                                            isFleet: false,
+                                            isChart: isChartLikeData(props.data)
+                                        });
+                                    }
                                 }
                                 // Also check children props
                                 if (props.children) {
@@ -816,12 +928,25 @@ async def extract_chart_data_from_scripts(page) -> list:
                                         ? props.children : [props.children];
                                     for (const child of children) {
                                         if (child && child.props && child.props.data &&
-                                            isFleetData(child.props.data)) {
-                                            candidates.push({
-                                                data: child.props.data,
-                                                source: 'fiber.child.props.data',
-                                                size: child.props.data.length
-                                            });
+                                            Array.isArray(child.props.data) && child.props.data.length > 0) {
+                                            const csample = child.props.data[0];
+                                            const ckeys = typeof csample === 'object' && csample ? Object.keys(csample) : [];
+                                            console.log('[scraper] Found child.props.data: ' + child.props.data.length +
+                                                ' items, keys: ' + ckeys.join(','));
+
+                                            if (isFleetData(child.props.data)) {
+                                                candidates.push({
+                                                    data: child.props.data,
+                                                    source: 'fiber.child.props.data',
+                                                    size: child.props.data.length
+                                                });
+                                            } else if (isFleetSectionTarget && isChartLikeData(child.props.data)) {
+                                                candidates.push({
+                                                    data: child.props.data,
+                                                    source: 'fiber.child.props.data(fleet-section-lenient)',
+                                                    size: child.props.data.length
+                                                });
+                                            }
                                         }
                                     }
                                 }
@@ -941,7 +1066,13 @@ async def extract_chart_data_from_scripts(page) -> list:
                     };
                 }
 
-                return null;
+                // No candidates found - return diagnostics
+                return {
+                    data: null,
+                    diagnosticArrays: diagnosticArrays.slice(0, 10),
+                    fleetSectionFound: isFleetSectionTarget,
+                    chartContainerCount: chartContainers.length
+                };
             }
         """)
 
@@ -952,14 +1083,30 @@ async def extract_chart_data_from_scripts(page) -> list:
             if all_sources:
                 print(f"    All sources found: {all_sources}")
 
+            # Log first item for diagnostics
+            if chart_data["data"]:
+                first_item = chart_data["data"][0]
+                print(f"    First data item keys: {list(first_item.keys()) if isinstance(first_item, dict) else type(first_item)}")
+                print(f"    First data item: {str(first_item)[:200]}")
+
             for item in chart_data["data"]:
                 if isinstance(item, dict):
-                    # Flexible field extraction
+                    # Flexible field extraction - try known keys first, then any string that looks like a date
                     date_val = None
-                    for key in ["date", "Date", "timestamp", "day", "created_at"]:
+                    for key in ["date", "Date", "timestamp", "day", "created_at",
+                                "time", "Time", "month", "Month", "x", "label", "name"]:
                         if key in item:
-                            date_val = str(item[key])
-                            break
+                            val = item[key]
+                            if val is not None:
+                                date_val = str(val)
+                                break
+                    # If no known date key, check all string values for date patterns
+                    if not date_val:
+                        for key, val in item.items():
+                            if isinstance(val, str) and re.match(r'\d{4}[-/]\d{1,2}', val):
+                                date_val = val
+                                break
+
                     if not date_val:
                         continue
 
@@ -971,13 +1118,16 @@ async def extract_chart_data_from_scripts(page) -> list:
                     austin = None
                     bayarea = None
                     total = None
+                    # Collect all numeric values for fallback assignment
+                    numeric_fields = {}
                     for key, val in item.items():
                         if val is None or not isinstance(val, (int, float)):
                             continue
-                        key_lower = key.lower().replace("_", "").replace("-", "")
+                        key_lower = key.lower().replace("_", "").replace("-", "").replace(" ", "")
+                        numeric_fields[key_lower] = int(val)
                         if "austin" in key_lower:
                             austin = int(val)
-                        elif "bay" in key_lower or "sf" in key_lower:
+                        elif "bay" in key_lower or "sf" in key_lower or "sanfran" in key_lower:
                             bayarea = int(val)
                         elif "total" in key_lower or "fleet" in key_lower:
                             total = int(val)
@@ -989,8 +1139,39 @@ async def extract_chart_data_from_scripts(page) -> list:
                             "austin": austin,
                             "total": total,
                         })
+                    elif numeric_fields:
+                        # Fallback: if data from Fleet Growth section has numeric fields
+                        # but with unknown key names, try to map them by value patterns
+                        # (e.g., the sum of two fields equals the third)
+                        nums = list(numeric_fields.values())
+                        entry = {"date": date_str, "austin": None, "bayarea": None, "total": None}
+                        if len(nums) == 1:
+                            entry["total"] = nums[0]
+                        elif len(nums) >= 2:
+                            nums_sorted = sorted(nums)
+                            entry["total"] = nums_sorted[-1]
+                            # If we have 2+ values, smaller ones are regions
+                            if len(nums_sorted) >= 3:
+                                entry["austin"] = nums_sorted[-3]
+                                entry["bayarea"] = nums_sorted[-2]
+                            elif len(nums_sorted) == 2:
+                                entry["austin"] = nums_sorted[0]
+                        historical.append(entry)
 
             print(f"  Found {len(historical)} data points from page state ({source})")
+        else:
+            # No data found - print diagnostics
+            diag = chart_data or {}
+            print(f"    DIAGNOSTIC: Fleet section found: {diag.get('fleetSectionFound')}, "
+                  f"chart containers: {diag.get('chartContainerCount')}")
+            diag_arrays = diag.get('diagnosticArrays', [])
+            if diag_arrays:
+                print(f"    DIAGNOSTIC: Found {len(diag_arrays)} non-matching arrays in fiber:")
+                for da in diag_arrays:
+                    print(f"      - keys={da.get('keys')}, size={da.get('size')}, "
+                          f"isChart={da.get('isChart')}, sample={da.get('sample', '')[:150]}")
+            else:
+                print("    DIAGNOSTIC: No arrays found in React fiber at all")
     except Exception as e:
         print(f"  Could not extract chart data from scripts: {e}")
         import traceback
