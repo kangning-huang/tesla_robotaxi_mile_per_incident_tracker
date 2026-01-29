@@ -1449,6 +1449,9 @@ async def click_bar_chart_mode(page) -> bool:
     Bar chart mode provides much better tooltip hit targets (each bar is a large
     hover area) compared to line chart mode where you need to hit exact data points.
 
+    Uses the Active/Total tab buttons as anchor points (known to be findable by
+    Playwright) to locate the nearby chart type icon toggle buttons.
+
     Returns:
         True if bar chart mode was activated, False otherwise.
     """
@@ -1463,231 +1466,356 @@ async def click_bar_chart_mode(page) -> bool:
     except Exception:
         pass
 
-    # Strategy 1: Find the bar chart toggle button near Fleet Growth heading
-    # The UI shows two icon buttons (line chart / bar chart) next to Active/Total tabs
+    # Strategy 1: Anchor-based approach using known Active/Total buttons
+    # Since click_fleet_tab() successfully finds Active/Total buttons, use them
+    # as anchor points to locate the nearby chart type toggle icons.
+    print("  Bar chart toggle: Strategy 1 (anchor-based)...")
     try:
-        clicked = await page.evaluate("""
-            () => {
-                // Find the Fleet Growth heading
-                const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, div, span, p');
-                let fleetHeading = null;
-                for (const el of headings) {
-                    const text = (el.textContent || '').trim();
-                    if ((text === 'Fleet Growth' || text === '车队增长' ||
-                         text === 'Flottenentwicklung' || text === 'Croissance de la flotte') &&
-                        el.children.length < 5) {
-                        fleetHeading = el;
-                        break;
-                    }
-                }
-                if (!fleetHeading) return {found: false, reason: 'no heading'};
+        anchor_bbox = None
+        anchor_text = None
 
-                // Look for the chart type toggle container near the heading
-                // Walk up to find the section containing the heading and chart controls
-                let section = fleetHeading.parentElement;
-                for (let i = 0; i < 8 && section; i++) {
-                    // Look for buttons/icons that could be chart type toggles
-                    const buttons = section.querySelectorAll('button, [role="button"], [class*="toggle"], [class*="icon"], svg');
-                    const candidates = [];
+        # Find Active or Total button as anchor (we know these exist)
+        for text in ["Active", "Total"]:
+            for sel in [
+                f"button:has-text('{text}')",
+                f"[role='tab']:has-text('{text}')",
+                f"text='{text}'",
+            ]:
+                try:
+                    btn = await page.query_selector(sel)
+                    if btn:
+                        visible = await btn.is_visible()
+                        if visible:
+                            bbox = await btn.bounding_box()
+                            if bbox:
+                                anchor_bbox = bbox
+                                anchor_text = text
+                                print(f"    Anchor: '{text}' button at ({bbox['x']:.0f},{bbox['y']:.0f}) "
+                                      f"{bbox['width']:.0f}x{bbox['height']:.0f}")
+                                break
+                except Exception:
+                    continue
+            if anchor_bbox:
+                break
 
-                    for (const btn of buttons) {
-                        const rect = btn.getBoundingClientRect();
-                        if (rect.width === 0 || rect.height === 0) continue;
-
-                        // Check if this button contains an SVG with bar chart paths
-                        // Bar chart icons typically have vertical rectangle paths
-                        const svgs = btn.tagName === 'svg' ? [btn] : btn.querySelectorAll('svg');
-                        for (const svg of svgs) {
-                            const paths = svg.querySelectorAll('path, rect, line');
-                            const svgContent = svg.innerHTML || '';
-                            // Bar chart SVG icons typically contain multiple vertical rectangles
-                            // or paths that look like bars
-                            const isBarChart = (
-                                svgContent.includes('rect') ||
-                                // Common bar chart icon patterns
-                                (paths.length >= 2 && paths.length <= 10)
-                            );
-                            if (isBarChart) {
-                                candidates.push({
-                                    element: btn.tagName === 'svg' ? btn.parentElement || btn : btn,
-                                    svg: svg,
-                                    pathCount: paths.length,
-                                    rect: rect,
-                                    text: (btn.textContent || '').trim(),
-                                    ariaLabel: btn.getAttribute('aria-label') || '',
-                                    title: btn.getAttribute('title') || '',
-                                });
-                            }
-                        }
-                    }
-
-                    if (candidates.length >= 2) {
-                        // Found toggle pair - the second one is typically the bar chart
-                        // Sort by horizontal position (left to right)
-                        candidates.sort((a, b) => a.rect.left - b.rect.left);
-
-                        // Try to identify the bar chart button:
-                        // 1. Check aria-label or title for "bar" keyword
-                        // 2. If no labels, take the second button (bar chart is usually after line chart)
-                        let barBtn = null;
-                        for (const c of candidates) {
-                            const label = (c.ariaLabel + ' ' + c.title + ' ' + c.text).toLowerCase();
-                            if (label.includes('bar')) {
-                                barBtn = c;
-                                break;
-                            }
-                        }
-                        if (!barBtn && candidates.length >= 2) {
-                            barBtn = candidates[1]; // Second icon is usually bar chart
-                        }
-
-                        if (barBtn) {
-                            barBtn.element.click();
-                            return {found: true, method: 'svg-toggle-pair',
-                                    candidates: candidates.length};
-                        }
-                    }
-
-                    section = section.parentElement;
-                }
-
-                return {found: false, reason: 'no toggle buttons found'};
-            }
-        """)
-
-        if clicked and clicked.get("found"):
-            print(f"  Switched to bar chart mode ({clicked.get('method')}, "
-                  f"{clicked.get('candidates', 0)} candidates)")
-            await asyncio.sleep(2)  # Wait for chart to re-render
-            return True
+        if not anchor_bbox:
+            print("    Could not find Active/Total button as anchor")
         else:
-            reason = clicked.get("reason", "unknown") if clicked else "evaluation failed"
-            print(f"  Bar chart toggle Strategy 1 failed: {reason}")
-    except Exception as e:
-        print(f"  Bar chart toggle Strategy 1 error: {e}")
+            # Find ALL buttons on the page
+            all_buttons = await page.query_selector_all("button")
+            icon_buttons = []
 
-    # Strategy 2: Look for buttons near Fleet Growth heading by position
-    # Find all small buttons/clickable elements in the Fleet Growth header area
+            for btn in all_buttons:
+                try:
+                    bbox = await btn.bounding_box()
+                    if not bbox or bbox["width"] == 0 or bbox["height"] == 0:
+                        continue
+
+                    # Must be on the same row (within 30px vertically of anchor)
+                    if abs(bbox["y"] - anchor_bbox["y"]) > 30:
+                        continue
+
+                    # Must be small-ish (icon button, not a large action button)
+                    if bbox["width"] > 80 or bbox["height"] > 60:
+                        continue
+
+                    # Get text content - icon buttons have no or very short text
+                    text_content = await btn.text_content()
+                    text_content = (text_content or "").strip()
+
+                    # Skip text buttons (Active, Total, etc.)
+                    if len(text_content) > 3:
+                        continue
+
+                    # Check if it contains an SVG (icon button indicator)
+                    has_svg = await btn.query_selector("svg")
+
+                    icon_buttons.append({
+                        "element": btn,
+                        "bbox": bbox,
+                        "text": text_content,
+                        "has_svg": has_svg is not None,
+                    })
+                except Exception:
+                    continue
+
+            # Sort by x position (left to right)
+            icon_buttons.sort(key=lambda b: b["bbox"]["x"])
+
+            icon_info = []
+            for b in icon_buttons:
+                bx = b["bbox"]["x"]
+                by = b["bbox"]["y"]
+                icon_info.append(f"({bx:.0f},{by:.0f}) svg={b['has_svg']} text={b['text']!r}")
+            print(f"    Found {len(icon_buttons)} icon buttons on same row: {icon_info}")
+
+            if len(icon_buttons) >= 2:
+                # The second icon button is the bar chart toggle
+                target = icon_buttons[1]["element"]
+                await target.click()
+                print(f"    Clicked bar chart toggle (2nd of {len(icon_buttons)} icon buttons)")
+                await asyncio.sleep(2)
+                return True
+            elif len(icon_buttons) == 1:
+                await icon_buttons[0]["element"].click()
+                print(f"    Clicked single icon button")
+                await asyncio.sleep(2)
+                return True
+            else:
+                print(f"    No icon buttons found on same row as anchor")
+
+    except Exception as e:
+        print(f"    Strategy 1 error: {e}")
+
+    # Strategy 2: Use JavaScript to find icon buttons near Active/Total buttons
+    print("  Bar chart toggle: Strategy 2 (JS anchor-based)...")
     try:
-        clicked = await page.evaluate("""
+        result = await page.evaluate("""
             () => {
-                // Find Fleet Growth heading position
-                const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, div, span, p');
-                let headingRect = null;
-                for (const el of headings) {
-                    const text = (el.textContent || '').trim();
-                    if ((text === 'Fleet Growth' || text === '车队增长') &&
-                        el.children.length < 5) {
-                        headingRect = el.getBoundingClientRect();
-                        break;
+                // Find Active or Total button
+                const allBtns = document.querySelectorAll('button, [role="tab"], [role="button"]');
+                let anchorRect = null;
+                let anchorText = '';
+                const textButtons = [];
+
+                for (const btn of allBtns) {
+                    const text = (btn.textContent || '').trim();
+                    const rect = btn.getBoundingClientRect();
+                    if (rect.width === 0 || rect.height === 0) continue;
+
+                    if (text === 'Active' || text === 'Total' ||
+                        text === '活跃' || text === '总计') {
+                        textButtons.push({el: btn, rect, text});
+                        if (!anchorRect) {
+                            anchorRect = rect;
+                            anchorText = text;
+                        }
                     }
                 }
-                if (!headingRect) return {found: false, reason: 'no heading rect'};
 
-                // Find all clickable elements near the heading (within 200px vertically)
-                const allClickable = document.querySelectorAll(
-                    'button, [role="button"], [role="tab"], [tabindex="0"]'
-                );
-                const nearby = [];
+                if (!anchorRect) {
+                    return {found: false, reason: 'no anchor button found'};
+                }
 
-                for (const el of allClickable) {
-                    const rect = el.getBoundingClientRect();
+                // Find the rightmost text button (Active or Total) to know where icons start
+                let maxRight = 0;
+                for (const tb of textButtons) {
+                    const right = tb.rect.left + tb.rect.width;
+                    if (Math.abs(tb.rect.top - anchorRect.top) < 30 && right > maxRight) {
+                        maxRight = right;
+                    }
+                }
+
+                // Find icon buttons: on same row, to the right of text buttons,
+                // small, and with short/no text content
+                const iconButtons = [];
+                for (const btn of allBtns) {
+                    const rect = btn.getBoundingClientRect();
                     if (rect.width === 0 || rect.height === 0) continue;
-                    // Must be near the heading vertically
-                    const vertDist = Math.abs(rect.top - headingRect.top);
-                    if (vertDist > 200) continue;
-                    // Must be to the right of heading or on the same line
-                    nearby.push({
-                        element: el,
-                        rect: rect,
-                        text: (el.textContent || '').trim().substring(0, 50),
-                        vertDist: vertDist,
-                        left: rect.left,
+
+                    // Same row as anchor (within 30px vertically)
+                    if (Math.abs(rect.top - anchorRect.top) > 30) continue;
+
+                    // To the right of all text buttons
+                    if (rect.left < maxRight) continue;
+
+                    // Small button (icon-sized)
+                    if (rect.width > 80 || rect.height > 60) continue;
+
+                    // Short/no text
+                    const text = (btn.textContent || '').trim();
+                    if (text.length > 3) continue;
+
+                    // Check for SVG child
+                    const hasSvg = btn.querySelector('svg') !== null;
+
+                    iconButtons.push({
+                        el: btn, rect, text, hasSvg,
+                        x: rect.left,
                     });
                 }
 
-                // Sort by position (left to right, same line as heading first)
-                nearby.sort((a, b) => a.vertDist - b.vertDist || a.left - b.left);
+                // Sort by x position
+                iconButtons.sort((a, b) => a.x - b.x);
 
-                // Look for the bar chart button - it's typically a small icon button
-                // that is NOT "Active" or "Total" text
-                const iconButtons = nearby.filter(n => {
-                    const text = n.text.toLowerCase();
-                    return text !== 'active' && text !== 'total' &&
-                           text !== '活跃' && text !== '总计' &&
-                           n.rect.width < 100 && n.rect.height < 100;
-                });
+                const debug = {
+                    anchor: anchorText,
+                    anchorX: Math.round(anchorRect.left),
+                    anchorY: Math.round(anchorRect.top),
+                    maxRight: Math.round(maxRight),
+                    iconCount: iconButtons.length,
+                    icons: iconButtons.map(b => ({
+                        x: Math.round(b.x),
+                        w: Math.round(b.rect.width),
+                        h: Math.round(b.rect.height),
+                        text: b.text,
+                        svg: b.hasSvg,
+                    })),
+                };
 
                 if (iconButtons.length >= 2) {
-                    // Click the second icon button (bar chart is typically second)
-                    iconButtons[1].element.click();
-                    return {found: true, method: 'position-based',
-                            total: nearby.length, icons: iconButtons.length};
+                    iconButtons[1].el.click();
+                    return {found: true, method: 'js-anchor-2nd', ...debug};
                 } else if (iconButtons.length === 1) {
-                    // Only one icon - try clicking it
-                    iconButtons[0].element.click();
-                    return {found: true, method: 'position-based-single',
-                            total: nearby.length, icons: 1};
+                    iconButtons[0].el.click();
+                    return {found: true, method: 'js-anchor-single', ...debug};
                 }
 
-                return {found: false, reason: 'no icon buttons',
-                        nearby: nearby.length,
-                        texts: nearby.map(n => n.text).slice(0, 10)};
+                // Fallback: look for ANY small buttons on same row (even to the left)
+                const allSameRow = [];
+                for (const btn of allBtns) {
+                    const rect = btn.getBoundingClientRect();
+                    if (rect.width === 0 || rect.height === 0) continue;
+                    if (Math.abs(rect.top - anchorRect.top) > 30) continue;
+                    if (rect.width > 80 || rect.height > 60) continue;
+                    const text = (btn.textContent || '').trim();
+                    if (text.length > 3) continue;
+                    allSameRow.push({
+                        el: btn, rect, text,
+                        hasSvg: btn.querySelector('svg') !== null,
+                        x: rect.left,
+                    });
+                }
+                allSameRow.sort((a, b) => a.x - b.x);
+
+                debug.allSameRowCount = allSameRow.length;
+                debug.allSameRow = allSameRow.map(b => ({
+                    x: Math.round(b.x), text: b.text, svg: b.hasSvg,
+                }));
+
+                if (allSameRow.length >= 2) {
+                    allSameRow[allSameRow.length - 1].el.click();
+                    return {found: true, method: 'js-samerow-last', ...debug};
+                }
+
+                return {found: false, reason: 'no icon buttons', ...debug};
             }
         """)
 
-        if clicked and clicked.get("found"):
-            print(f"  Switched to bar chart mode ({clicked.get('method')}, "
-                  f"{clicked.get('icons', 0)} icon buttons)")
+        if result and result.get("found"):
+            print(f"    Clicked bar chart toggle ({result.get('method')}, "
+                  f"anchor={result.get('anchor')}, icons={result.get('iconCount')})")
+            if result.get("icons"):
+                print(f"    Icon details: {result['icons']}")
             await asyncio.sleep(2)
             return True
         else:
-            reason = clicked.get("reason", "unknown") if clicked else "evaluation failed"
-            texts = clicked.get("texts", []) if clicked else []
-            print(f"  Bar chart toggle Strategy 2 failed: {reason}")
-            if texts:
-                print(f"    Nearby elements: {texts}")
+            reason = result.get("reason", "unknown") if result else "eval failed"
+            print(f"    Strategy 2 failed: {reason}")
+            if result:
+                print(f"    Debug: anchor={result.get('anchor')}, "
+                      f"anchorX={result.get('anchorX')}, maxRight={result.get('maxRight')}, "
+                      f"icons={result.get('iconCount')}, "
+                      f"sameRow={result.get('allSameRowCount')}")
+                if result.get("allSameRow"):
+                    print(f"    Same-row elements: {result['allSameRow']}")
     except Exception as e:
-        print(f"  Bar chart toggle Strategy 2 error: {e}")
+        print(f"    Strategy 2 error: {e}")
 
-    # Strategy 3: Use Playwright to find and click elements with bar chart-like SVG
+    # Strategy 3: Direct Playwright SVG search near Fleet Growth text
+    print("  Bar chart toggle: Strategy 3 (Playwright SVG search)...")
     try:
-        # Look for all SVG elements near Fleet Growth that could be toggle icons
-        svg_elements = await page.query_selector_all("svg")
-        fleet_section = await page.query_selector("text=Fleet Growth")
-        if fleet_section:
-            fleet_bbox = await fleet_section.bounding_box()
+        fleet_text = await page.query_selector("text=Fleet Growth")
+        if not fleet_text:
+            fleet_text = await page.query_selector("text=车队增长")
+
+        if fleet_text:
+            fleet_bbox = await fleet_text.bounding_box()
             if fleet_bbox:
+                # Find all SVG elements and filter by proximity
+                all_svgs = await page.query_selector_all("svg")
                 icon_svgs = []
-                for svg in svg_elements:
+
+                for svg in all_svgs:
                     try:
                         svg_bbox = await svg.bounding_box()
                         if not svg_bbox:
                             continue
-                        # Small icon SVG near the heading
+                        # Small icon SVG on the same line as heading
                         if (svg_bbox["width"] < 50 and svg_bbox["height"] < 50 and
-                                abs(svg_bbox["y"] - fleet_bbox["y"]) < 100):
-                            icon_svgs.append((svg, svg_bbox))
+                                abs(svg_bbox["y"] - fleet_bbox["y"]) < 40):
+                            # Try to get the parent button if it exists
+                            parent = await svg.evaluate_handle("el => el.parentElement")
+                            parent_tag = await parent.evaluate("el => el.tagName") if parent else ""
+                            icon_svgs.append({
+                                "svg": svg,
+                                "parent": parent if parent_tag == "BUTTON" else svg,
+                                "bbox": svg_bbox,
+                                "is_button_child": parent_tag == "BUTTON",
+                            })
                     except Exception:
                         continue
 
+                # Sort by x position
+                icon_svgs.sort(key=lambda s: s["bbox"]["x"])
+                print(f"    Found {len(icon_svgs)} small SVGs near heading "
+                      f"(y_range={fleet_bbox['y']:.0f}±40)")
+
                 if len(icon_svgs) >= 2:
-                    # Sort by x position, click the second one (bar chart)
-                    icon_svgs.sort(key=lambda x: x[1]["x"])
-                    await icon_svgs[1][0].click()
-                    print(f"  Switched to bar chart mode (SVG direct click, "
-                          f"{len(icon_svgs)} icon SVGs)")
+                    target = icon_svgs[1]["parent"] if icon_svgs[1]["is_button_child"] else icon_svgs[1]["svg"]
+                    await target.click()
+                    print(f"    Clicked 2nd SVG icon (bar chart)")
                     await asyncio.sleep(2)
                     return True
                 elif len(icon_svgs) == 1:
-                    await icon_svgs[0][0].click()
-                    print(f"  Clicked single icon SVG near Fleet Growth")
+                    target = icon_svgs[0]["parent"] if icon_svgs[0]["is_button_child"] else icon_svgs[0]["svg"]
+                    await target.click()
+                    print(f"    Clicked single SVG icon")
                     await asyncio.sleep(2)
                     return True
                 else:
-                    print(f"  Bar chart toggle Strategy 3: no icon SVGs found near heading")
+                    # Try wider vertical range
+                    wide_svgs = []
+                    for svg in all_svgs:
+                        try:
+                            svg_bbox = await svg.bounding_box()
+                            if not svg_bbox:
+                                continue
+                            if (svg_bbox["width"] < 50 and svg_bbox["height"] < 50 and
+                                    abs(svg_bbox["y"] - fleet_bbox["y"]) < 100):
+                                wide_svgs.append((svg, svg_bbox))
+                        except Exception:
+                            continue
+                    print(f"    Wider search: {len(wide_svgs)} SVGs within 100px")
     except Exception as e:
-        print(f"  Bar chart toggle Strategy 3 error: {e}")
+        print(f"    Strategy 3 error: {e}")
+
+    # Strategy 4: Diagnostic dump + keyboard-based approach
+    print("  Bar chart toggle: Strategy 4 (diagnostic + keyboard)...")
+    try:
+        # Dump all buttons near Fleet Growth for diagnostic purposes
+        diag = await page.evaluate("""
+            () => {
+                const allBtns = document.querySelectorAll('button, [role="button"], [role="tab"]');
+                const btns = [];
+                for (const btn of allBtns) {
+                    const rect = btn.getBoundingClientRect();
+                    if (rect.width === 0 || rect.height === 0) continue;
+                    if (rect.top > 600) continue; // Only top portion of page
+                    btns.push({
+                        tag: btn.tagName,
+                        text: (btn.textContent || '').trim().substring(0, 30),
+                        x: Math.round(rect.left),
+                        y: Math.round(rect.top),
+                        w: Math.round(rect.width),
+                        h: Math.round(rect.height),
+                        hasSvg: btn.querySelector('svg') !== null,
+                        classes: (btn.className || '').toString().substring(0, 80),
+                        dataState: btn.getAttribute('data-state') || '',
+                        role: btn.getAttribute('role') || '',
+                    });
+                }
+                return btns;
+            }
+        """)
+        print(f"    All buttons in top 600px ({len(diag)} total):")
+        for b in diag:
+            svg_str = " [SVG]" if b.get("hasSvg") else ""
+            state = f" data-state={b['dataState']}" if b.get("dataState") else ""
+            print(f"      [{b['tag']}] '{b['text']}' at ({b['x']},{b['y']}) "
+                  f"{b['w']}x{b['h']}{svg_str}{state} class='{b['classes'][:50]}'")
+    except Exception as e:
+        print(f"    Diagnostic dump error: {e}")
 
     print(f"  Warning: Could not switch to bar chart mode (all strategies failed)")
     return False
