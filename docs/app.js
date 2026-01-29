@@ -13,7 +13,8 @@ const incidentData = [
     { date: '2025-12-10', days: 28, fleet: 32, miles: 107500, mpi: 107500 },
 ];
 
-// Fleet size data (Austin unsupervised robotaxis only) - all data points from fleet_data.json
+// Active fleet size data (Austin unsupervised robotaxis actually on the road)
+// Uses active fleet counts when available; falls back to total fleet from fleet_data.json
 const fleetData = [
     { date: '2025-06-25', size: 10 },
     { date: '2025-07-01', size: 12 },

@@ -110,6 +110,11 @@ jobs:
         run: python scripts/scrape_fleet_data.py
         continue-on-error: true  # Site may block or change
 
+      - name: Scrape fleet growth time-series data
+        run: python scripts/scrape_fleet_growth.py
+        timeout-minutes: 10
+        continue-on-error: true  # Fallback: fleet_data.py may have already captured this
+
       - name: Upload screenshots as artifacts
         uses: actions/upload-artifact@v4
         if: always()
@@ -117,6 +122,19 @@ jobs:
           name: scraper-screenshots
           path: data/screenshot_*.png
           retention-days: 7
+
+      - name: Upload fleet growth data as artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fleet-growth-data
+          path: |
+            data/fleet_growth_active.json
+            data/fleet_growth_active.csv
+            data/fleet_growth_total.json
+            data/fleet_growth_total.csv
+          retention-days: 30
+          if-no-files-found: warn
 
       - name: Check for fleet data changes
         id: fleet-changes
@@ -142,6 +160,20 @@ jobs:
             fi
           fi
 
+          # Check fleet growth time-series files
+          for f in data/fleet_growth_active.json data/fleet_growth_total.json \
+                   data/fleet_growth_active.csv data/fleet_growth_total.csv; do
+            if [ -f "$f" ]; then
+              if ! git ls-files --error-unmatch "$f" >/dev/null 2>&1; then
+                echo "$f is new (untracked)"
+                CHANGED=true
+              elif ! git diff --quiet "$f"; then
+                echo "$f has changes"
+                CHANGED=true
+              fi
+            fi
+          done
+
           if [ "$CHANGED" = true ]; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
@@ -153,8 +185,10 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          # Add both scraped and merged fleet data files
+          # Add scraped fleet data, merged fleet data, and fleet growth time-series
           git add data/fleet_data_scraped.json data/fleet_data.json
+          git add data/fleet_growth_active.json data/fleet_growth_active.csv \
+                  data/fleet_growth_total.json data/fleet_growth_total.csv 2>/dev/null || true
           git commit -m "Update fleet data from robotaxitracker.com - $(date +'%Y-%m-%d')"
           # Pull any changes from other jobs before pushing
           git pull --rebase origin main

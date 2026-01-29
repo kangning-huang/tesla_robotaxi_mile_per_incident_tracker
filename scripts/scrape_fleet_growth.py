@@ -28,10 +28,11 @@ except ImportError:
     sys.exit(1)
 
 SCRIPT_DIR = Path(__file__).parent
-OUTPUT_JSON_ACTIVE = SCRIPT_DIR / "fleet_growth_active.json"
-OUTPUT_CSV_ACTIVE = SCRIPT_DIR / "fleet_growth_active.csv"
-OUTPUT_JSON_TOTAL = SCRIPT_DIR / "fleet_growth_total.json"
-OUTPUT_CSV_TOTAL = SCRIPT_DIR / "fleet_growth_total.csv"
+DATA_DIR = SCRIPT_DIR.parent / "data"
+OUTPUT_JSON_ACTIVE = DATA_DIR / "fleet_growth_active.json"
+OUTPUT_CSV_ACTIVE = DATA_DIR / "fleet_growth_active.csv"
+OUTPUT_JSON_TOTAL = DATA_DIR / "fleet_growth_total.json"
+OUTPUT_CSV_TOTAL = DATA_DIR / "fleet_growth_total.csv"
 URL = "https://robotaxitracker.com"
 
 
@@ -810,6 +811,9 @@ async def main():
     print("Robotaxi Tracker - Fleet Growth Scraper")
     print("=" * 60)
     print()
+
+    # Ensure data directory exists
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     active_data, total_data = await scrape_fleet_growth()
 

@@ -45,16 +45,40 @@ except ImportError:
 
 
 class FleetInterpolator:
-    """Interpolate fleet size for any given date based on snapshots."""
+    """Interpolate fleet size for any given date based on snapshots.
+
+    Prefers active fleet counts (vehicles actually on the road) over total
+    fleet counts, since only active vehicles contribute to miles driven.
+    Falls back to total fleet counts when active data is not available.
+    """
 
     def __init__(self, snapshots: list[dict]):
-        """Initialize with fleet snapshots."""
+        """Initialize with fleet snapshots.
+
+        For each snapshot, uses austin_active_vehicles if available,
+        otherwise falls back to total_robotaxi / austin_vehicles.
+        """
         self.snapshots = []
+        active_count = 0
+        total_count = 0
         for s in snapshots:
             dt = datetime.strptime(s["date"], "%Y-%m-%d")
-            count = s.get("total_robotaxi", s.get("austin_vehicles", 0))
+            # Prefer active fleet size (vehicles actually driving)
+            active = s.get("austin_active_vehicles")
+            if active is not None:
+                count = active
+                active_count += 1
+            else:
+                count = s.get("total_robotaxi", s.get("austin_vehicles", 0))
+                total_count += 1
             self.snapshots.append((dt, count))
         self.snapshots.sort(key=lambda x: x[0])
+
+        if active_count > 0:
+            print(f"  FleetInterpolator: {active_count} active fleet snapshots, "
+                  f"{total_count} total fleet fallbacks")
+        else:
+            print(f"  FleetInterpolator: {total_count} snapshots (no active fleet data available, using total)")
 
     def get_fleet_size(self, target_date: datetime) -> int:
         """Get interpolated fleet size for a specific date."""
@@ -303,7 +327,13 @@ def parse_incident_dates(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_fleet_data(data_dir: Path) -> list[dict]:
-    """Load fleet size snapshots from JSON."""
+    """Load fleet size snapshots from JSON, enriched with active fleet data.
+
+    Loads fleet_data.json (total fleet snapshots), then overlays active fleet
+    counts from fleet_growth_active.json when available. Active fleet size is
+    preferred for MPI calculations because only active vehicles contribute to
+    miles driven.
+    """
     fleet_file = data_dir / "fleet_data.json"
 
     if not fleet_file.exists():
@@ -315,6 +345,59 @@ def load_fleet_data(data_dir: Path) -> list[dict]:
 
     snapshots = data.get("snapshots", [])
     print(f"  Loaded {len(snapshots)} fleet snapshots")
+
+    # Overlay active fleet data from fleet_growth_active.json
+    active_file = data_dir / "fleet_growth_active.json"
+    if active_file.exists():
+        try:
+            with open(active_file) as f:
+                active_data = json.load(f)
+
+            active_points = active_data.get("data", [])
+            if active_points:
+                # Build lookup by date
+                active_by_date = {}
+                for pt in active_points:
+                    date = pt.get("date")
+                    if date:
+                        active_by_date[date] = pt
+
+                # Merge active counts into existing snapshots
+                merged_count = 0
+                for snapshot in snapshots:
+                    date = snapshot.get("date")
+                    if date and date in active_by_date:
+                        apt = active_by_date[date]
+                        if apt.get("austin") is not None:
+                            snapshot["austin_active_vehicles"] = apt["austin"]
+                            merged_count += 1
+                        if apt.get("bayarea") is not None:
+                            snapshot["bayarea_active_vehicles"] = apt["bayarea"]
+
+                # Add active-only dates that don't have a snapshot yet
+                existing_dates = {s["date"] for s in snapshots}
+                new_count = 0
+                for date, apt in active_by_date.items():
+                    if date not in existing_dates and apt.get("austin") is not None:
+                        snapshots.append({
+                            "date": date,
+                            "austin_vehicles": None,
+                            "bayarea_vehicles": None,
+                            "total_robotaxi": None,
+                            "austin_active_vehicles": apt.get("austin"),
+                            "bayarea_active_vehicles": apt.get("bayarea"),
+                            "source": "robotaxitracker.com (active)",
+                            "notes": "Active fleet from fleet_growth_active.json"
+                        })
+                        new_count += 1
+
+                snapshots.sort(key=lambda s: s["date"])
+                print(f"  Active fleet data: merged {merged_count} snapshots, added {new_count} new")
+        except (json.JSONDecodeError, IOError) as e:
+            print(f"  Warning: Could not load active fleet data: {e}")
+    else:
+        print(f"  Note: No active fleet data file ({active_file.name}), using total fleet counts")
+
     return snapshots
 
 
@@ -666,6 +749,8 @@ def main():
   MPI Calculation:
   - Miles between incident N and N+1 = Σ(daily_fleet_size × miles_per_day)
   - Fleet size interpolated daily from {len(fleet_snapshots)} snapshots
+  - Uses active fleet size (vehicles actually on the road) when available
+  - Falls back to total fleet size when active data is not available
   - Assumes {daily_miles} miles/vehicle/day (moderate estimate)
   - Service stoppage days excluded: {len(excluded_dates)} day(s) with 0 miles
 
@@ -676,7 +761,7 @@ def main():
 
   Caveats:
   - Tesla cited for delayed crash reporting to NHTSA
-  - Fleet size estimates may differ from actual active vehicles
+  - Active fleet data may not cover all dates (falls back to total fleet)
   - Not all incidents are equal in severity
   - Small sample size limits trend reliability
     """)
@@ -696,10 +781,15 @@ def main():
             "reason": stoppage.get("reason", "Unknown")
         })
 
+    # Check if active fleet data was used
+    active_fleet_file = data_dir / "fleet_growth_active.json"
+    fleet_source = "active" if active_fleet_file.exists() else "total"
+
     output = {
         "analysis_date": datetime.now().isoformat(),
         "service_start": service_start.strftime("%Y-%m-%d"),
         "data_source": "sample" if use_sample else "nhtsa",
+        "fleet_data_source": fleet_source,
         "incident_count": len(all_tesla),
         "daily_miles_assumption": daily_miles,
         "excluded_dates": sorted(excluded_dates),

@@ -335,8 +335,8 @@
     <section class="chart-section secondary">
         <div class="container">
             <div class="section-header">
-                <h2>Fleet Size Over Time</h2>
-                <p>Austin robotaxi fleet growth (true unsupervised ADS vehicles)</p>
+                <h2>Active Fleet Size Over Time</h2>
+                <p>Austin robotaxi active fleet growth — vehicles actually on the road (unsupervised ADS)</p>
             </div>
             <div class="chart-container small">
                 <canvas id="fleetChart"></canvas>
@@ -549,12 +549,12 @@
                 <div class="method-card">
                     <div class="method-number">01</div>
                     <h3>Fleet Data</h3>
-                    <p>Fleet size updated daily from <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a>, supplemented by news sources and NHTSA filings.</p>
+                    <p>We use <strong>active fleet size</strong> (vehicles actually on the road) scraped daily from <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a>. Not every vehicle in the total fleet operates every day&mdash;some may be charging, in maintenance, or offline. Using active counts gives a more accurate miles estimate.</p>
                 </div>
                 <div class="method-card">
                     <div class="method-number">02</div>
                     <h3>Miles Estimation</h3>
-                    <p>Daily miles = Fleet size × 115 mi/vehicle/day (based on Tesla's 250K miles Q3 2025 report).</p>
+                    <p>Daily miles = Active fleet size × 115 mi/vehicle/day (based on Tesla's 250K miles Q3 2025 report).</p>
                 </div>
                 <div class="method-card">
                     <div class="method-number">03</div>
