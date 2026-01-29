@@ -1,5 +1,5 @@
 {
-  "analysis_date": "2026-01-29T11:48:53.051858",
+  "analysis_date": "2026-01-29T12:23:31.580063",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "fleet_data_source": "active",
@@ -134,23 +134,23 @@
     "best_model": "exponential",
     "best_fit": {
       "type": "exponential",
-      "a": 10342.94099739987,
-      "b": 0.013209545056860339,
-      "r_squared": 0.19776331458667495,
+      "a": 10342.940165131622,
+      "b": 0.013209545864062068,
+      "r_squared": 0.19776331458774987,
       "interpretation": "improving",
-      "growth_rate_per_day": 0.013209545056860339,
-      "doubling_time_days": 52.47320612301945,
+      "growth_rate_per_day": 0.013209545864062068,
+      "doubling_time_days": 52.47320291651537,
       "halving_time_days": null
     },
     "all_models": {
       "exponential": {
         "type": "exponential",
-        "a": 10342.94099739987,
-        "b": 0.013209545056860339,
-        "r_squared": 0.19776331458667495,
+        "a": 10342.940165131622,
+        "b": 0.013209545864062068,
+        "r_squared": 0.19776331458774987,
         "interpretation": "improving",
-        "growth_rate_per_day": 0.013209545056860339,
-        "doubling_time_days": 52.47320612301945,
+        "growth_rate_per_day": 0.013209545864062068,
+        "doubling_time_days": 52.47320291651537,
         "halving_time_days": null
       }
     }
