@@ -22,6 +22,8 @@ The dashboard displays:
 ├── data/
 │   ├── fleet_data.json         # Fleet size snapshots (Austin)
 │   ├── fleet_data_scraped.json # Auto-scraped from robotaxitracker.com
+│   ├── fleet_growth_active.json # Active fleet time-series (used for MPI)
+│   ├── fleet_growth_total.json  # Total fleet time-series
 │   ├── service_stoppages.json  # Dates when service was suspended (e.g. storms)
 │   ├── analysis_results.json   # Latest MPI analysis output
 │   ├── mpi_trend_chart.png     # Generated trend chart
@@ -33,7 +35,8 @@ The dashboard displays:
 ├── scripts/
 │   ├── download_nhtsa_data.py  # Download NHTSA ADS/ADAS CSV files
 │   ├── analyze_tesla_incidents.py  # Calculate MPI with trend analysis
-│   └── scrape_fleet_data.py    # Scrape robotaxitracker.com via Playwright
+│   ├── scrape_fleet_data.py    # Scrape robotaxitracker.com via Playwright
+│   └── scrape_fleet_growth.py  # Scrape active/total fleet growth time-series
 └── requirements.txt
 ```
 
@@ -57,6 +60,7 @@ Miles between incidents = Σ (daily_fleet_size × 115 mi/day/vehicle)
 ```
 
 - **Fleet size**: Interpolated daily from robotaxitracker.com snapshots
+- **Active fleet preferred**: The calculation uses **active** fleet size (vehicles actually on the road) rather than total fleet size, because only active vehicles contribute to miles driven. Not every vehicle in the total fleet operates every day — some may be charging, in maintenance, or otherwise offline. When active fleet data is unavailable, the calculation falls back to total fleet size.
 - **115 mi/day/vehicle**: Validated from Tesla's Q3 2025 report (~250K miles driven)
 - **Incidents**: From NHTSA Standing General Order 2021-01 reports
 
@@ -104,7 +108,7 @@ The tracker accounts for days when Tesla's Robotaxi service was not operating. O
 ## Limitations
 
 1. **Reporting Delays**: Tesla has been cited by NHTSA for delayed crash reporting
-2. **Fleet Estimates**: Active vehicles may differ from reported fleet size
+2. **Fleet Estimates**: Active fleet data may not cover all dates (falls back to total fleet size)
 3. **Miles Estimation**: No official daily miles data from Tesla
 4. **Severity Variance**: All incidents treated equally regardless of severity
 5. **Small Sample**: 10 incidents limits statistical confidence
