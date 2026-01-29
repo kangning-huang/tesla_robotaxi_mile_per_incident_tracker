@@ -508,6 +508,264 @@ def parse_tooltip_text(text: str) -> dict:
     return result
 
 
+async def click_fleet_tab(page, tab_name: str) -> bool:
+    """Click the 'Active' or 'Total' tab on the Fleet Growth chart.
+
+    Args:
+        page: Playwright page object.
+        tab_name: 'Active' or 'Total' (English). Also matches Chinese: '活跃' / '总计'.
+
+    Returns:
+        True if tab was found and clicked, False otherwise.
+    """
+    # Map of tab names in various languages
+    tab_variants = {
+        "Active": ["Active", "活跃", "Aktiv", "Actif", "Activo"],
+        "Total": ["Total", "总计", "Gesamt", "Totale"],
+    }
+
+    variants = tab_variants.get(tab_name, [tab_name])
+
+    # First scroll to Fleet Growth section
+    try:
+        fleet_section = await page.query_selector("text=Fleet Growth")
+        if not fleet_section:
+            fleet_section = await page.query_selector("text=车队增长")
+        if fleet_section:
+            await fleet_section.scroll_into_view_if_needed()
+            await asyncio.sleep(1)
+    except Exception:
+        pass
+
+    # Try clicking tab using text selectors
+    for variant in variants:
+        try:
+            # Try exact text match on button-like elements
+            selectors = [
+                f"button:has-text('{variant}')",
+                f"[role='tab']:has-text('{variant}')",
+                f"text='{variant}'",
+                f"span:has-text('{variant}')",
+                f"div:has-text('{variant}')",
+            ]
+            for selector in selectors:
+                try:
+                    element = await page.query_selector(selector)
+                    if element:
+                        is_visible = await element.is_visible()
+                        if is_visible:
+                            await element.click()
+                            print(f"  Clicked '{variant}' tab (selector: {selector})")
+                            await asyncio.sleep(2)  # Wait for chart to re-render
+                            return True
+                except Exception:
+                    continue
+        except Exception:
+            continue
+
+    # Fallback: try JavaScript click
+    try:
+        clicked = await page.evaluate("""
+            (variants) => {
+                // Find all clickable elements near the Fleet Growth section
+                const elements = document.querySelectorAll('button, [role="tab"], span, div');
+                for (const el of elements) {
+                    const text = (el.textContent || '').trim();
+                    for (const variant of variants) {
+                        if (text === variant || text.toLowerCase() === variant.toLowerCase()) {
+                            el.click();
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        """, variants)
+        if clicked:
+            print(f"  Clicked '{tab_name}' tab via JavaScript")
+            await asyncio.sleep(2)
+            return True
+    except Exception as e:
+        print(f"  JS tab click failed: {e}")
+
+    print(f"  Warning: Could not find '{tab_name}' tab")
+    return False
+
+
+async def extract_active_fleet_numbers(page) -> dict:
+    """Extract active fleet numbers after clicking the Active tab.
+
+    Returns dict with active fleet counts, or empty values if not found.
+    """
+    active_data = {
+        "austin_active": None,
+        "bayarea_active": None,
+        "total_active": None,
+    }
+
+    content = await page.content()
+
+    # The Active view shows a "Total Fleet" or "总车队" number
+    # Look for patterns in the visible text
+    try:
+        js_result = await page.evaluate("""
+            () => {
+                const result = {};
+                const allText = document.body.innerText;
+
+                // After clicking Active tab, the total fleet number updates
+                // Look for "TOTAL FLEET" or "总车队" followed by a number
+                const totalMatch = allText.match(/(?:TOTAL\\s*FLEET|总车队)[\\s\\n]*(\\d+)/i);
+                if (totalMatch) result.total = parseInt(totalMatch[1]);
+
+                // Look for region-specific numbers
+                const austinMatch = allText.match(/AUSTIN[\\s\\n]*(\\d+)/i);
+                if (austinMatch) result.austin = parseInt(austinMatch[1]);
+
+                const bayMatch = allText.match(/BAY\\s*AREA[\\s\\n]*(\\d+)/i);
+                if (bayMatch) result.bayarea = parseInt(bayMatch[1]);
+
+                return result;
+            }
+        """)
+        if js_result:
+            if js_result.get("total"):
+                active_data["total_active"] = js_result["total"]
+            if js_result.get("austin"):
+                active_data["austin_active"] = js_result["austin"]
+            if js_result.get("bayarea"):
+                active_data["bayarea_active"] = js_result["bayarea"]
+    except Exception as e:
+        print(f"  JS active fleet extraction failed: {e}")
+
+    # Also try regex on HTML content
+    patterns = [
+        (r"TOTAL\s*FLEET\s*(\d+)", "total_active"),
+        (r"总车队\s*(\d+)", "total_active"),
+        (r"AUSTIN\s*(\d+)", "austin_active"),
+        (r"BAY\s*AREA\s*(\d+)", "bayarea_active"),
+    ]
+    for pattern, key in patterns:
+        match = re.search(pattern, content, re.IGNORECASE)
+        if match and active_data[key] is None:
+            active_data[key] = int(match.group(1))
+
+    return active_data
+
+
+async def extract_active_historical_data(page) -> list:
+    """Extract historical active fleet data from the chart after clicking Active tab.
+
+    Uses the same tooltip-hovering approach as extract_historical_data().
+    """
+    historical = []
+
+    try:
+        # Find the chart container
+        chart_element = await page.query_selector("svg.recharts-surface")
+        if not chart_element:
+            for selector in ["canvas", ".recharts-wrapper", "[class*='chart']"]:
+                chart_element = await page.query_selector(selector)
+                if chart_element:
+                    break
+
+        if not chart_element:
+            print("  Could not find active chart element")
+            return historical
+
+        await chart_element.scroll_into_view_if_needed()
+        await asyncio.sleep(1)
+
+        bbox = await chart_element.bounding_box()
+        if not bbox:
+            print("  Could not get active chart bounding box")
+            return historical
+
+        print(f"  Active chart bbox: x={bbox['x']:.0f}, y={bbox['y']:.0f}, w={bbox['width']:.0f}, h={bbox['height']:.0f}")
+
+        chart_left = bbox['x'] + 60
+        chart_right = bbox['x'] + bbox['width'] - 20
+        chart_y_positions = [
+            bbox['y'] + bbox['height'] * 0.3,
+            bbox['y'] + bbox['height'] * 0.5,
+            bbox['y'] + bbox['height'] * 0.7,
+        ]
+
+        num_samples = 60
+        step = (chart_right - chart_left) / num_samples
+        seen_dates = set()
+
+        print(f"  Scanning active chart with {num_samples} hover positions...")
+
+        for i in range(num_samples + 1):
+            x = chart_left + (i * step)
+
+            for y in chart_y_positions:
+                await page.evaluate("""
+                    (coords) => {
+                        const element = document.elementFromPoint(coords.x, coords.y);
+                        if (element) {
+                            const mouseEnter = new MouseEvent('mouseenter', {
+                                bubbles: true, clientX: coords.x, clientY: coords.y
+                            });
+                            const mouseMove = new MouseEvent('mousemove', {
+                                bubbles: true, clientX: coords.x, clientY: coords.y
+                            });
+                            const mouseOver = new MouseEvent('mouseover', {
+                                bubbles: true, clientX: coords.x, clientY: coords.y
+                            });
+                            element.dispatchEvent(mouseEnter);
+                            element.dispatchEvent(mouseOver);
+                            element.dispatchEvent(mouseMove);
+                        }
+                    }
+                """, {"x": x, "y": y})
+
+                await asyncio.sleep(0.1)
+
+                tooltip_selectors = [
+                    ".recharts-tooltip-wrapper:not([style*='visibility: hidden'])",
+                    ".recharts-tooltip-wrapper",
+                    ".recharts-default-tooltip",
+                    "[class*='tooltip']",
+                    "[role='tooltip']",
+                ]
+
+                for tooltip_selector in tooltip_selectors:
+                    try:
+                        tooltip = await page.query_selector(tooltip_selector)
+                        if tooltip:
+                            is_visible = await tooltip.is_visible()
+                            if not is_visible:
+                                continue
+
+                            tooltip_text = await tooltip.text_content()
+                            if tooltip_text and tooltip_text.strip():
+                                data_point = parse_tooltip_text(tooltip_text)
+                                if data_point and data_point.get("date") and data_point["date"] not in seen_dates:
+                                    seen_dates.add(data_point["date"])
+                                    historical.append(data_point)
+                                    print(f"    Active: {data_point['date']} - Austin: {data_point.get('austin')}, Bay Area: {data_point.get('bayarea')}")
+                                break
+                    except Exception:
+                        pass
+
+        # Try script extraction as fallback
+        if not historical:
+            print("  No active tooltips found, trying script extraction...")
+            historical = await extract_chart_data_from_scripts(page)
+
+        historical.sort(key=lambda x: x.get("date", ""))
+        print(f"  Extracted {len(historical)} active historical data points")
+
+    except Exception as e:
+        print(f"Warning: Could not extract active historical data: {e}")
+        import traceback
+        traceback.print_exc()
+
+    return historical
+
+
 async def extract_nhtsa_incidents(page) -> list:
     """Extract NHTSA incident data from the /nhtsa page."""
     incidents = []
@@ -616,10 +874,47 @@ async def scrape_robotaxi_tracker():
             # Take full page screenshot after all content loaded
             await take_screenshot(page, "main_page_full")
 
-            # Extract historical data
-            print("\nExtracting historical data...")
+            # Extract historical data (Total fleet - default view)
+            print("\nExtracting historical data (Total fleet)...")
             historical = await extract_historical_data(page)
-            print(f"  Found {len(historical)} historical data points")
+            print(f"  Found {len(historical)} total historical data points")
+
+            # --- Active Fleet Extraction ---
+            # The site has "Active" / "Total" tabs on the Fleet Growth chart
+            # Active fleet = vehicles actually on the road (more meaningful for MPI)
+            print("\n" + "-" * 40)
+            print("EXTRACTING ACTIVE FLEET DATA")
+            print("-" * 40)
+
+            active_fleet = {
+                "austin_active": None,
+                "bayarea_active": None,
+                "total_active": None,
+            }
+            active_historical = []
+
+            # Navigate back to main page if needed (after NHTSA extraction later)
+            # Click the "Active" tab on Fleet Growth chart
+            active_tab_clicked = await click_fleet_tab(page, "Active")
+            if active_tab_clicked:
+                await take_screenshot(page, "fleet_growth_active")
+
+                # Extract active fleet numbers
+                print("\nExtracting active fleet numbers...")
+                active_fleet = await extract_active_fleet_numbers(page)
+                print(f"  Austin active: {active_fleet['austin_active']}")
+                print(f"  Bay Area active: {active_fleet['bayarea_active']}")
+                print(f"  Total active: {active_fleet['total_active']}")
+
+                # Extract active historical data from chart tooltips
+                print("\nExtracting active historical data...")
+                active_historical = await extract_active_historical_data(page)
+                print(f"  Found {len(active_historical)} active historical data points")
+
+                # Switch back to Total tab for consistency
+                await click_fleet_tab(page, "Total")
+            else:
+                print("  Active tab not found - skipping active fleet extraction")
 
             # Extract NHTSA incidents
             print("\nExtracting NHTSA incidents...")
@@ -634,10 +929,12 @@ async def scrape_robotaxi_tracker():
                 "metadata": {
                     "scraped_at": datetime.now().isoformat(),
                     "source": ROBOTAXI_TRACKER_URL,
-                    "scraper_version": "1.0.0"
+                    "scraper_version": "2.0.0"
                 },
                 "current_fleet": fleet_data,
+                "active_fleet": active_fleet,
                 "historical_data": historical,
+                "active_historical_data": active_historical,
                 "nhtsa_incidents": incidents
             }
 
@@ -673,12 +970,16 @@ def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
     1. Loads existing fleet_data.json
     2. Converts scraped data to snapshot format
     3. Merges new data points (skips duplicates by date)
-    4. Sorts by date
-    5. Saves updated fleet_data.json
+    4. Merges active fleet data into existing snapshots by date
+    5. Sorts by date
+    6. Saves updated fleet_data.json
 
     Returns True if merge was successful and changes were made, False otherwise.
     """
-    if not scraped_data or not scraped_data.get("historical_data"):
+    has_total_data = scraped_data and scraped_data.get("historical_data")
+    has_active_data = scraped_data and scraped_data.get("active_historical_data")
+
+    if not has_total_data and not has_active_data:
         print("No historical data to merge")
         return False
 
@@ -694,42 +995,96 @@ def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
         print(f"Error reading {FLEET_DATA_FILE}: {e}")
         return False
 
-    # Get existing dates for deduplication
+    changes_made = False
+
+    # --- Merge total fleet historical data (existing behavior) ---
     existing_dates = {s["date"] for s in fleet_data.get("snapshots", [])}
     initial_count = len(existing_dates)
 
-    # Convert scraped historical data to snapshot format
-    new_snapshots = []
-    for item in scraped_data["historical_data"]:
-        date = item.get("date")
-        if not date or date in existing_dates:
-            continue  # Skip if no date or already exists
+    if has_total_data:
+        new_snapshots = []
+        for item in scraped_data["historical_data"]:
+            date = item.get("date")
+            if not date or date in existing_dates:
+                continue
 
-        austin = item.get("austin")
-        bayarea = item.get("bayarea")
+            austin = item.get("austin")
+            bayarea = item.get("bayarea")
 
-        if austin is None and bayarea is None:
-            continue  # Skip if no fleet data
+            if austin is None and bayarea is None:
+                continue
 
-        # Create snapshot in the same format as fleet_data.json
-        snapshot = {
-            "date": date,
-            "austin_vehicles": austin,
-            "bayarea_vehicles": bayarea,
-            "total_robotaxi": austin,  # Only Austin has true robotaxis (unsupervised)
-            "source": "robotaxitracker.com",
-            "notes": "Scraped from chart"
-        }
+            snapshot = {
+                "date": date,
+                "austin_vehicles": austin,
+                "bayarea_vehicles": bayarea,
+                "total_robotaxi": austin,
+                "source": "robotaxitracker.com",
+                "notes": "Scraped from chart"
+            }
 
-        new_snapshots.append(snapshot)
-        existing_dates.add(date)
+            new_snapshots.append(snapshot)
+            existing_dates.add(date)
 
-    if not new_snapshots:
+        if new_snapshots:
+            fleet_data["snapshots"].extend(new_snapshots)
+            changes_made = True
+            print(f"  Added {len(new_snapshots)} new total fleet snapshots")
+
+    # --- Merge active fleet historical data ---
+    if has_active_data:
+        # Build a lookup of existing snapshots by date for updating
+        snapshot_by_date = {s["date"]: s for s in fleet_data.get("snapshots", [])}
+        active_merged_count = 0
+        active_new_count = 0
+
+        for item in scraped_data["active_historical_data"]:
+            date = item.get("date")
+            if not date:
+                continue
+
+            austin_active = item.get("austin")
+            bayarea_active = item.get("bayarea")
+
+            if austin_active is None and bayarea_active is None:
+                continue
+
+            if date in snapshot_by_date:
+                # Update existing snapshot with active fleet data
+                snapshot = snapshot_by_date[date]
+                updated = False
+                if austin_active is not None and snapshot.get("austin_active_vehicles") != austin_active:
+                    snapshot["austin_active_vehicles"] = austin_active
+                    updated = True
+                if bayarea_active is not None and snapshot.get("bayarea_active_vehicles") != bayarea_active:
+                    snapshot["bayarea_active_vehicles"] = bayarea_active
+                    updated = True
+                if updated:
+                    active_merged_count += 1
+                    changes_made = True
+            else:
+                # Create a new snapshot with active data only
+                snapshot = {
+                    "date": date,
+                    "austin_vehicles": None,
+                    "bayarea_vehicles": None,
+                    "total_robotaxi": None,
+                    "austin_active_vehicles": austin_active,
+                    "bayarea_active_vehicles": bayarea_active,
+                    "source": "robotaxitracker.com",
+                    "notes": "Active fleet scraped from chart"
+                }
+                fleet_data["snapshots"].append(snapshot)
+                snapshot_by_date[date] = snapshot
+                active_new_count += 1
+                changes_made = True
+
+        if active_merged_count > 0 or active_new_count > 0:
+            print(f"  Active fleet: updated {active_merged_count} existing snapshots, added {active_new_count} new")
+
+    if not changes_made:
         print("No new data points to merge")
         return False
-
-    # Add new snapshots to existing data
-    fleet_data["snapshots"].extend(new_snapshots)
 
     # Sort all snapshots by date
     fleet_data["snapshots"].sort(key=lambda x: x["date"])
@@ -739,12 +1094,31 @@ def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
 
     # Update the last snapshot's notes with current fleet totals if available
     current_fleet = scraped_data.get("current_fleet", {})
+    active_fleet = scraped_data.get("active_fleet", {})
     if current_fleet.get("austin_vehicles") and current_fleet.get("bayarea_vehicles"):
         last_snapshot = fleet_data["snapshots"][-1]
         austin = current_fleet["austin_vehicles"]
         bayarea = current_fleet["bayarea_vehicles"]
         total = austin + bayarea
-        last_snapshot["notes"] = f"Current fleet: {austin} Austin + {bayarea} Bay Area = {total} total"
+        notes = f"Current fleet: {austin} Austin + {bayarea} Bay Area = {total} total"
+
+        # Add active fleet info to notes if available
+        austin_active = active_fleet.get("austin_active")
+        total_active = active_fleet.get("total_active")
+        if austin_active is not None:
+            notes += f" (active: {austin_active} Austin"
+            if total_active is not None:
+                notes += f", {total_active} total"
+            notes += ")"
+
+        last_snapshot["notes"] = notes
+
+        # Also set active fields on last snapshot from current data
+        if austin_active is not None:
+            last_snapshot["austin_active_vehicles"] = austin_active
+        bayarea_active = active_fleet.get("bayarea_active")
+        if bayarea_active is not None:
+            last_snapshot["bayarea_active_vehicles"] = bayarea_active
 
     # Save updated fleet_data.json
     try:
@@ -752,7 +1126,7 @@ def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
             json.dump(fleet_data, f, indent=2)
 
         final_count = len(fleet_data["snapshots"])
-        print(f"\nMerge complete: {final_count - initial_count} new data points added")
+        print(f"\nMerge complete: {final_count - initial_count} new snapshots added")
         print(f"  Total snapshots: {final_count}")
         print(f"  Updated: {FLEET_DATA_FILE}")
         return True
@@ -772,11 +1146,23 @@ def main():
         print("=" * 60)
 
         if result["current_fleet"]["total_vehicles"]:
-            print(f"\nCurrent Fleet Size: {result['current_fleet']['total_vehicles']}")
+            print(f"\nCurrent Total Fleet Size: {result['current_fleet']['total_vehicles']}")
         else:
             print("\nWarning: Could not extract fleet numbers.")
             print("Check screenshots in data/ folder for debugging.")
             print("The site may have changed structure or be blocking scrapers.")
+
+        # Print active fleet info
+        active_fleet = result.get("active_fleet", {})
+        if active_fleet.get("total_active") or active_fleet.get("austin_active"):
+            print(f"\nActive Fleet:")
+            print(f"  Austin active: {active_fleet.get('austin_active')}")
+            print(f"  Bay Area active: {active_fleet.get('bayarea_active')}")
+            print(f"  Total active: {active_fleet.get('total_active')}")
+            active_hist = result.get("active_historical_data", [])
+            print(f"  Active historical data points: {len(active_hist)}")
+        else:
+            print("\nNote: Active fleet data not available (tab may not exist yet).")
 
         # Merge scraped data into fleet_data.json
         print("\n" + "-" * 60)
