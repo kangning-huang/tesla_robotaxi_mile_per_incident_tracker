@@ -188,206 +188,536 @@ async def extract_fleet_numbers(page) -> dict:
     return fleet_data
 
 
-async def extract_historical_data(page) -> list:
-    """Extract historical fleet data by hovering over chart bars to get tooltips."""
+async def extract_historical_data(page, captured_api_responses=None) -> list:
+    """Extract historical fleet data using multiple strategies.
+
+    Strategies tried in order:
+    1. Network API interception (most reliable - captures raw JSON from API calls)
+    2. React/Next.js state extraction (access chart data from component props)
+    3. Playwright native mouse hover (triggers real browser events for tooltips)
+    """
     historical = []
 
-    try:
-        # First, scroll to the Fleet Growth section and ensure it's visible
-        fleet_section = await page.query_selector("text=Fleet Growth")
-        if fleet_section:
-            await fleet_section.scroll_into_view_if_needed()
-            await asyncio.sleep(2)
-
-        # Find the chart container - Recharts uses svg.recharts-surface
-        chart_element = await page.query_selector("svg.recharts-surface")
-        if not chart_element:
-            # Try alternative selectors
-            for selector in ["canvas", ".recharts-wrapper", "[class*='chart']"]:
-                chart_element = await page.query_selector(selector)
-                if chart_element:
-                    print(f"  Found chart element with selector: {selector}")
-                    break
-        else:
-            print("  Found chart element with selector: svg.recharts-surface")
-
-        if not chart_element:
-            print("  Could not find chart element for tooltip extraction")
+    # Strategy 1: Extract from captured API responses
+    if captured_api_responses:
+        print("  Strategy 1: Checking captured API responses...")
+        historical = extract_fleet_data_from_api_responses(captured_api_responses)
+        if historical:
+            print(f"  -> Found {len(historical)} data points from API responses")
+            historical.sort(key=lambda x: x.get("date", ""))
             return historical
+        print("  -> No fleet data found in API responses")
 
-        # Scroll chart into view and get bounding box
-        await chart_element.scroll_into_view_if_needed()
-        await asyncio.sleep(1)
-
-        bbox = await chart_element.bounding_box()
-        if not bbox:
-            print("  Could not get chart bounding box")
-            return historical
-
-        print(f"  Chart bounding box: x={bbox['x']:.0f}, y={bbox['y']:.0f}, w={bbox['width']:.0f}, h={bbox['height']:.0f}")
-
-        # For Recharts, we need to find the actual bar elements and hover on them
-        # Look for rect elements (bars) within the chart
-        bars = await page.query_selector_all("svg.recharts-surface rect.recharts-bar-rectangle")
-        if not bars:
-            bars = await page.query_selector_all("svg.recharts-surface rect")
-
-        print(f"  Found {len(bars)} bar elements in chart")
-
-        # Calculate hover positions across the chart
-        chart_left = bbox['x'] + 60  # Skip y-axis
-        chart_right = bbox['x'] + bbox['width'] - 20
-        # Hover at multiple y positions to ensure we hit the bars
-        chart_y_positions = [
-            bbox['y'] + bbox['height'] * 0.3,  # Upper third
-            bbox['y'] + bbox['height'] * 0.5,  # Middle
-            bbox['y'] + bbox['height'] * 0.7,  # Lower third
-        ]
-
-        num_samples = 60
-        step = (chart_right - chart_left) / num_samples
-        seen_dates = set()
-
-        print(f"  Scanning chart with {num_samples} hover positions...")
-
-        for i in range(num_samples + 1):
-            x = chart_left + (i * step)
-
-            # Try multiple y positions
-            for y in chart_y_positions:
-                # Use JavaScript to dispatch proper mouse events
-                await page.evaluate(f"""
-                    (coords) => {{
-                        const element = document.elementFromPoint(coords.x, coords.y);
-                        if (element) {{
-                            const mouseEnter = new MouseEvent('mouseenter', {{
-                                bubbles: true, clientX: coords.x, clientY: coords.y
-                            }});
-                            const mouseMove = new MouseEvent('mousemove', {{
-                                bubbles: true, clientX: coords.x, clientY: coords.y
-                            }});
-                            const mouseOver = new MouseEvent('mouseover', {{
-                                bubbles: true, clientX: coords.x, clientY: coords.y
-                            }});
-                            element.dispatchEvent(mouseEnter);
-                            element.dispatchEvent(mouseOver);
-                            element.dispatchEvent(mouseMove);
-                        }}
-                    }}
-                """, {"x": x, "y": y})
-
-                await asyncio.sleep(0.1)
-
-                # Try to find tooltip - Recharts uses various tooltip containers
-                tooltip_selectors = [
-                    ".recharts-tooltip-wrapper:not([style*='visibility: hidden'])",
-                    ".recharts-tooltip-wrapper",
-                    ".recharts-default-tooltip",
-                    "[class*='tooltip']",
-                    "[role='tooltip']",
-                ]
-
-                for tooltip_selector in tooltip_selectors:
-                    try:
-                        tooltip = await page.query_selector(tooltip_selector)
-                        if tooltip:
-                            # Check if tooltip is visible
-                            is_visible = await tooltip.is_visible()
-                            if not is_visible:
-                                continue
-
-                            tooltip_text = await tooltip.text_content()
-                            if tooltip_text and tooltip_text.strip():
-                                # Parse the tooltip text
-                                data_point = parse_tooltip_text(tooltip_text)
-                                if data_point and data_point.get("date") and data_point.get("date") not in seen_dates:
-                                    seen_dates.add(data_point["date"])
-                                    historical.append(data_point)
-                                    print(f"    Found: {data_point['date']} - Bay Area: {data_point.get('bayarea')}, Austin: {data_point.get('austin')}")
-                                break
-                    except Exception:
-                        pass
-
-        # If still no data, try to extract from the page's JavaScript data
-        if not historical:
-            print("  No tooltips found, trying to extract chart data from page scripts...")
-            historical = await extract_chart_data_from_scripts(page)
-
-        # Sort by date
+    # Strategy 2: Extract from React/Next.js page state
+    print("  Strategy 2: Extracting from React/Next.js state...")
+    historical = await extract_chart_data_from_scripts(page)
+    if historical:
+        print(f"  -> Found {len(historical)} data points from page state")
         historical.sort(key=lambda x: x.get("date", ""))
-        print(f"  Extracted {len(historical)} historical data points")
+        return historical
+    print("  -> No data found in page state")
 
+    # Strategy 3: Native mouse hover for tooltip extraction
+    print("  Strategy 3: Using native mouse hover for tooltips...")
+    try:
+        historical = await extract_data_via_mouse_hover(page)
+        if historical:
+            print(f"  -> Found {len(historical)} data points from tooltips")
+            historical.sort(key=lambda x: x.get("date", ""))
+            return historical
+        print("  -> No tooltips captured")
     except Exception as e:
-        print(f"Warning: Could not extract historical data: {e}")
+        print(f"  -> Mouse hover failed: {e}")
         import traceback
         traceback.print_exc()
+
+    print(f"  Extracted {len(historical)} historical data points total")
+    return historical
+
+
+def extract_fleet_data_from_api_responses(captured_responses: list) -> list:
+    """Parse captured API responses for fleet/chart data arrays."""
+    historical = []
+
+    for resp in captured_responses:
+        body = resp.get("body", "")
+        url = resp.get("url", "")
+
+        try:
+            # Try to parse as JSON
+            data = json.loads(body)
+        except (json.JSONDecodeError, TypeError):
+            # Try to find JSON arrays embedded in the response
+            data = None
+            # Look for array patterns containing date-like data
+            for match in re.finditer(r'\[[\s\S]*?\{[^}]*"(?:date|Date|timestamp)"[^}]*\}[\s\S]*?\]', body):
+                try:
+                    data = json.loads(match.group(0))
+                    break
+                except json.JSONDecodeError:
+                    continue
+
+        if data is None:
+            continue
+
+        # Handle different response shapes
+        items = []
+        if isinstance(data, list):
+            items = data
+        elif isinstance(data, dict):
+            # Look for arrays nested in the response
+            for key in ["data", "result", "results", "items", "fleet", "vehicles",
+                        "chartData", "chart_data", "fleetData", "fleet_data",
+                        "historicalData", "historical_data", "series", "records"]:
+                if key in data and isinstance(data[key], list):
+                    items = data[key]
+                    break
+            # Also check nested structures like { result: { data: [...] } }
+            if not items:
+                for val in data.values():
+                    if isinstance(val, dict):
+                        for subkey, subval in val.items():
+                            if isinstance(subval, list) and len(subval) > 1:
+                                items = subval
+                                break
+                    if items:
+                        break
+
+        # Check if items contain fleet-like data
+        fleet_points = []
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            # Look for date field
+            date_val = None
+            for date_key in ["date", "Date", "timestamp", "day", "created_at", "scraped_at"]:
+                if date_key in item:
+                    date_val = item[date_key]
+                    break
+            if not date_val:
+                continue
+
+            # Normalize date
+            date_str = normalize_date_string(str(date_val))
+            if not date_str:
+                continue
+
+            # Look for fleet count fields
+            austin = None
+            bayarea = None
+            total = None
+            for key, val in item.items():
+                key_lower = key.lower().replace("_", "").replace("-", "")
+                if val is not None and isinstance(val, (int, float)):
+                    val = int(val)
+                    if "austin" in key_lower:
+                        austin = val
+                    elif "bay" in key_lower or "sf" in key_lower or "sanfran" in key_lower:
+                        bayarea = val
+                    elif "total" in key_lower or "fleet" in key_lower or "count" in key_lower:
+                        total = val
+
+            if austin is not None or bayarea is not None or total is not None:
+                fleet_points.append({
+                    "date": date_str,
+                    "austin": austin,
+                    "bayarea": bayarea,
+                    "total": total,
+                })
+
+        if fleet_points and len(fleet_points) > len(historical):
+            print(f"    Found {len(fleet_points)} fleet data points from {url[:80]}")
+            historical = fleet_points
+
+    return historical
+
+
+def normalize_date_string(date_val: str) -> str:
+    """Normalize various date formats to YYYY-MM-DD."""
+    if not date_val:
+        return None
+
+    # Already ISO format
+    match = re.match(r'^(\d{4})-(\d{2})-(\d{2})', date_val)
+    if match:
+        return f"{match.group(1)}-{match.group(2)}-{match.group(3)}"
+
+    # Unix timestamp (seconds or milliseconds)
+    try:
+        ts = float(date_val)
+        if ts > 1e12:  # milliseconds
+            ts = ts / 1000
+        if 1e9 < ts < 2e9:  # Reasonable epoch range (2001-2033)
+            dt = datetime.fromtimestamp(ts)
+            return dt.strftime("%Y-%m-%d")
+    except (ValueError, OSError):
+        pass
+
+    # Try common date formats
+    for fmt in ["%Y/%m/%d", "%m/%d/%Y", "%d/%m/%Y", "%b %d, %Y", "%B %d, %Y",
+                "%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S.%f",
+                "%Y-%m-%dT%H:%M:%S.%fZ"]:
+        try:
+            dt = datetime.strptime(date_val.strip(), fmt)
+            return dt.strftime("%Y-%m-%d")
+        except ValueError:
+            continue
+
+    return None
+
+
+async def extract_data_via_mouse_hover(page) -> list:
+    """Extract chart data using Playwright's native page.mouse.move().
+
+    Unlike synthetic JavaScript MouseEvents, native mouse movements go through
+    the browser's event pipeline and reliably trigger Recharts tooltips.
+    """
+    historical = []
+
+    # Scroll to Fleet Growth section
+    fleet_section = await page.query_selector("text=Fleet Growth")
+    if not fleet_section:
+        fleet_section = await page.query_selector("text=车队增长")
+    if fleet_section:
+        await fleet_section.scroll_into_view_if_needed()
+        await asyncio.sleep(2)
+
+    # Find the chart - try multiple selectors
+    chart_selectors = [
+        "svg.recharts-surface",
+        ".recharts-wrapper",
+        ".recharts-responsive-container",
+        "[class*='chart'] svg",
+        "[class*='Chart'] svg",
+    ]
+    chart_element = None
+    for selector in chart_selectors:
+        chart_element = await page.query_selector(selector)
+        if chart_element:
+            print(f"  Found chart: {selector}")
+            break
+
+    if not chart_element:
+        print("  Could not find chart element")
+        return historical
+
+    await chart_element.scroll_into_view_if_needed()
+    await asyncio.sleep(1)
+
+    bbox = await chart_element.bounding_box()
+    if not bbox:
+        print("  Could not get chart bounding box")
+        return historical
+
+    print(f"  Chart bbox: x={bbox['x']:.0f}, y={bbox['y']:.0f}, w={bbox['width']:.0f}, h={bbox['height']:.0f}")
+
+    # Calculate hover area - stay within the plot area (inside axes)
+    chart_left = bbox['x'] + 60   # Skip y-axis labels
+    chart_right = bbox['x'] + bbox['width'] - 20  # Skip right padding
+    chart_mid_y = bbox['y'] + bbox['height'] * 0.5  # Middle of chart
+
+    num_samples = 80  # More samples for better coverage
+    step = (chart_right - chart_left) / num_samples
+    seen_dates = set()
+
+    print(f"  Hovering across chart with {num_samples} positions using native mouse...")
+
+    # First move to chart area to activate it
+    await page.mouse.move(chart_left, chart_mid_y)
+    await asyncio.sleep(0.5)
+
+    for i in range(num_samples + 1):
+        x = chart_left + (i * step)
+
+        # Use Playwright's native mouse.move - this generates real browser events
+        # that Recharts' internal event handler on the SVG overlay will pick up
+        await page.mouse.move(x, chart_mid_y)
+        await asyncio.sleep(0.15)  # Give tooltip time to render
+
+        # Check for tooltip content
+        tooltip_text = await page.evaluate("""
+            () => {
+                // Recharts tooltip wrapper
+                const selectors = [
+                    '.recharts-tooltip-wrapper',
+                    '[class*="tooltip"]',
+                    '[role="tooltip"]',
+                ];
+                for (const sel of selectors) {
+                    const el = document.querySelector(sel);
+                    if (el) {
+                        const style = window.getComputedStyle(el);
+                        // Check visibility - Recharts hides tooltip with
+                        // visibility:hidden or pointer-events:none or opacity:0
+                        if (style.visibility === 'hidden' || style.opacity === '0') {
+                            continue;
+                        }
+                        // Also check if the element has content
+                        const text = el.textContent || '';
+                        if (text.trim().length > 0) {
+                            return text.trim();
+                        }
+                    }
+                }
+                return null;
+            }
+        """)
+
+        if tooltip_text:
+            data_point = parse_tooltip_text(tooltip_text)
+            if data_point and data_point.get("date") and data_point["date"] not in seen_dates:
+                seen_dates.add(data_point["date"])
+                historical.append(data_point)
+                if len(historical) <= 3 or len(historical) % 10 == 0:
+                    print(f"    [{len(historical)}] {data_point['date']} - Austin: {data_point.get('austin')}, Bay Area: {data_point.get('bayarea')}")
+
+    # Move mouse away to dismiss tooltip
+    await page.mouse.move(0, 0)
 
     return historical
 
 
 async def extract_chart_data_from_scripts(page) -> list:
-    """Try to extract chart data directly from page scripts or React state."""
+    """Try to extract chart data from React/Next.js state, scripts, or DOM.
+
+    Strategies:
+    1. __NEXT_DATA__ (Next.js server-side props)
+    2. React fiber traversal (finds chart data in component props)
+    3. Window/global object scan
+    4. Script tag parsing
+    5. Recharts internal state via all .recharts-wrapper elements
+    """
     historical = []
 
     try:
-        # Try to access React component state or chart data
         chart_data = await page.evaluate("""
             () => {
-                // Try to find chart data in window or React state
-                const results = [];
+                const candidates = [];
 
-                // Method 1: Look for data in window object
-                for (const key of Object.keys(window)) {
-                    if (key.includes('chart') || key.includes('fleet') || key.includes('data')) {
-                        const val = window[key];
-                        if (Array.isArray(val) && val.length > 0 && val[0].date) {
-                            return val;
+                // Helper: check if an array looks like fleet data
+                function isFleetData(arr) {
+                    if (!Array.isArray(arr) || arr.length < 3) return false;
+                    const sample = arr[0];
+                    if (typeof sample !== 'object' || sample === null) return false;
+                    const keys = Object.keys(sample).map(k => k.toLowerCase());
+                    // Must have something date-like and something count-like
+                    const hasDate = keys.some(k =>
+                        k.includes('date') || k.includes('time') || k.includes('day')
+                    );
+                    const hasCount = keys.some(k =>
+                        k.includes('austin') || k.includes('bay') || k.includes('total') ||
+                        k.includes('fleet') || k.includes('count') || k.includes('vehicle') ||
+                        k.includes('active')
+                    );
+                    return hasDate && hasCount;
+                }
+
+                // Helper: recursively search object for fleet data arrays
+                function findFleetArrays(obj, depth, path) {
+                    if (depth > 6 || !obj || typeof obj !== 'object') return;
+                    if (Array.isArray(obj) && isFleetData(obj)) {
+                        candidates.push({data: obj, source: path, size: obj.length});
+                        return;
+                    }
+                    try {
+                        const keys = Array.isArray(obj) ? [] : Object.keys(obj);
+                        for (const key of keys.slice(0, 50)) { // Limit keys to avoid perf issues
+                            try {
+                                findFleetArrays(obj[key], depth + 1, path + '.' + key);
+                            } catch(e) {}
+                        }
+                    } catch(e) {}
+                }
+
+                // Method 1: __NEXT_DATA__ (Next.js apps store page props here)
+                if (window.__NEXT_DATA__) {
+                    console.log('[scraper] Found __NEXT_DATA__');
+                    findFleetArrays(window.__NEXT_DATA__, 0, '__NEXT_DATA__');
+                }
+
+                // Method 2: React fiber traversal on ALL recharts wrappers
+                const chartContainers = document.querySelectorAll(
+                    '.recharts-wrapper, .recharts-responsive-container, [class*="chart"], [class*="Chart"]'
+                );
+                for (const container of chartContainers) {
+                    // React fiber keys are randomized per build, find them dynamically
+                    const fiberKeys = Object.keys(container).filter(k =>
+                        k.startsWith('__reactFiber$') || k.startsWith('__reactInternalInstance$') ||
+                        k.startsWith('__reactProps$')
+                    );
+                    for (const fiberKey of fiberKeys) {
+                        let fiber = container[fiberKey];
+                        let visited = 0;
+                        while (fiber && visited < 50) {
+                            visited++;
+                            // Check memoizedProps.data (Recharts passes data as prop)
+                            if (fiber.memoizedProps) {
+                                const props = fiber.memoizedProps;
+                                if (props.data && isFleetData(props.data)) {
+                                    candidates.push({
+                                        data: props.data,
+                                        source: 'fiber.memoizedProps.data',
+                                        size: props.data.length
+                                    });
+                                }
+                                // Also check children props
+                                if (props.children) {
+                                    const children = Array.isArray(props.children)
+                                        ? props.children : [props.children];
+                                    for (const child of children) {
+                                        if (child && child.props && child.props.data &&
+                                            isFleetData(child.props.data)) {
+                                            candidates.push({
+                                                data: child.props.data,
+                                                source: 'fiber.child.props.data',
+                                                size: child.props.data.length
+                                            });
+                                        }
+                                    }
+                                }
+                            }
+                            // Check memoizedState (hooks data)
+                            if (fiber.memoizedState) {
+                                findFleetArrays(fiber.memoizedState, 0, 'fiber.memoizedState');
+                            }
+                            fiber = fiber.return;
                         }
                     }
                 }
 
-                // Method 2: Try to find Recharts internal data
-                const rechartsWrapper = document.querySelector('.recharts-wrapper');
-                if (rechartsWrapper && rechartsWrapper.__reactFiber$) {
-                    // React fiber might have props with data
-                    let fiber = rechartsWrapper.__reactFiber$;
-                    while (fiber) {
-                        if (fiber.memoizedProps && fiber.memoizedProps.data) {
-                            return fiber.memoizedProps.data;
-                        }
-                        fiber = fiber.return;
+                // Method 3: Scan window/global for data
+                try {
+                    for (const key of Object.keys(window)) {
+                        try {
+                            const val = window[key];
+                            if (Array.isArray(val) && isFleetData(val)) {
+                                candidates.push({data: val, source: 'window.' + key, size: val.length});
+                            } else if (val && typeof val === 'object' && !Array.isArray(val)) {
+                                findFleetArrays(val, 0, 'window.' + key);
+                            }
+                        } catch(e) {}
                     }
-                }
+                } catch(e) {}
 
-                // Method 3: Parse script tags for data
+                // Method 4: Parse script tags for embedded JSON data
                 const scripts = document.querySelectorAll('script');
                 for (const script of scripts) {
                     const text = script.textContent || '';
-                    // Look for array patterns with dates
-                    const match = text.match(/\\[\\s*\\{[^\\]]*"date"[^\\]]*\\}\\s*\\]/);
-                    if (match) {
-                        try {
-                            return JSON.parse(match[0]);
-                        } catch(e) {}
+                    if (text.length < 100 || text.length > 500000) continue;
+                    // Look for JSON arrays with date fields
+                    const patterns = [
+                        /\[\s*\{[^}]*"date"[^]*?\}\s*\]/g,
+                        /\[\s*\{[^}]*"Date"[^]*?\}\s*\]/g,
+                        /\[\s*\{[^}]*"timestamp"[^]*?\}\s*\]/g,
+                    ];
+                    for (const pattern of patterns) {
+                        let match;
+                        while ((match = pattern.exec(text)) !== null) {
+                            try {
+                                const parsed = JSON.parse(match[0]);
+                                if (isFleetData(parsed)) {
+                                    candidates.push({
+                                        data: parsed,
+                                        source: 'script_tag',
+                                        size: parsed.length
+                                    });
+                                }
+                            } catch(e) {}
+                        }
+                    }
+                    // Also look for self.__next_f.push patterns (Next.js RSC payload)
+                    if (text.includes('self.__next_f')) {
+                        // Extract JSON chunks from RSC payload
+                        const rscMatches = text.matchAll(/self\.__next_f\.push\(\s*\[\s*\d+\s*,\s*"([^"]+)"/g);
+                        for (const rscMatch of rscMatches) {
+                            try {
+                                const decoded = rscMatch[1]
+                                    .replace(/\\n/g, '')
+                                    .replace(/\\"/g, '"')
+                                    .replace(/\\\\/g, '\\\\');
+                                // Find JSON arrays in the decoded chunk
+                                const arrMatch = decoded.match(/\[[\s\S]*?\{[^}]*date[^}]*\}[\s\S]*?\]/i);
+                                if (arrMatch) {
+                                    const parsed = JSON.parse(arrMatch[0]);
+                                    if (isFleetData(parsed)) {
+                                        candidates.push({
+                                            data: parsed,
+                                            source: 'next_rsc_payload',
+                                            size: parsed.length
+                                        });
+                                    }
+                                }
+                            } catch(e) {}
+                        }
                     }
                 }
 
-                return results;
+                // Return the largest candidate (most likely the full dataset)
+                if (candidates.length > 0) {
+                    candidates.sort((a, b) => b.size - a.size);
+                    console.log('[scraper] Found ' + candidates.length + ' candidates, best: ' +
+                        candidates[0].source + ' (' + candidates[0].size + ' items)');
+                    return {
+                        data: candidates[0].data,
+                        source: candidates[0].source,
+                        all_sources: candidates.map(c => c.source + ':' + c.size)
+                    };
+                }
+
+                return null;
             }
         """)
 
-        if chart_data and isinstance(chart_data, list):
-            for item in chart_data:
-                if isinstance(item, dict) and item.get("date"):
-                    historical.append({
-                        "date": item.get("date"),
-                        "bayarea": item.get("bayArea") or item.get("bayarea") or item.get("Bay Area"),
-                        "austin": item.get("austin") or item.get("Austin"),
-                        "total": item.get("total") or item.get("Total"),
-                    })
-            print(f"  Found {len(historical)} data points from scripts")
+        if chart_data and chart_data.get("data"):
+            source = chart_data.get("source", "unknown")
+            all_sources = chart_data.get("all_sources", [])
+            print(f"    Best source: {source}")
+            if all_sources:
+                print(f"    All sources found: {all_sources}")
+
+            for item in chart_data["data"]:
+                if isinstance(item, dict):
+                    # Flexible field extraction
+                    date_val = None
+                    for key in ["date", "Date", "timestamp", "day", "created_at"]:
+                        if key in item:
+                            date_val = str(item[key])
+                            break
+                    if not date_val:
+                        continue
+
+                    date_str = normalize_date_string(date_val)
+                    if not date_str:
+                        continue
+
+                    # Extract counts with flexible field names
+                    austin = None
+                    bayarea = None
+                    total = None
+                    for key, val in item.items():
+                        if val is None or not isinstance(val, (int, float)):
+                            continue
+                        key_lower = key.lower().replace("_", "").replace("-", "")
+                        if "austin" in key_lower:
+                            austin = int(val)
+                        elif "bay" in key_lower or "sf" in key_lower:
+                            bayarea = int(val)
+                        elif "total" in key_lower or "fleet" in key_lower:
+                            total = int(val)
+
+                    if austin is not None or bayarea is not None or total is not None:
+                        historical.append({
+                            "date": date_str,
+                            "bayarea": bayarea,
+                            "austin": austin,
+                            "total": total,
+                        })
+
+            print(f"  Found {len(historical)} data points from page state ({source})")
     except Exception as e:
         print(f"  Could not extract chart data from scripts: {e}")
+        import traceback
+        traceback.print_exc()
 
     return historical
 
@@ -653,116 +983,34 @@ async def extract_active_fleet_numbers(page) -> dict:
     return active_data
 
 
-async def extract_active_historical_data(page) -> list:
-    """Extract historical active fleet data from the chart after clicking Active tab.
+async def extract_active_historical_data(page, captured_api_responses=None) -> list:
+    """Extract historical active fleet data after clicking the Active tab.
 
-    Uses the same tooltip-hovering approach as extract_historical_data().
+    Uses the same multi-strategy approach as extract_historical_data():
+    1. React/Next.js state extraction (chart data should reflect Active tab)
+    2. Native mouse hover for tooltip extraction
     """
-    historical = []
-
-    try:
-        # Find the chart container
-        chart_element = await page.query_selector("svg.recharts-surface")
-        if not chart_element:
-            for selector in ["canvas", ".recharts-wrapper", "[class*='chart']"]:
-                chart_element = await page.query_selector(selector)
-                if chart_element:
-                    break
-
-        if not chart_element:
-            print("  Could not find active chart element")
-            return historical
-
-        await chart_element.scroll_into_view_if_needed()
-        await asyncio.sleep(1)
-
-        bbox = await chart_element.bounding_box()
-        if not bbox:
-            print("  Could not get active chart bounding box")
-            return historical
-
-        print(f"  Active chart bbox: x={bbox['x']:.0f}, y={bbox['y']:.0f}, w={bbox['width']:.0f}, h={bbox['height']:.0f}")
-
-        chart_left = bbox['x'] + 60
-        chart_right = bbox['x'] + bbox['width'] - 20
-        chart_y_positions = [
-            bbox['y'] + bbox['height'] * 0.3,
-            bbox['y'] + bbox['height'] * 0.5,
-            bbox['y'] + bbox['height'] * 0.7,
-        ]
-
-        num_samples = 60
-        step = (chart_right - chart_left) / num_samples
-        seen_dates = set()
-
-        print(f"  Scanning active chart with {num_samples} hover positions...")
-
-        for i in range(num_samples + 1):
-            x = chart_left + (i * step)
-
-            for y in chart_y_positions:
-                await page.evaluate("""
-                    (coords) => {
-                        const element = document.elementFromPoint(coords.x, coords.y);
-                        if (element) {
-                            const mouseEnter = new MouseEvent('mouseenter', {
-                                bubbles: true, clientX: coords.x, clientY: coords.y
-                            });
-                            const mouseMove = new MouseEvent('mousemove', {
-                                bubbles: true, clientX: coords.x, clientY: coords.y
-                            });
-                            const mouseOver = new MouseEvent('mouseover', {
-                                bubbles: true, clientX: coords.x, clientY: coords.y
-                            });
-                            element.dispatchEvent(mouseEnter);
-                            element.dispatchEvent(mouseOver);
-                            element.dispatchEvent(mouseMove);
-                        }
-                    }
-                """, {"x": x, "y": y})
-
-                await asyncio.sleep(0.1)
-
-                tooltip_selectors = [
-                    ".recharts-tooltip-wrapper:not([style*='visibility: hidden'])",
-                    ".recharts-tooltip-wrapper",
-                    ".recharts-default-tooltip",
-                    "[class*='tooltip']",
-                    "[role='tooltip']",
-                ]
-
-                for tooltip_selector in tooltip_selectors:
-                    try:
-                        tooltip = await page.query_selector(tooltip_selector)
-                        if tooltip:
-                            is_visible = await tooltip.is_visible()
-                            if not is_visible:
-                                continue
-
-                            tooltip_text = await tooltip.text_content()
-                            if tooltip_text and tooltip_text.strip():
-                                data_point = parse_tooltip_text(tooltip_text)
-                                if data_point and data_point.get("date") and data_point["date"] not in seen_dates:
-                                    seen_dates.add(data_point["date"])
-                                    historical.append(data_point)
-                                    print(f"    Active: {data_point['date']} - Austin: {data_point.get('austin')}, Bay Area: {data_point.get('bayarea')}")
-                                break
-                    except Exception:
-                        pass
-
-        # Try script extraction as fallback
-        if not historical:
-            print("  No active tooltips found, trying script extraction...")
-            historical = await extract_chart_data_from_scripts(page)
-
+    # After clicking Active tab, the React state should now hold active data.
+    # Re-run extraction strategies on the updated page state.
+    print("  Extracting active chart data from page state...")
+    historical = await extract_chart_data_from_scripts(page)
+    if historical:
+        print(f"  -> Found {len(historical)} active data points from page state")
         historical.sort(key=lambda x: x.get("date", ""))
-        print(f"  Extracted {len(historical)} active historical data points")
+        return historical
 
+    # Fallback: native mouse hover on active chart
+    print("  -> No state data, trying native mouse hover on active chart...")
+    try:
+        historical = await extract_data_via_mouse_hover(page)
+        if historical:
+            print(f"  -> Found {len(historical)} active data points from tooltips")
+            historical.sort(key=lambda x: x.get("date", ""))
+            return historical
     except Exception as e:
-        print(f"Warning: Could not extract active historical data: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"  -> Mouse hover failed: {e}")
 
+    print(f"  Extracted {len(historical)} active historical data points total")
     return historical
 
 
@@ -823,6 +1071,31 @@ async def scrape_robotaxi_tracker():
     # Ensure data directory exists
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
+    # Collect API responses during page load for fleet data extraction
+    captured_api_responses = []
+
+    async def capture_response(response):
+        """Capture API responses that may contain fleet/chart data."""
+        url = response.url
+        try:
+            # Look for API responses that might contain fleet data
+            if any(keyword in url.lower() for keyword in [
+                "api", "fleet", "vehicle", "chart", "data", "graphql",
+                "trpc", "supabase", "firebase", "json"
+            ]):
+                content_type = response.headers.get("content-type", "")
+                if "json" in content_type or "javascript" in content_type:
+                    body = await response.text()
+                    if body and len(body) > 10:
+                        captured_api_responses.append({
+                            "url": url,
+                            "status": response.status,
+                            "body": body[:50000],  # Cap at 50KB
+                        })
+                        print(f"  [API] Captured: {url[:100]} ({len(body)} bytes)")
+        except Exception:
+            pass  # Some responses can't be read (e.g., streaming)
+
     async with async_playwright() as p:
         # Launch browser
         print("\nLaunching browser...")
@@ -841,6 +1114,9 @@ async def scrape_robotaxi_tracker():
         )
 
         page = await context.new_page()
+
+        # Listen for network responses to capture API data
+        page.on("response", capture_response)
 
         try:
             # Navigate to main page
@@ -875,8 +1151,9 @@ async def scrape_robotaxi_tracker():
             await take_screenshot(page, "main_page_full")
 
             # Extract historical data (Total fleet - default view)
+            print(f"\n  Captured {len(captured_api_responses)} API responses during page load")
             print("\nExtracting historical data (Total fleet)...")
-            historical = await extract_historical_data(page)
+            historical = await extract_historical_data(page, captured_api_responses)
             print(f"  Found {len(historical)} total historical data points")
 
             # --- Active Fleet Extraction ---
@@ -908,7 +1185,7 @@ async def scrape_robotaxi_tracker():
 
                 # Extract active historical data from chart tooltips
                 print("\nExtracting active historical data...")
-                active_historical = await extract_active_historical_data(page)
+                active_historical = await extract_active_historical_data(page, captured_api_responses)
                 print(f"  Found {len(active_historical)} active historical data points")
 
                 # Switch back to Total tab for consistency
