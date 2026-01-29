@@ -8,7 +8,7 @@
       "Electrek",
       "Teslarati"
     ],
-    "notes": "Austin vehicles are true robotaxis (unsupervised ADS). Bay Area vehicles have human safety drivers. Data from Aug 2025 onwards is scraped from robotaxitracker.com chart tooltips. Active vehicle counts (austin_active_vehicles, bayarea_active_vehicles) represent vehicles actually on the road, which is a subset of total fleet. MPI calculations prefer active fleet size (from fleet_growth_active.json) since only active vehicles contribute to miles driven."
+    "notes": "Austin vehicles are true robotaxis (unsupervised ADS). Bay Area vehicles have human safety drivers. Data from Aug 2025 onwards is scraped from robotaxitracker.com chart tooltips. Active vehicle counts (austin_active_vehicles, bayarea_active_vehicles) represent vehicles actually on the road, which is a subset of total fleet. MPI calculations use total fleet size (austin_vehicles). Active fleet data is preserved for future use."
   },
   "snapshots": [
     {

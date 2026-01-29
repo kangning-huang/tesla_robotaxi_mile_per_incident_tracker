@@ -45,33 +45,32 @@ except ImportError:
 
 
 class FleetInterpolator:
-    """Interpolate fleet size for any given date based on active fleet snapshots.
+    """Interpolate fleet size for any given date based on total fleet snapshots.
 
-    Uses only active fleet counts (vehicles actually on the road), since only
-    active vehicles contribute to miles driven. Snapshots without active fleet
-    data are skipped. Missing days are filled via linear interpolation between
-    known active fleet data points.
+    Uses total fleet counts (all vehicles in the Austin fleet), interpolated
+    linearly between known data points. Missing days are filled via linear
+    interpolation.
     """
 
     def __init__(self, snapshots: list[dict]):
         """Initialize with fleet snapshots.
 
-        Only uses austin_active_vehicles. Snapshots without active fleet
-        data are skipped entirely (total fleet is not used as fallback).
+        Uses austin_vehicles (total Austin fleet). Snapshots without
+        austin_vehicles data are skipped.
         """
         self.snapshots = []
         skipped_count = 0
         for s in snapshots:
-            active = s.get("austin_active_vehicles")
-            if active is not None:
+            total = s.get("austin_vehicles")
+            if total is not None:
                 dt = datetime.strptime(s["date"], "%Y-%m-%d")
-                self.snapshots.append((dt, active))
+                self.snapshots.append((dt, total))
             else:
                 skipped_count += 1
         self.snapshots.sort(key=lambda x: x[0])
 
-        print(f"  FleetInterpolator: {len(self.snapshots)} active fleet data points "
-              f"({skipped_count} total-only snapshots skipped, interpolating between known dates)")
+        print(f"  FleetInterpolator: {len(self.snapshots)} fleet data points "
+              f"({skipped_count} snapshots without Austin total skipped, interpolating between known dates)")
 
     def get_fleet_size(self, target_date: datetime) -> int:
         """Get interpolated fleet size for a specific date."""
@@ -322,10 +321,9 @@ def parse_incident_dates(df: pd.DataFrame) -> pd.DataFrame:
 def load_fleet_data(data_dir: Path) -> list[dict]:
     """Load fleet size snapshots from JSON, enriched with active fleet data.
 
-    Loads fleet_data.json (total fleet snapshots), then overlays active fleet
-    counts from fleet_growth_active.json when available. Active fleet size is
-    preferred for MPI calculations because only active vehicles contribute to
-    miles driven.
+    Loads fleet_data.json (total fleet snapshots). Active fleet data from
+    fleet_growth_active.json is also loaded and preserved for future use,
+    but MPI calculations use total fleet size (austin_vehicles).
     """
     fleet_file = data_dir / "fleet_data.json"
 
@@ -741,8 +739,8 @@ def main():
 
   MPI Calculation:
   - Miles between incident N and N+1 = Σ(daily_fleet_size × miles_per_day)
-  - Uses active fleet size only (vehicles actually on the road)
-  - Missing days interpolated linearly between known active fleet data points
+  - Uses total fleet size (all vehicles in the Austin fleet)
+  - Missing days interpolated linearly between known fleet data points
   - Assumes {daily_miles} miles/vehicle/day (moderate estimate)
   - Service stoppage days excluded: {len(excluded_dates)} day(s) with 0 miles
 
@@ -753,7 +751,7 @@ def main():
 
   Caveats:
   - Tesla cited for delayed crash reporting to NHTSA
-  - Active fleet data may not cover all dates (linearly interpolated)
+  - Fleet data may not cover all dates (linearly interpolated)
   - Not all incidents are equal in severity
   - Small sample size limits trend reliability
     """)
@@ -773,8 +771,8 @@ def main():
             "reason": stoppage.get("reason", "Unknown")
         })
 
-    # Fleet source is always active (total fleet is not used for MPI calculations)
-    fleet_source = "active"
+    # Fleet source is total (all vehicles in the Austin fleet)
+    fleet_source = "total"
 
     output = {
         "analysis_date": datetime.now().isoformat(),
