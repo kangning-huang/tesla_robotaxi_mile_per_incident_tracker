@@ -1,7 +1,8 @@
 {
-  "analysis_date": "2026-01-29T09:12:34.707016",
+  "analysis_date": "2026-01-29T10:15:48.423593",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
+  "fleet_data_source": "total",
   "incident_count": 10,
   "daily_miles_assumption": 115,
   "excluded_dates": [
