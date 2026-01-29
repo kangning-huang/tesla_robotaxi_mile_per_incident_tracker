@@ -1,8 +1,8 @@
 {
-  "analysis_date": "2026-01-29T10:15:48.423593",
+  "analysis_date": "2026-01-29T10:59:55.603559",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
-  "fleet_data_source": "total",
+  "fleet_data_source": "active",
   "incident_count": 10,
   "daily_miles_assumption": 115,
   "excluded_dates": [
@@ -111,55 +111,33 @@
       "incident_number": 9,
       "incident_date": "2025-10-01",
       "days_since_previous": 30,
-      "miles_since_previous": 62560,
-      "mpi_since_previous": 62560,
-      "avg_fleet_size": 17.548387096774192,
-      "cumulative_miles": 181700,
+      "miles_since_previous": 59915,
+      "mpi_since_previous": 59915,
+      "avg_fleet_size": 16.806451612903224,
+      "cumulative_miles": 179055,
       "cumulative_incidents": 9,
-      "cumulative_mpi": 20188.88888888889
+      "cumulative_mpi": 19895.0
     },
     {
       "incident_number": 10,
       "incident_date": "2025-11-01",
       "days_since_previous": 31,
-      "miles_since_previous": 66585,
-      "mpi_since_previous": 66585,
-      "avg_fleet_size": 18.09375,
-      "cumulative_miles": 248285,
+      "miles_since_previous": 65205,
+      "mpi_since_previous": 65205,
+      "avg_fleet_size": 17.71875,
+      "cumulative_miles": 244260,
       "cumulative_incidents": 10,
-      "cumulative_mpi": 24828.5
+      "cumulative_mpi": 24426.0
     }
   ],
   "trend_analysis": {
-    "best_model": "exponential",
-    "best_fit": {
-      "type": "exponential",
-      "a": 9130.95166872868,
-      "b": 0.017107788199630068,
-      "r_squared": 0.35962310971075506,
-      "interpretation": "improving",
-      "growth_rate_per_day": 0.017107788199630068,
-      "doubling_time_days": 40.516469602711915,
-      "halving_time_days": null
-    },
-    "all_models": {
-      "exponential": {
-        "type": "exponential",
-        "a": 9130.95166872868,
-        "b": 0.017107788199630068,
-        "r_squared": 0.35962310971075506,
-        "interpretation": "improving",
-        "growth_rate_per_day": 0.017107788199630068,
-        "doubling_time_days": 40.516469602711915,
-        "halving_time_days": null
-      }
-    }
+    "error": "No models could be fitted"
   },
   "summary": {
-    "average_mpi": 24828.5,
-    "latest_mpi": 66585,
-    "cumulative_mpi": 24828.5,
-    "total_miles": 248285,
+    "average_mpi": 24426.0,
+    "latest_mpi": 65205,
+    "cumulative_mpi": 24426.0,
+    "total_miles": 244260,
     "total_excluded_days": 2
   }
 }
