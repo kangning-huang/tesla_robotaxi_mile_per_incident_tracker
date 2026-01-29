@@ -372,13 +372,32 @@ async def extract_historical_data(page, captured_api_responses=None) -> list:
             historical = []
     print("  -> No valid data found in page state")
 
-    # Strategy 3: Native mouse hover for tooltip extraction
-    print("  Strategy 3: Using native mouse hover for tooltips...")
+    # Strategy 3: Direct bar element hover (most reliable for bar chart mode)
+    print("  Strategy 3: Hovering individual bar elements...")
+    try:
+        historical = await extract_data_via_bar_click(page)
+        if historical:
+            historical = deduplicate_by_date(historical)
+            if validate_historical_data(historical, "Strategy 3"):
+                print(f"  -> Found {len(historical)} valid data points from bar hovering")
+                historical.sort(key=lambda x: x.get("date", ""))
+                return historical
+            else:
+                print(f"  -> Bar hover data rejected by validation")
+                historical = []
+        print("  -> No bars found or no tooltips captured")
+    except Exception as e:
+        print(f"  -> Bar hover failed: {e}")
+        import traceback
+        traceback.print_exc()
+
+    # Strategy 4: Native mouse hover sweep for tooltip extraction (fallback)
+    print("  Strategy 4: Using native mouse hover sweep for tooltips...")
     try:
         historical = await extract_data_via_mouse_hover(page)
         if historical:
             historical = deduplicate_by_date(historical)
-            if validate_historical_data(historical, "Strategy 3"):
+            if validate_historical_data(historical, "Strategy 4"):
                 print(f"  -> Found {len(historical)} valid data points from tooltips")
                 historical.sort(key=lambda x: x.get("date", ""))
                 return historical
@@ -883,44 +902,8 @@ async def extract_data_via_mouse_hover(page) -> list:
 
             await asyncio.sleep(0.12)  # Give tooltip time to render
 
-            # Check for tooltip content - try Recharts-specific and broader selectors
-            tooltip_text = await page.evaluate("""
-                () => {
-                    // Try multiple tooltip selectors in order of specificity
-                    const selectors = [
-                        '.recharts-tooltip-wrapper',
-                        '[class*="tooltip"]',
-                        '[class*="Tooltip"]',
-                        '[role="tooltip"]',
-                    ];
-
-                    for (const selector of selectors) {
-                        const elements = document.querySelectorAll(selector);
-                        for (const el of elements) {
-                            const style = window.getComputedStyle(el);
-                            // Skip hidden tooltips
-                            if (style.visibility === 'hidden' || style.opacity === '0' ||
-                                style.display === 'none') {
-                                continue;
-                            }
-
-                            const rect = el.getBoundingClientRect();
-                            if (rect.width === 0 || rect.height === 0) continue;
-
-                            const text = el.textContent || '';
-                            if (text.trim().length > 0) {
-                                // Verify this looks like chart data (has a date or number)
-                                const hasDate = /\d{4}|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec/i.test(text);
-                                const hasNumber = /\d{2,}/.test(text);
-                                if (hasDate || hasNumber) {
-                                    return text.trim();
-                                }
-                            }
-                        }
-                    }
-                    return null;
-                }
-            """)
+            # Check for tooltip content using shared helper
+            tooltip_text = await get_visible_tooltip_text(page)
 
             if tooltip_text:
                 # Debug: log first few raw tooltip texts
@@ -1184,9 +1167,74 @@ async def extract_chart_data_from_scripts(page) -> list:
                     };
                 }
 
-                return null;
+                // Diagnostic: if no candidates, report what we found in Recharts containers
+                const diagInfo = {
+                    candidateCount: 0,
+                    fleetSectionFound: !!fleetSection,
+                    chartContainerCount: chartContainers ? chartContainers.length : 0,
+                    fiberDataShapes: [],
+                    nearMissArrays: [],
+                };
+
+                // Scan Recharts containers for any data arrays (even non-fleet ones)
+                for (const container of chartContainers) {
+                    const fiberKeys = Object.keys(container).filter(k =>
+                        k.startsWith('__reactFiber$') || k.startsWith('__reactInternalInstance$') ||
+                        k.startsWith('__reactProps$')
+                    );
+                    for (const fiberKey of fiberKeys) {
+                        let fiber = container[fiberKey];
+                        let visited = 0;
+                        while (fiber && visited < 30) {
+                            visited++;
+                            if (fiber.memoizedProps && fiber.memoizedProps.data &&
+                                Array.isArray(fiber.memoizedProps.data) &&
+                                fiber.memoizedProps.data.length > 2) {
+                                const sample = fiber.memoizedProps.data[0];
+                                const keys = typeof sample === 'object' && sample
+                                    ? Object.keys(sample) : [];
+                                diagInfo.fiberDataShapes.push({
+                                    keys: keys.slice(0, 10),
+                                    size: fiber.memoizedProps.data.length,
+                                    sampleValues: keys.slice(0, 5).map(k => typeof sample[k]),
+                                });
+                                // Check if this is a "near miss" - has numeric values
+                                // but didn't pass isFleetData
+                                const hasNumeric = keys.some(k =>
+                                    typeof sample[k] === 'number');
+                                if (hasNumeric && keys.length >= 2) {
+                                    diagInfo.nearMissArrays.push({
+                                        keys: keys,
+                                        size: fiber.memoizedProps.data.length,
+                                        sample: JSON.stringify(sample).substring(0, 200),
+                                    });
+                                }
+                            }
+                            fiber = fiber.return;
+                        }
+                    }
+                }
+
+                return {diagnostic: true, ...diagInfo};
             }
         """)
+
+        if chart_data and chart_data.get("diagnostic"):
+            print(f"    [Strategy 2 diagnostic] Fleet section: {chart_data.get('fleetSectionFound')}, "
+                  f"chart containers: {chart_data.get('chartContainerCount')}")
+            shapes = chart_data.get("fiberDataShapes", [])
+            if shapes:
+                print(f"    Found {len(shapes)} data arrays in Recharts fibers:")
+                for s in shapes[:5]:
+                    print(f"      keys={s['keys']}, size={s['size']}, types={s['sampleValues']}")
+            near_misses = chart_data.get("nearMissArrays", [])
+            if near_misses:
+                print(f"    Near-miss arrays (have numbers but not fleet keys):")
+                for nm in near_misses[:3]:
+                    print(f"      keys={nm['keys']}, size={nm['size']}")
+                    print(f"      sample: {nm['sample'][:150]}")
+            if not shapes and not near_misses:
+                print(f"    No data arrays found in any Recharts container fibers")
 
         if chart_data and chart_data.get("data"):
             source = chart_data.get("source", "unknown")
@@ -1356,6 +1404,271 @@ def parse_tooltip_text(text: str) -> dict:
         result["total"] = int(total_match.group(1))
 
     return result
+
+
+async def get_visible_tooltip_text(page) -> str:
+    """Get the text content of any visible tooltip on the page.
+
+    Searches multiple tooltip selectors (Recharts-specific and generic) and returns
+    the first one that is visible and contains date-like or numeric content.
+    Returns None if no tooltip is found.
+    """
+    return await page.evaluate("""
+        () => {
+            const selectors = [
+                '.recharts-tooltip-wrapper',
+                '.recharts-default-tooltip',
+                '.recharts-tooltip-content',
+                '[class*="tooltip"]',
+                '[class*="Tooltip"]',
+                '[class*="TooltipContent"]',
+                '[role="tooltip"]',
+                '[data-radix-popper-content-wrapper]',
+            ];
+
+            for (const selector of selectors) {
+                const elements = document.querySelectorAll(selector);
+                for (const el of elements) {
+                    const style = window.getComputedStyle(el);
+                    if (style.visibility === 'hidden' || style.opacity === '0' ||
+                        style.display === 'none') {
+                        continue;
+                    }
+
+                    const rect = el.getBoundingClientRect();
+                    if (rect.width === 0 || rect.height === 0) continue;
+
+                    const text = el.textContent || '';
+                    if (text.trim().length > 0) {
+                        // Check for date or number (including CJK date chars)
+                        const hasDate = /\\d{4}|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|年|월/i.test(text);
+                        const hasNumber = /\\d{2,}/.test(text);
+                        if (hasDate || hasNumber) {
+                            return text.trim();
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+    """)
+
+
+async def extract_data_via_bar_click(page) -> list:
+    """Extract historical data by finding and hovering individual chart bar elements.
+
+    This strategy directly locates SVG <rect> elements within the Fleet Growth
+    chart (Recharts bar rectangles) and hovers over each one's center point.
+    This is much more targeted than the generic mouse sweep approach, as each
+    bar is a large, distinct hover target.
+
+    Works for both stacked bars (Total mode) and single bars (Active mode).
+    """
+    historical = []
+    seen_dates = set()
+
+    # Ensure chart is visible
+    chart_visible = await ensure_fleet_chart_visible(page)
+    if not chart_visible:
+        print("  [bar-click] Chart not visible, trying anyway...")
+
+    # Find all bar elements in the Fleet Growth chart
+    bar_data = await page.evaluate("""
+        () => {
+            const result = {bars: [], surfaces: 0, validCharts: 0, debug: '', allRectCount: 0};
+
+            // Find the Fleet Growth section heading
+            const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6, div, span, p');
+            let sectionEl = null;
+            for (const el of headings) {
+                const text = (el.textContent || '').trim();
+                if ((text === 'Fleet Growth' || text === '车队增长' ||
+                     text === 'Flottenentwicklung' || text === 'Croissance de la flotte') &&
+                    el.children.length < 5) {
+                    // Walk up to find the parent section containing a chart
+                    let parent = el.parentElement;
+                    for (let i = 0; i < 15 && parent; i++) {
+                        const hasSurface = parent.querySelector('svg.recharts-surface');
+                        const hasChart = parent.querySelector('.recharts-wrapper, .recharts-responsive-container');
+                        const hasLargeSvg = (() => {
+                            const svgs = parent.querySelectorAll('svg');
+                            for (const s of svgs) {
+                                const r = s.getBoundingClientRect();
+                                if (r.height >= 100 && r.width >= 200) return true;
+                            }
+                            return false;
+                        })();
+                        if (hasSurface || hasChart || hasLargeSvg) {
+                            sectionEl = parent;
+                            break;
+                        }
+                        parent = parent.parentElement;
+                    }
+                    break;
+                }
+            }
+
+            const searchRoot = sectionEl || document;
+            result.debug = sectionEl ? 'Found Fleet Growth section' : 'Using document root';
+
+            // Find chart SVGs
+            const surfaces = searchRoot.querySelectorAll('svg.recharts-surface, svg');
+            result.surfaces = surfaces.length;
+
+            for (const svg of surfaces) {
+                const svgRect = svg.getBoundingClientRect();
+                if (svgRect.height < 100 || svgRect.width < 200) continue;
+                result.validCharts++;
+
+                // Try Recharts-specific bar selectors first
+                const rechartsSelectors = [
+                    '.recharts-bar-rectangle rect',
+                    '.recharts-bar-rectangles rect',
+                    '.recharts-bar rect',
+                    'g[class*="recharts-bar"] rect',
+                ];
+
+                let barRects = [];
+                let matchedSelector = '';
+                for (const sel of rechartsSelectors) {
+                    const found = svg.querySelectorAll(sel);
+                    if (found.length > 0) {
+                        barRects = Array.from(found);
+                        matchedSelector = sel;
+                        break;
+                    }
+                }
+
+                // If no Recharts bars found, look for bar-like rects
+                if (barRects.length === 0) {
+                    const allRects = svg.querySelectorAll('rect');
+                    result.allRectCount = allRects.length;
+                    const barLike = [];
+                    for (const r of allRects) {
+                        const b = r.getBoundingClientRect();
+                        // Bar-like: has meaningful height, narrow width, positioned within chart
+                        if (b.height > 5 && b.width > 2 && b.width < 60 &&
+                            b.y + b.height > svgRect.y && b.y < svgRect.y + svgRect.height) {
+                            barLike.push(r);
+                        }
+                    }
+                    if (barLike.length > 3) {
+                        barRects = barLike;
+                        matchedSelector = 'bar-like-rects';
+                    }
+                }
+
+                result.debug += ` | ${matchedSelector}: ${barRects.length} bars`;
+
+                if (barRects.length === 0) continue;
+
+                // Group bars by x-position (each date has bars at similar x)
+                // Use the tallest bar at each x-position for hovering
+                const xGroups = new Map();
+                for (const rect of barRects) {
+                    const b = rect.getBoundingClientRect();
+                    if (b.height < 3 || b.width < 1) continue;
+
+                    // Round x center to group bars at the same date
+                    const xKey = Math.round(b.x + b.width / 2);
+                    if (!xGroups.has(xKey)) {
+                        xGroups.set(xKey, {
+                            x: b.x + b.width / 2,
+                            y: b.y + b.height * 0.3,  // Hover upper portion of tallest bar
+                            width: b.width,
+                            height: b.height,
+                        });
+                    } else {
+                        const existing = xGroups.get(xKey);
+                        // Keep the one with larger area (likely the stacked total)
+                        if (b.height * b.width > existing.height * existing.width) {
+                            xGroups.set(xKey, {
+                                x: b.x + b.width / 2,
+                                y: b.y + b.height * 0.3,
+                                width: b.width,
+                                height: b.height,
+                            });
+                        }
+                    }
+                }
+
+                // Sort by x position (left to right = chronological)
+                const sortedBars = Array.from(xGroups.values())
+                    .sort((a, b) => a.x - b.x);
+
+                result.bars = sortedBars;
+                if (sortedBars.length > 0) break;
+            }
+
+            return result;
+        }
+    """)
+
+    bars = bar_data.get("bars", [])
+    print(f"  [bar-click] {bar_data.get('debug', '')}")
+    print(f"  [bar-click] Found {len(bars)} unique bar x-positions from "
+          f"{bar_data.get('surfaces', 0)} SVGs, "
+          f"{bar_data.get('validCharts', 0)} valid charts "
+          f"(total rects scanned: {bar_data.get('allRectCount', 0)})")
+
+    if not bars:
+        return historical
+
+    # First move to the chart area to activate it
+    mid_bar = bars[len(bars) // 2]
+    await page.mouse.move(mid_bar['x'], mid_bar['y'])
+    await asyncio.sleep(0.5)
+
+    debug_tooltip_count = 0
+    for i, bar in enumerate(bars):
+        # Use Playwright's native mouse.move for real browser events
+        await page.mouse.move(bar['x'], bar['y'])
+
+        # Also dispatch JavaScript events directly for Recharts compatibility
+        await page.evaluate("""
+            (coords) => {
+                const element = document.elementFromPoint(coords.x, coords.y);
+                if (element) {
+                    const events = ['mouseenter', 'mouseover', 'mousemove'];
+                    for (const eventType of events) {
+                        const evt = new MouseEvent(eventType, {
+                            bubbles: true,
+                            cancelable: true,
+                            clientX: coords.x,
+                            clientY: coords.y,
+                            view: window
+                        });
+                        element.dispatchEvent(evt);
+                    }
+                }
+            }
+        """, {"x": bar['x'], "y": bar['y']})
+
+        await asyncio.sleep(0.15)
+
+        # Read tooltip
+        tooltip_text = await get_visible_tooltip_text(page)
+
+        if tooltip_text:
+            if debug_tooltip_count < 5:
+                print(f"    [bar {i}/{len(bars)}] tooltip: {repr(tooltip_text[:120])}")
+                debug_tooltip_count += 1
+
+            data_point = parse_tooltip_text(tooltip_text)
+            if data_point and data_point.get("date") and data_point["date"] not in seen_dates:
+                seen_dates.add(data_point["date"])
+                historical.append(data_point)
+                if len(historical) <= 3 or len(historical) % 20 == 0:
+                    print(f"    [{len(historical)}] {data_point['date']} - "
+                          f"Austin: {data_point.get('austin')}, "
+                          f"Bay Area: {data_point.get('bayarea')}, "
+                          f"Total: {data_point.get('total')}")
+
+    # Move mouse away to dismiss tooltip
+    await page.mouse.move(0, 0)
+
+    print(f"  [bar-click] Captured {len(historical)} data points from {len(bars)} bar positions")
+    return historical
 
 
 async def click_fleet_tab(page, tab_name: str) -> bool:
@@ -1911,8 +2224,27 @@ async def extract_active_historical_data(page, captured_api_responses=None) -> l
             print(f"  -> Active state data rejected by validation")
             historical = []
 
-    # Fallback: native mouse hover on active chart
-    print("  -> Trying native mouse hover on active chart...")
+    # Fallback 1: Direct bar element hover on active chart
+    print("  -> Trying bar element hover on active chart...")
+    try:
+        historical = await extract_data_via_bar_click(page)
+        if historical:
+            historical = deduplicate_by_date(historical)
+            if validate_historical_data(historical, "Active-BarClick"):
+                print(f"  -> Found {len(historical)} valid active data points from bar hovering")
+                historical.sort(key=lambda x: x.get("date", ""))
+                return historical
+            else:
+                print(f"  -> Active bar hover data rejected by validation")
+                historical = []
+        print("  -> No active bar elements or tooltips found")
+    except Exception as e:
+        print(f"  -> Bar hover failed: {e}")
+        import traceback
+        traceback.print_exc()
+
+    # Fallback 2: Native mouse hover sweep on active chart
+    print("  -> Trying native mouse hover sweep on active chart...")
     try:
         historical = await extract_data_via_mouse_hover(page)
         if historical:
@@ -2074,6 +2406,45 @@ async def scrape_robotaxi_tracker():
             # Bar charts have large hover areas per data point vs line charts
             print("\nSwitching to bar chart mode for reliable tooltip extraction...")
             bar_chart_active = await click_bar_chart_mode(page)
+
+            # Diagnostic: take screenshot after bar chart toggle to verify chart state
+            await take_screenshot(page, "after_bar_chart_toggle")
+
+            # Diagnostic: dump chart element info for debugging
+            try:
+                chart_diag = await page.evaluate("""
+                    () => {
+                        const surfaces = document.querySelectorAll('svg.recharts-surface');
+                        const info = {surfaceCount: surfaces.length, charts: []};
+                        for (const svg of surfaces) {
+                            const r = svg.getBoundingClientRect();
+                            const barRects = svg.querySelectorAll(
+                                '.recharts-bar-rectangle rect, .recharts-bar-rectangles rect, .recharts-bar rect'
+                            );
+                            const allRects = svg.querySelectorAll('rect');
+                            const barLike = Array.from(allRects).filter(rect => {
+                                const b = rect.getBoundingClientRect();
+                                return b.height > 5 && b.width > 2 && b.width < 60;
+                            });
+                            info.charts.push({
+                                width: Math.round(r.width),
+                                height: Math.round(r.height),
+                                top: Math.round(r.top),
+                                rechartsBarRects: barRects.length,
+                                totalRects: allRects.length,
+                                barLikeRects: barLike.length,
+                            });
+                        }
+                        return info;
+                    }
+                """)
+                print(f"\n  [Chart diagnostic] {chart_diag.get('surfaceCount', 0)} SVG surfaces found:")
+                for i, c in enumerate(chart_diag.get('charts', [])):
+                    print(f"    chart[{i}]: {c['width']}x{c['height']} at y={c['top']}, "
+                          f"recharts-bars={c['rechartsBarRects']}, "
+                          f"total-rects={c['totalRects']}, bar-like={c['barLikeRects']}")
+            except Exception as e:
+                print(f"  Chart diagnostic failed: {e}")
 
             # Extract historical data (Total fleet - default view)
             print(f"\n  Captured {len(captured_api_responses)} API responses during page load")
