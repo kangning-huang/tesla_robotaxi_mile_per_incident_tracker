@@ -102,7 +102,7 @@
                     {
                         "@type": "PropertyValue",
                         "name": "Fleet Size",
-                        "description": "Number of active Tesla robotaxi vehicles"
+                        "description": "Number of Tesla robotaxi vehicles in Austin fleet"
                     }
                 ],
                 "distribution": {
@@ -157,7 +157,7 @@
             <div class="hero-content">
                 <p class="hero-label">Independent Safety Tracking</p>
                 <h1 class="hero-title">Tesla Robotaxi Safety is<br>Doubling Every <span id="hero-doubling-time">69</span> Days</h1>
-                <p class="hero-subtitle">Improving from <span class="highlight-number">14,100</span> to <span class="highlight-number">107,500</span> miles between incidents—on track to match human drivers</p>
+                <p class="hero-subtitle">Improving from <span class="highlight-number">14,100</span> to <span class="highlight-number">92,500</span> miles between incidents—on track to match human drivers</p>
 
                 <div class="hero-streak-card">
                     <div class="hero-streak-header">
@@ -241,7 +241,7 @@
                     <div class="metrics-grid-vertical">
                         <div class="metric-card">
                             <div class="metric-label">Latest Interval</div>
-                            <div class="metric-value" id="latest-mpi">107,500</div>
+                            <div class="metric-value" id="latest-mpi">92,500</div>
                             <div class="metric-change positive">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M18 15l-6-6-6 6"/>
@@ -261,7 +261,7 @@
                         </div>
                         <div class="metric-card">
                             <div class="metric-label">vs Human Drivers</div>
-                            <div class="metric-value negative" id="vs-human">4.7x</div>
+                            <div class="metric-value negative" id="vs-human">5.4x</div>
                             <div class="metric-subtext">worse (latest interval)</div>
                         </div>
                     </div>
@@ -335,8 +335,8 @@
     <section class="chart-section secondary">
         <div class="container">
             <div class="section-header">
-                <h2>Active Fleet Size Over Time</h2>
-                <p>Austin robotaxi active fleet growth — vehicles actually on the road (unsupervised ADS)</p>
+                <h2>Fleet Size Over Time</h2>
+                <p>Austin robotaxi fleet growth (unsupervised ADS)</p>
             </div>
             <div class="chart-container small">
                 <canvas id="fleetChart"></canvas>
@@ -381,10 +381,10 @@
                 <div class="comparison-item">
                     <div class="comparison-label">
                         <span class="company">Tesla Robotaxi (Latest)</span>
-                        <span class="value">107,500</span>
+                        <span class="value">92,500</span>
                     </div>
                     <div class="comparison-bar-bg">
-                        <div class="comparison-bar tesla" style="width: 10.75%;"></div>
+                        <div class="comparison-bar tesla" style="width: 9.25%;"></div>
                     </div>
                 </div>
                 <div class="comparison-item">
@@ -549,12 +549,12 @@
                 <div class="method-card">
                     <div class="method-number">01</div>
                     <h3>Fleet Data</h3>
-                    <p>We use <strong>active fleet size</strong> (vehicles actually on the road) scraped daily from <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a>. Not every vehicle in the total fleet operates every day&mdash;some may be charging, in maintenance, or offline. Using active counts gives a more accurate miles estimate.</p>
+                    <p>We use <strong>total fleet size</strong> (all vehicles in the Austin fleet) scraped from <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a>, interpolated daily between known data points.</p>
                 </div>
                 <div class="method-card">
                     <div class="method-number">02</div>
                     <h3>Miles Estimation</h3>
-                    <p>Daily miles = Active fleet size × 115 mi/vehicle/day (based on Tesla's 250K miles Q3 2025 report).</p>
+                    <p>Daily miles = Fleet size × 115 mi/vehicle/day (based on Tesla's 250K miles Q3 2025 report).</p>
                 </div>
                 <div class="method-card">
                     <div class="method-number">03</div>
