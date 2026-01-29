@@ -84,19 +84,31 @@ async def scroll_and_wait_for_charts(page):
                 for (const chart of charts) {
                     const rect = chart.getBoundingClientRect();
                     if (rect.height >= 100 && rect.width >= 200) {
-                        return {height: rect.height, width: rect.width};
+                        // Check if chart has actual rendered SVG content
+                        const paths = chart.querySelectorAll('svg path, svg line, svg rect, svg circle');
+                        const hasContent = paths.length > 5;  // Real charts have many path elements
+                        return {
+                            height: rect.height,
+                            width: rect.width,
+                            pathCount: paths.length,
+                            hasContent: hasContent
+                        };
                     }
                 }
                 return null;
             }
         """)
         if has_chart:
-            print(f"  Recharts chart detected ({has_chart['width']:.0f}x{has_chart['height']:.0f})")
-            await asyncio.sleep(1)  # Extra wait for chart data to populate
-            break
+            print(f"  Recharts chart detected ({has_chart['width']:.0f}x{has_chart['height']:.0f}), "
+                  f"SVG elements: {has_chart['pathCount']}, has content: {has_chart['hasContent']}")
+            if has_chart['hasContent']:
+                await asyncio.sleep(1)
+                break
+            else:
+                print(f"  Chart container found but empty (attempt {attempt + 1}/6), waiting...")
         await asyncio.sleep(2)
     else:
-        print("  No properly-sized Recharts chart found after waiting")
+        print("  No properly-sized Recharts chart with content found after waiting")
 
 
 async def extract_fleet_numbers(page) -> dict:
@@ -590,6 +602,37 @@ async def extract_data_via_mouse_hover(page) -> list:
     if bbox['height'] < 100:
         print(f"  WARNING: Chart too small (height={bbox['height']:.0f}px), likely a sparkline")
         print("  The main Fleet Growth chart may not have loaded. Skipping hover.")
+        return historical
+
+    # Check that the chart has actual SVG content (not just an empty container)
+    svg_check = await page.evaluate("""
+        (bbox) => {
+            // Find the chart at the given position
+            const charts = document.querySelectorAll('.recharts-wrapper');
+            for (const chart of charts) {
+                const rect = chart.getBoundingClientRect();
+                if (Math.abs(rect.x - bbox.x) < 5 && Math.abs(rect.y - bbox.y) < 5) {
+                    const paths = chart.querySelectorAll('svg path');
+                    const areas = chart.querySelectorAll('.recharts-area-area, .recharts-line-curve');
+                    return {pathCount: paths.length, areaCount: areas.length};
+                }
+            }
+            // Fallback: check any chart near this position
+            const el = document.elementFromPoint(bbox.x + bbox.width / 2, bbox.y + bbox.height / 2);
+            if (el) {
+                const wrapper = el.closest('.recharts-wrapper');
+                if (wrapper) {
+                    const paths = wrapper.querySelectorAll('svg path');
+                    const areas = wrapper.querySelectorAll('.recharts-area-area, .recharts-line-curve');
+                    return {pathCount: paths.length, areaCount: areas.length};
+                }
+            }
+            return {pathCount: 0, areaCount: 0};
+        }
+    """, bbox)
+    print(f"  SVG content check: {svg_check['pathCount']} paths, {svg_check['areaCount']} area/line elements")
+    if svg_check['pathCount'] < 3 and svg_check['areaCount'] == 0:
+        print("  WARNING: Chart container is empty (no SVG paths rendered). Skipping hover.")
         return historical
 
     # Calculate hover area - stay within the plot area (inside axes)
@@ -1400,8 +1443,49 @@ async def scrape_robotaxi_tracker():
             # Take full page screenshot after all content loaded
             await take_screenshot(page, "main_page_full")
 
-            # Extract historical data (Total fleet - default view)
-            print(f"\n  Captured {len(captured_api_responses)} API responses during page load")
+            # Click "Total" tab explicitly to trigger data fetch
+            # The chart may not render data until the tab is clicked
+            print("\nClicking 'Total' tab to trigger chart data loading...")
+            await click_fleet_tab(page, "Total")
+
+            # Wait for SVG content to appear inside the chart
+            print("  Waiting for chart SVG content after tab click...")
+            for wait_attempt in range(8):
+                chart_status = await page.evaluate("""
+                    () => {
+                        const charts = document.querySelectorAll('.recharts-wrapper');
+                        for (const chart of charts) {
+                            const rect = chart.getBoundingClientRect();
+                            if (rect.height >= 100 && rect.width >= 200) {
+                                const paths = chart.querySelectorAll('svg path');
+                                const areas = chart.querySelectorAll('.recharts-area-area, .recharts-line-curve');
+                                return {
+                                    height: rect.height,
+                                    width: rect.width,
+                                    pathCount: paths.length,
+                                    areaCount: areas.length,
+                                    hasContent: paths.length > 5 || areas.length > 0
+                                };
+                            }
+                        }
+                        return null;
+                    }
+                """)
+                if chart_status and chart_status.get('hasContent'):
+                    print(f"  Chart has content: {chart_status['pathCount']} paths, "
+                          f"{chart_status['areaCount']} area/line elements")
+                    break
+                status_msg = f"paths={chart_status['pathCount']}" if chart_status else "no chart"
+                print(f"  Chart not ready ({status_msg}), waiting... (attempt {wait_attempt + 1}/8)")
+                await asyncio.sleep(2)
+            else:
+                print("  WARNING: Chart content did not appear after waiting")
+
+            # Take screenshot after tab click + wait
+            await take_screenshot(page, "fleet_growth_after_tab_click")
+
+            # Extract historical data (Total fleet)
+            print(f"\n  Captured {len(captured_api_responses)} API responses total")
             print("\nExtracting historical data (Total fleet)...")
             historical = await extract_historical_data(page, captured_api_responses)
             print(f"  Found {len(historical)} total historical data points")
