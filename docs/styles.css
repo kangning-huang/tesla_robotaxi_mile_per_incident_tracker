@@ -1443,18 +1443,14 @@ a:hover {
 .subscribe-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
+    justify-content: center;
+    padding: 8px;
     background: var(--accent-primary);
     color: #ffffff;
     border: none;
     border-radius: var(--radius-sm);
-    font-family: var(--font-sans);
-    font-size: 13px;
-    font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    white-space: nowrap;
 }
 
 .subscribe-btn:hover {
