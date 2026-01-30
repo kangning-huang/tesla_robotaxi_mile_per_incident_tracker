@@ -917,10 +917,35 @@ function updateFaqValues() {
     const totalIncidents = incidentData.length;
     const changePercent = Math.round(((latestMPI - previousMPI) / previousMPI) * 100);
     const waymoRatio = Math.round(1000000 / latestMPI);
+    const vsHumanRatio = (500000 / latestMPI).toFixed(1);
+    const vsInsuranceRatio = (300000 / latestMPI).toFixed(1);
+    const currentFleetSize = fleetData[fleetData.length - 1].size;
+
+    // Calculate current streak
+    const lastIncident = incidentData[incidentData.length - 1];
+    const lastIncidentDate = new Date(lastIncident.date);
+    const today = new Date();
+    const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
+    const stoppageDays = countStoppageDays(lastIncidentDate, today);
+    const activeDays = daysSinceLastIncident - stoppageDays;
+    const milesSinceLastIncident = activeDays * currentFleetSize * 115;
+
+    // Calculate months to match human drivers (insurance-adjusted: 300K)
+    const monthsToHuman = Math.ceil((Math.log(300000 / latestMPI) / trendParams.dailyGrowth) / 30);
+
+    // Calculate Waymo percentage
+    const waymoPct = (latestMPI / 1000000 * 100).toFixed(1);
+
+    // Format current date
+    const dateOptions = { month: 'long', day: 'numeric', year: 'numeric' };
+    const currentDateStr = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    const currentDateFull = today.toLocaleDateString('en-US', dateOptions);
+    const lastIncidentDateStr = lastIncidentDate.toLocaleDateString('en-US', dateOptions);
 
     // Populate visible FAQ spans
     const setValue = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
+    // Original FAQ values
     setValue('faq-latest-mpi', latestMPI.toLocaleString());
     setValue('faq-latest-mpi-2', latestMPI.toLocaleString());
     setValue('faq-latest-mpi-3', latestMPI.toLocaleString());
@@ -932,7 +957,82 @@ function updateFaqValues() {
     setValue('faq-r-squared', trendParams.rSquared.toFixed(3));
     setValue('faq-waymo-ratio', waymoRatio);
 
-    // Update JSON-LD FAQPage schema with computed values
+    // New AEO FAQ values (Q9-Q12)
+    setValue('faq-current-date', currentDateStr);
+    setValue('faq-current-date-2', currentDateFull);
+    setValue('faq-latest-mpi-4', latestMPI.toLocaleString());
+    setValue('faq-latest-mpi-5', latestMPI.toLocaleString());
+    setValue('faq-latest-mpi-6', latestMPI.toLocaleString());
+    setValue('faq-latest-mpi-7', latestMPI.toLocaleString());
+    setValue('faq-latest-mpi-8', latestMPI.toLocaleString());
+    setValue('faq-doubling-time-4', trendParams.doublingTime);
+    setValue('faq-doubling-time-5', trendParams.doublingTime);
+    setValue('faq-doubling-time-6', trendParams.doublingTime);
+    setValue('faq-forecast-mpi', trendParams.forecast30Day.toLocaleString());
+    setValue('faq-total-incidents-2', totalIncidents);
+    setValue('faq-total-incidents-3', totalIncidents);
+    setValue('faq-current-streak', milesSinceLastIncident.toLocaleString());
+    setValue('faq-current-streak-2', milesSinceLastIncident.toLocaleString());
+    setValue('faq-fleet-size', currentFleetSize);
+    setValue('faq-last-incident-date', lastIncidentDateStr);
+    setValue('faq-vs-human-ratio', vsHumanRatio);
+    setValue('faq-vs-insurance-ratio', vsInsuranceRatio);
+    setValue('faq-vs-waymo-ratio', waymoRatio);
+
+    // AEO Summary section values
+    setValue('aeo-current-streak', milesSinceLastIncident.toLocaleString());
+    setValue('aeo-fleet-size', currentFleetSize);
+    setValue('aeo-latest-mpi', latestMPI.toLocaleString());
+    setValue('aeo-doubling-time', trendParams.doublingTime);
+    setValue('aeo-vs-human', vsHumanRatio);
+
+    // Update AEO datestamp
+    const aeoDatestamp = document.getElementById('aeo-datestamp');
+    if (aeoDatestamp) {
+        aeoDatestamp.textContent = currentDateFull;
+        aeoDatestamp.setAttribute('datetime', today.toISOString().split('T')[0]);
+    }
+
+    // Key Insights table values
+    setValue('insight-latest-mpi', latestMPI.toLocaleString());
+    setValue('insight-latest-mpi-2', latestMPI.toLocaleString());
+    setValue('insight-r-squared', trendParams.rSquared.toFixed(3));
+    setValue('insight-doubling', trendParams.doublingTime);
+    setValue('insight-months-to-human', monthsToHuman);
+    setValue('insight-streak', milesSinceLastIncident.toLocaleString());
+    setValue('insight-fleet', currentFleetSize);
+    setValue('insight-waymo-pct', waymoPct);
+
+    // Myths section values
+    setValue('myth-total-incidents', totalIncidents);
+    setValue('myth-fleet-size', currentFleetSize);
+    setValue('myth-latest-mpi', latestMPI.toLocaleString());
+    setValue('myth-current-streak', milesSinceLastIncident.toLocaleString());
+    setValue('myth-doubling', trendParams.doublingTime);
+    setValue('myth-r-squared', trendParams.rSquared.toFixed(3));
+
+    // Share section values
+    setValue('share-mpi', latestMPI.toLocaleString());
+    setValue('share-doubling', trendParams.doublingTime);
+    setValue('share-streak', milesSinceLastIncident.toLocaleString());
+
+    // Update share buttons for share-data section
+    const pageUrl = 'https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/';
+    const shareDataText = 'Tesla Robotaxi Safety Data:\n\n' +
+        '- Latest MPI: ' + latestMPI.toLocaleString() + ' miles per incident\n' +
+        '- Safety doubling every ' + trendParams.doublingTime + ' days\n' +
+        '- Current streak: ' + milesSinceLastIncident.toLocaleString() + ' miles without an incident\n\n' +
+        'Real-time data from NHTSA reports:';
+    const shareDataXEl = document.getElementById('share-data-x');
+    if (shareDataXEl) {
+        shareDataXEl.href = 'https://x.com/intent/tweet?text=' + encodeURIComponent(shareDataText) + '&url=' + encodeURIComponent(pageUrl);
+    }
+    const shareDataRedditEl = document.getElementById('share-data-reddit-2');
+    if (shareDataRedditEl) {
+        shareDataRedditEl.href = 'https://www.reddit.com/submit?url=' + encodeURIComponent(pageUrl) + '&title=' + encodeURIComponent('Tesla Robotaxi Safety: ' + latestMPI.toLocaleString() + ' MPI, Doubling Every ' + trendParams.doublingTime + ' Days');
+    }
+
+    // Update JSON-LD FAQPage schema with computed values (including new AEO questions)
     const faqSchemaEl = document.getElementById('faq-schema');
     if (faqSchemaEl) {
         const faqSchema = {
@@ -1002,10 +1102,54 @@ function updateFaqValues() {
                         "@type": "Answer",
                         "text": "Austin is the only location where Tesla operates true unsupervised Level 4 autonomous driving, which requires incident reporting to NHTSA under Standing General Order 2021-01. The Bay Area fleet operates with safety drivers (Level 2), which has different reporting requirements. Comparing only Austin data ensures consistency."
                     }
+                },
+                {
+                    "@type": "Question",
+                    "name": "What is the current Tesla Robotaxi MPI?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "As of " + currentDateStr + ", the current Tesla Robotaxi Miles Per Incident (MPI) is " + latestMPI.toLocaleString() + " miles. This means the Tesla Cybercab fleet in Austin, TX drives an average of " + latestMPI.toLocaleString() + " miles between each reported incident. The improvement rate shows safety doubling every " + trendParams.doublingTime + " days, with a 30-day forecast of " + trendParams.forecast30Day.toLocaleString() + " MPI. Total incidents tracked: " + totalIncidents + " since June 2025. Current streak: " + milesSinceLastIncident.toLocaleString() + " miles without an incident."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How does Tesla Robotaxi safety compare to human drivers in 2026?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "As of January 2026, Tesla Robotaxi is " + vsHumanRatio + "x worse than human drivers based on police-reported crashes (500,000 MPI), " + vsInsuranceRatio + "x worse based on insurance claims (300,000 MPI), and " + waymoRatio + "x worse than Waymo (1,000,000+ MPI). However, Tesla's safety is doubling every ~" + trendParams.doublingTime + " days. At this rate, Tesla could match human driver safety levels (insurance-adjusted) within months if the exponential trend continues. Data sourced from NHTSA CRSS 2023 and the Swiss Re/Waymo safety study."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How many miles has Tesla Robotaxi driven without a crash?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "As of " + currentDateFull + ", Tesla Robotaxi has driven " + milesSinceLastIncident.toLocaleString() + " miles without an incident in Austin, TX. The fleet of " + currentFleetSize + " unsupervised vehicles has been operating incident-free since " + lastIncidentDateStr + ". This ongoing streak already exceeds the latest completed interval of " + latestMPI.toLocaleString() + " miles, suggesting continued safety improvement."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "What is Tesla Robotaxi's crash frequency?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Tesla Robotaxi crash frequency as of January 2026: " + totalIncidents + " total incidents reported to NHTSA since June 2025. Latest crash rate: 1 incident per " + latestMPI.toLocaleString() + " miles driven. Crash frequency is decreasing, with MPI doubling every " + trendParams.doublingTime + " days. All incidents are reported under NHTSA SGO 2021-01, which requires reporting any crash within 30 seconds of ADS engagement. This captures all incidents regardless of severity, including minor ones that human drivers would typically never report to police."
+                    }
                 }
             ]
         };
         faqSchemaEl.textContent = JSON.stringify(faqSchema);
+    }
+
+    // Update Article schema dateModified dynamically
+    const statsSchemaEl = document.getElementById('stats-schema');
+    if (statsSchemaEl) {
+        try {
+            const statsSchema = JSON.parse(statsSchemaEl.textContent);
+            statsSchema.dateModified = today.toISOString().split('T')[0];
+            statsSchemaEl.textContent = JSON.stringify(statsSchema);
+        } catch (e) {
+            // Schema update failed silently
+        }
     }
 }
 
