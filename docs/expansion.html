@@ -9,7 +9,7 @@
     <meta name="description" content="Track Tesla's robotaxi expansion across US cities. Real-time status for Austin, Bay Area, Dallas, Houston, Phoenix, Miami, and more. Updated daily.">
     <meta name="keywords" content="Tesla robotaxi cities, Tesla robotaxi expansion, Tesla robotaxi 2026, Tesla robotaxi Dallas, Tesla robotaxi Houston, Tesla robotaxi Phoenix">
     <meta name="author" content="Kangning Huang">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     <meta name="google-site-verification" content="abZJn0glSeK0F1M5tJWNACVXJlmNoQoKrvEIEybbd8o" />
     <link rel="canonical" href="https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/expansion.html">
 
@@ -26,6 +26,9 @@
     <meta name="twitter:description" content="Track Tesla's robotaxi rollout across US cities with real-time fleet data and launch timelines.">
     <meta name="twitter:image" content="https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/chart-preview.png">
 
+    <!-- Performance: DNS prefetch for CDN resources -->
+    <link rel="dns-prefetch" href="https://unpkg.com">
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,6 +39,28 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <link rel="stylesheet" href="styles.css">
+
+    <!-- Structured Data / JSON-LD: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Tesla Robotaxi Safety Tracker",
+                "item": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Expansion Tracker",
+                "item": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/expansion.html"
+            }
+        ]
+    }
+    </script>
 
     <!-- Structured Data / JSON-LD: Dataset -->
     <script type="application/ld+json">
@@ -173,7 +198,7 @@
         <div class="container">
             <p class="hero-label">Expansion Tracking</p>
             <h1 class="expansion-hero-title">Tesla Robotaxi Expansion Tracker</h1>
-            <p class="expansion-hero-subtitle">City-by-city status of Tesla's autonomous ride-hailing rollout</p>
+            <p class="expansion-hero-subtitle">City-by-city status of Tesla's autonomous ride-hailing rollout — see also our <a href="index.html#trend" style="color: inherit; text-decoration: underline;">safety trend tracker</a></p>
 
             <!-- Summary Stats -->
             <div class="stats-row">
