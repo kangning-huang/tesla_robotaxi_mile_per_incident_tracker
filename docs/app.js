@@ -910,6 +910,105 @@ function animateComparisonBars() {
     });
 }
 
+// ===== Update FAQ Dynamic Values =====
+function updateFaqValues() {
+    const latestMPI = incidentData[incidentData.length - 1].mpi;
+    const previousMPI = incidentData[incidentData.length - 2].mpi;
+    const totalIncidents = incidentData.length;
+    const changePercent = Math.round(((latestMPI - previousMPI) / previousMPI) * 100);
+    const waymoRatio = Math.round(1000000 / latestMPI);
+
+    // Populate visible FAQ spans
+    const setValue = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+
+    setValue('faq-latest-mpi', latestMPI.toLocaleString());
+    setValue('faq-latest-mpi-2', latestMPI.toLocaleString());
+    setValue('faq-latest-mpi-3', latestMPI.toLocaleString());
+    setValue('faq-doubling-time', trendParams.doublingTime);
+    setValue('faq-doubling-time-2', trendParams.doublingTime);
+    setValue('faq-doubling-time-3', trendParams.doublingTime);
+    setValue('faq-total-incidents', totalIncidents);
+    setValue('faq-change-percent', changePercent);
+    setValue('faq-r-squared', trendParams.rSquared.toFixed(3));
+    setValue('faq-waymo-ratio', waymoRatio);
+
+    // Update JSON-LD FAQPage schema with computed values
+    const faqSchemaEl = document.getElementById('faq-schema');
+    if (faqSchemaEl) {
+        const faqSchema = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "How safe are Tesla robotaxis compared to human drivers?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Tesla robotaxis in Austin average approximately " + latestMPI.toLocaleString() + " miles between incidents. For comparison, human drivers average about 500,000 miles between police-reported crashes, or approximately 300,000 miles between insurance claims. Tesla's safety is improving rapidly, with the interval between incidents doubling approximately every " + trendParams.doublingTime + " days."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How many Tesla robotaxi incidents have occurred?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Tesla has reported " + totalIncidents + " incidents to NHTSA since launching in Austin in June 2025. All incidents occurred in Austin, Texas, which is the only location where Tesla operates true unsupervised autonomous driving (Level 4). The Bay Area fleet operates with safety drivers and follows different reporting requirements."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Is Tesla robotaxi safety improving?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes, significantly. Our analysis shows Tesla robotaxi safety is doubling approximately every " + trendParams.doublingTime + " days. The most recent interval between incidents reached " + latestMPI.toLocaleString() + " miles — a " + changePercent + "% improvement from the previous interval. This exponential improvement trend (R\u00B2 = " + trendParams.rSquared.toFixed(3) + ") suggests the system is learning and becoming safer over time."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How does Tesla robotaxi compare to Waymo?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Waymo reports approximately 1,000,000+ miles per incident based on their published safety data. Tesla's latest interval is " + latestMPI.toLocaleString() + " miles per incident — roughly " + waymoRatio + "x less than Waymo's reported figures. However, Tesla's rapid improvement rate (doubling every ~" + trendParams.doublingTime + " days) could narrow this gap significantly if the trend continues."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Where does Tesla operate robotaxis?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Tesla currently operates robotaxis in two markets: Austin, Texas (with some unsupervised vehicles) and the San Francisco Bay Area (with safety drivers). Tesla has announced plans to expand to Dallas, Houston, Phoenix, Miami, Orlando, Tampa, and Las Vegas in the first half of 2026."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "What is Tesla's robotaxi fleet size?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "As of the Q4 2025 earnings call, Tesla reported 'well over 500' vehicles across Austin and the Bay Area carrying paid customers. Elon Musk stated the fleet is expected to 'double every month.' This tracker monitors the Austin fleet specifically, as it's the only location with true unsupervised autonomous driving."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How is Tesla robotaxi safety data calculated?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Miles per incident is calculated by: (1) Tracking fleet size daily from robotaxitracker.com and news sources; (2) Estimating daily miles using 115 miles/vehicle/day based on Tesla's Q3 2025 report; (3) Recording incidents from NHTSA Standing General Order crash reports. An exponential trend model is then fitted to identify the improvement rate."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Why does this tracker focus only on Austin data?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Austin is the only location where Tesla operates true unsupervised Level 4 autonomous driving, which requires incident reporting to NHTSA under Standing General Order 2021-01. The Bay Area fleet operates with safety drivers (Level 2), which has different reporting requirements. Comparing only Austin data ensures consistency."
+                    }
+                }
+            ]
+        };
+        faqSchemaEl.textContent = JSON.stringify(faqSchema);
+    }
+}
+
 // ===== Initialize =====
 document.addEventListener('DOMContentLoaded', () => {
     initMPIChart();
@@ -918,6 +1017,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateMetrics();
     updateHeroStreak();
     updateCurrentStreakComparison();
+    updateFaqValues();
     animateComparisonBars();
 
     // Update Best Fit Model card with equation and R² details
@@ -1005,6 +1105,31 @@ async function fetchLatestData() {
 
 // Try to fetch latest data
 fetchLatestData();
+
+// ===== FAQ Accordion =====
+(function initFaqAccordion() {
+    const faqItems = document.querySelectorAll('.faq-item');
+
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+
+        question.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+
+            // Close all other items
+            faqItems.forEach(otherItem => {
+                otherItem.classList.remove('active');
+                otherItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+            });
+
+            // Toggle current item
+            if (!isActive) {
+                item.classList.add('active');
+                question.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+})();
 
 // ===== Subscribe Modal =====
 (function initSubscribeModal() {
