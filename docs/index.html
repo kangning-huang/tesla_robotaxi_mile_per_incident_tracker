@@ -3,27 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tesla Robotaxi Safety Tracker</title>
-    <meta name="description" content="Track Tesla Robotaxi miles per incident with trend analysis. Independent safety metrics for TSLA investors.">
+    <title>Tesla Robotaxi Safety Tracker | Real-Time Miles Per Incident Data 2026</title>
+    <meta name="description" content="Track Tesla Robotaxi miles per incident (MPI) with real-time safety trend analysis. Compare Cybercab crash rate vs human drivers and Waymo. Independent Austin ops data updated daily.">
+    <meta name="keywords" content="Tesla Robotaxi safety tracker, miles per incident Tesla, Cybercab incidents Austin, Tesla vs Waymo safety, unsupervised Robotaxi crashes, Tesla Robotaxi crash rate, Cybercab testing, Robotaxi fleet size, Tesla autonomous vehicle safety 2026">
     <meta name="author" content="Kangning Huang">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     <meta name="google-site-verification" content="abZJn0glSeK0F1M5tJWNACVXJlmNoQoKrvEIEybbd8o" />
     <link rel="canonical" href="https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/">
 
     <!-- Open Graph / Social Media Preview -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/">
-    <meta property="og:title" content="Tesla Robotaxi Safety Tracker">
-    <meta property="og:description" content="Track Tesla Robotaxi miles per incident with trend analysis. Safety is doubling every ~69 days.">
+    <meta property="og:title" content="Tesla Robotaxi Safety Tracker | Real-Time MPI & Incident Data">
+    <meta property="og:description" content="Track Tesla Robotaxi miles per incident with real-time trend analysis. Compare Cybercab safety vs human drivers and Waymo in Austin.">
     <meta property="og:image" content="https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/chart-preview.png">
     <meta property="og:image:width" content="1782">
     <meta property="og:image:height" content="1481">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Tesla Robotaxi Safety Tracker">
-    <meta name="twitter:description" content="Track Tesla Robotaxi miles per incident with trend analysis. Safety is doubling every ~69 days.">
+    <meta name="twitter:title" content="Tesla Robotaxi Safety Tracker | Real-Time MPI & Incident Data">
+    <meta name="twitter:description" content="Track Tesla Robotaxi miles per incident with real-time trend analysis. Compare Cybercab safety vs human drivers and Waymo in Austin.">
     <meta name="twitter:image" content="https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/chart-preview.png">
+
+    <!-- Performance: DNS prefetch for CDN resources -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,7 +50,7 @@
                 "@id": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/#website",
                 "url": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/",
                 "name": "Tesla Robotaxi Safety Tracker",
-                "description": "Track Tesla Robotaxi miles per incident with trend analysis. Independent safety metrics for TSLA investors.",
+                "description": "Track Tesla Robotaxi miles per incident (MPI) with real-time safety trend analysis. Compare Cybercab crash rate vs human drivers and Waymo. Independent Austin ops data updated daily.",
                 "publisher": {
                     "@id": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/#person"
                 }
@@ -56,7 +60,7 @@
                 "@id": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/#webpage",
                 "url": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/",
                 "name": "Tesla Robotaxi Safety Tracker - Miles Per Incident Analysis",
-                "description": "Track Tesla Robotaxi miles per incident with trend analysis. Safety is doubling every ~69 days.",
+                "description": "Real-time Tesla Robotaxi miles per incident data with exponential safety trend analysis. Cybercab crash rate improving and doubling every ~69 days in Austin.",
                 "isPartOf": {
                     "@id": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/#website"
                 },
@@ -76,6 +80,17 @@
                     "https://x.com/FytasoK60918",
                     "https://open.substack.com/pub/kangninghuang",
                     "https://github.com/kangning-huang"
+                ]
+            },
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Tesla Robotaxi Safety Tracker",
+                        "item": "https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/"
+                    }
                 ]
             },
             {
@@ -168,7 +183,7 @@
             <div class="hero-content">
                 <p class="hero-label">Independent Safety Tracking</p>
                 <h1 class="hero-title">Tesla Robotaxi Safety is<br>Doubling Every <span id="hero-doubling-time">69</span> Days</h1>
-                <p class="hero-subtitle">Improving from <span class="highlight-number">14,100</span> to <span class="highlight-number">92,500</span> miles between incidents—on track to match human drivers</p>
+                <p class="hero-subtitle">Tesla Robotaxi MPI improving from <span class="highlight-number">14,100</span> to <span class="highlight-number">92,500</span> miles between incidents in Austin—tracking how Cybercab safety compares to human drivers in 2026</p>
 
                 <div class="hero-streak-card">
                     <div class="hero-streak-header">
@@ -198,7 +213,7 @@
                 <div class="section-header-row">
                     <div>
                         <h2>Safety Trend Analysis</h2>
-                        <p>Miles driven between each consecutive incident with trend projection</p>
+                        <p>Tesla Robotaxi miles per incident between each consecutive crash, with exponential trend projection toward human driver safety levels</p>
                     </div>
                     <div class="share-icons">
                         <a href="#" id="share-x" class="share-icon" target="_blank" rel="noopener noreferrer" aria-label="Share on X" title="Post on X">
@@ -217,7 +232,7 @@
             <div class="chart-metrics-layout">
                 <div class="chart-area">
                     <div class="chart-container">
-                        <canvas id="mpiChart"></canvas>
+                        <canvas id="mpiChart" role="img" aria-label="Chart showing Tesla Robotaxi miles per incident trend from 14,100 to 92,500 miles, with exponential growth doubling safety every 69 days compared to human driver benchmarks of 300K and 500K miles"></canvas>
                     </div>
                     <div class="chart-legend">
                         <div class="legend-group">
@@ -347,10 +362,10 @@
         <div class="container">
             <div class="section-header">
                 <h2>Fleet Size Over Time</h2>
-                <p>Austin robotaxi fleet growth (unsupervised ADS)</p>
+                <p>Tesla Robotaxi fleet growth in Austin — unsupervised autonomous driving system (ADS) vehicles</p>
             </div>
             <div class="chart-container small">
-                <canvas id="fleetChart"></canvas>
+                <canvas id="fleetChart" role="img" aria-label="Chart showing Tesla Robotaxi fleet size growth in Austin from 10 to 72 vehicles between June 2025 and January 2026"></canvas>
             </div>
         </div>
     </section>
@@ -375,7 +390,7 @@
         <div class="container">
             <div class="section-header">
                 <h2>Incident-by-Incident Breakdown</h2>
-                <p>Miles driven between each consecutive incident</p>
+                <p>Miles driven between each consecutive incident — see <a href="#methodology">how we calculate MPI</a></p>
             </div>
             <div class="table-wrapper">
                 <table class="data-table">
@@ -400,8 +415,8 @@
     <section class="comparison">
         <div class="container">
             <div class="section-header">
-                <h2>Industry Comparison</h2>
-                <p>How Tesla Robotaxi compares to benchmarks</p>
+                <h2>Industry Comparison: Tesla vs Waymo vs Human Drivers</h2>
+                <p>How Tesla Robotaxi safety compares to Waymo and human driver crash rates</p>
             </div>
             <div class="comparison-bars">
                 <div class="comparison-item">
@@ -569,7 +584,7 @@
         <div class="container">
             <div class="section-header">
                 <h2>Methodology</h2>
-                <p>How we calculate miles per incident</p>
+                <p>How we calculate miles per incident for the <a href="#trend">safety trend analysis</a></p>
             </div>
             <div class="methodology-grid">
                 <div class="method-card">
@@ -651,7 +666,7 @@
         <div class="container">
             <div class="section-header">
                 <h2>Frequently Asked Questions</h2>
-                <p>Common questions about Tesla robotaxi safety data</p>
+                <p>Common questions about Tesla Robotaxi safety incidents, Cybercab crash rates, and MPI methodology</p>
             </div>
 
             <div class="faq-grid">
