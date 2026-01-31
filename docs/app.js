@@ -1017,7 +1017,7 @@ function updateFaqValues() {
     setValue('share-streak', milesSinceLastIncident.toLocaleString());
 
     // Update share buttons for share-data section
-    const pageUrl = 'https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/';
+    const pageUrl = 'https://robotaxi-safety-tracker.com/';
     const shareDataText = 'Tesla Robotaxi Safety Data:\n\n' +
         '- Latest MPI: ' + latestMPI.toLocaleString() + ' miles per incident\n' +
         '- Safety doubling every ' + trendParams.doublingTime + ' days\n' +
@@ -1197,7 +1197,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Set up share button URLs
-    const pageUrl = 'https://kangning-huang.github.io/tesla_robotaxi_mile_per_incident_tracker/';
+    const pageUrl = 'https://robotaxi-safety-tracker.com/';
     const shareTitle = 'Tesla Robotaxi Safety is Doubling Every ' + trendParams.doublingTime + ' Days';
     const shareText = shareTitle + '\n\nTracking Tesla\'s autonomous vehicle safety improvements with real NHTSA data.';
 
