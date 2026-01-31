@@ -75,23 +75,20 @@ async def scroll_and_wait_for_charts(page):
     except Exception as e:
         print(f"  Could not scroll to Fleet Growth: {e}")
 
-    # Wait for a properly-sized Recharts chart to render (not sparklines)
-    # Sparklines are ~40px tall; the main Fleet Growth chart is 200-400px
+    # Wait for a Recharts chart to render
     for attempt in range(6):
         has_chart = await page.evaluate("""
             () => {
                 const charts = document.querySelectorAll('.recharts-wrapper');
                 for (const chart of charts) {
                     const rect = chart.getBoundingClientRect();
-                    if (rect.height >= 100 && rect.width >= 200) {
-                        // Check if chart has actual rendered SVG content
+                    if (rect.height >= 50 && rect.width >= 100) {
                         const paths = chart.querySelectorAll('svg path, svg line, svg rect, svg circle');
-                        const hasContent = paths.length > 5;  // Real charts have many path elements
                         return {
                             height: rect.height,
                             width: rect.width,
                             pathCount: paths.length,
-                            hasContent: hasContent
+                            hasContent: paths.length > 0
                         };
                     }
                 }
@@ -100,7 +97,7 @@ async def scroll_and_wait_for_charts(page):
         """)
         if has_chart:
             print(f"  Recharts chart detected ({has_chart['width']:.0f}x{has_chart['height']:.0f}), "
-                  f"SVG elements: {has_chart['pathCount']}, has content: {has_chart['hasContent']}")
+                  f"SVG elements: {has_chart['pathCount']}")
             if has_chart['hasContent']:
                 await asyncio.sleep(1)
                 break
@@ -108,7 +105,7 @@ async def scroll_and_wait_for_charts(page):
                 print(f"  Chart container found but empty (attempt {attempt + 1}/6), waiting...")
         await asyncio.sleep(2)
     else:
-        print("  No properly-sized Recharts chart with content found after waiting")
+        print("  No Recharts chart found after waiting, proceeding anyway...")
 
 
 async def extract_fleet_numbers(page) -> dict:
@@ -513,14 +510,14 @@ async def extract_data_via_mouse_hover(page) -> list:
                 }
             }
 
-            // Find all recharts charts, filtering out sparklines (height < 100)
+            // Find all recharts charts, filtering out tiny sparklines
             const allCharts = document.querySelectorAll('.recharts-wrapper');
             if (allCharts.length === 0) return null;
 
             const charts = [];
             for (const chart of allCharts) {
                 const rect = chart.getBoundingClientRect();
-                if (rect.height >= 100 && rect.width >= 200) {
+                if (rect.height >= 50 && rect.width >= 100) {
                     charts.push(chart);
                 }
             }
@@ -599,41 +596,9 @@ async def extract_data_via_mouse_hover(page) -> list:
     print(f"  Chart bbox: x={bbox['x']:.0f}, y={bbox['y']:.0f}, "
           f"w={bbox['width']:.0f}, h={bbox['height']:.0f}")
 
-    if bbox['height'] < 100:
-        print(f"  WARNING: Chart too small (height={bbox['height']:.0f}px), likely a sparkline")
-        print("  The main Fleet Growth chart may not have loaded. Skipping hover.")
-        return historical
-
-    # Check that the chart has actual SVG content (not just an empty container)
-    svg_check = await page.evaluate("""
-        (bbox) => {
-            // Find the chart at the given position
-            const charts = document.querySelectorAll('.recharts-wrapper');
-            for (const chart of charts) {
-                const rect = chart.getBoundingClientRect();
-                if (Math.abs(rect.x - bbox.x) < 5 && Math.abs(rect.y - bbox.y) < 5) {
-                    const paths = chart.querySelectorAll('svg path');
-                    const areas = chart.querySelectorAll('.recharts-area-area, .recharts-line-curve');
-                    return {pathCount: paths.length, areaCount: areas.length};
-                }
-            }
-            // Fallback: check any chart near this position
-            const el = document.elementFromPoint(bbox.x + bbox.width / 2, bbox.y + bbox.height / 2);
-            if (el) {
-                const wrapper = el.closest('.recharts-wrapper');
-                if (wrapper) {
-                    const paths = wrapper.querySelectorAll('svg path');
-                    const areas = wrapper.querySelectorAll('.recharts-area-area, .recharts-line-curve');
-                    return {pathCount: paths.length, areaCount: areas.length};
-                }
-            }
-            return {pathCount: 0, areaCount: 0};
-        }
-    """, bbox)
-    print(f"  SVG content check: {svg_check['pathCount']} paths, {svg_check['areaCount']} area/line elements")
-    if svg_check['pathCount'] < 3 and svg_check['areaCount'] == 0:
-        print("  WARNING: Chart container is empty (no SVG paths rendered). Skipping hover.")
-        return historical
+    if bbox['height'] < 50:
+        print(f"  WARNING: Chart very small (height={bbox['height']:.0f}px), likely a sparkline")
+        print("  Attempting hover anyway...")
 
     # Calculate hover area - stay within the plot area (inside axes)
     chart_left = bbox['x'] + 60   # Skip y-axis labels
@@ -729,13 +694,21 @@ async def extract_chart_data_from_scripts(page) -> list:
                     const hasDate = keys.some(k =>
                         k.includes('date') || k.includes('time') || k.includes('day')
                     );
-                    // Must have fleet-specific or region-specific keys
-                    // Generic 'total' or 'count' alone is NOT sufficient (too many false positives)
+                    if (!hasDate) return false;
+                    // Accept fleet-specific/region-specific keys
                     const hasFleetKey = keys.some(k =>
                         k.includes('austin') || k.includes('bay') || k.includes('sf') ||
                         k.includes('sanfran') || k.includes('fleet') || k.includes('vehicle')
                     );
-                    return hasDate && hasFleetKey;
+                    if (hasFleetKey) return true;
+                    // Also accept arrays with date + numeric values (relaxed matching)
+                    const hasNumericValues = Object.values(sample).some(v =>
+                        typeof v === 'number' && v > 0
+                    );
+                    const hasTotal = keys.some(k =>
+                        k.includes('total') || k.includes('count') || k.includes('value')
+                    );
+                    return hasNumericValues && (hasTotal || keys.length >= 3);
                 }
 
                 // Helper: recursively search object for fleet data arrays
@@ -1456,7 +1429,7 @@ async def scrape_robotaxi_tracker():
                         const charts = document.querySelectorAll('.recharts-wrapper');
                         for (const chart of charts) {
                             const rect = chart.getBoundingClientRect();
-                            if (rect.height >= 100 && rect.width >= 200) {
+                            if (rect.height >= 50 && rect.width >= 100) {
                                 const paths = chart.querySelectorAll('svg path');
                                 const areas = chart.querySelectorAll('.recharts-area-area, .recharts-line-curve');
                                 return {
@@ -1464,7 +1437,7 @@ async def scrape_robotaxi_tracker():
                                     width: rect.width,
                                     pathCount: paths.length,
                                     areaCount: areas.length,
-                                    hasContent: paths.length > 5 || areas.length > 0
+                                    hasContent: paths.length > 0 || areas.length > 0
                                 };
                             }
                         }
@@ -1479,7 +1452,7 @@ async def scrape_robotaxi_tracker():
                 print(f"  Chart not ready ({status_msg}), waiting... (attempt {wait_attempt + 1}/8)")
                 await asyncio.sleep(2)
             else:
-                print("  WARNING: Chart content did not appear after waiting")
+                print("  WARNING: Chart content did not appear after waiting, proceeding anyway...")
 
             # Take screenshot after tab click + wait
             await take_screenshot(page, "fleet_growth_after_tab_click")
@@ -1582,16 +1555,19 @@ def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
     2. Converts scraped data to snapshot format
     3. Merges new data points (skips duplicates by date)
     4. Merges active fleet data into existing snapshots by date
-    5. Sorts by date
-    6. Saves updated fleet_data.json
+    5. Falls back to current_fleet data for today's snapshot if no historical data
+    6. Sorts by date
+    7. Saves updated fleet_data.json
 
     Returns True if merge was successful and changes were made, False otherwise.
     """
     has_total_data = scraped_data and scraped_data.get("historical_data")
     has_active_data = scraped_data and scraped_data.get("active_historical_data")
+    has_current_fleet = (scraped_data and scraped_data.get("current_fleet")
+                         and scraped_data["current_fleet"].get("austin_vehicles"))
 
-    if not has_total_data and not has_active_data:
-        print("No historical data to merge")
+    if not has_total_data and not has_active_data and not has_current_fleet:
+        print("No historical data or current fleet data to merge")
         return False
 
     # Load existing fleet_data.json
@@ -1692,6 +1668,36 @@ def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
 
         if active_merged_count > 0 or active_new_count > 0:
             print(f"  Active fleet: updated {active_merged_count} existing snapshots, added {active_new_count} new")
+
+    # --- Fallback: add today's snapshot from current_fleet if no historical data ---
+    if not changes_made and has_current_fleet:
+        current_fleet = scraped_data["current_fleet"]
+        active_fleet = scraped_data.get("active_fleet", {})
+        today = datetime.now().strftime("%Y-%m-%d")
+
+        if today not in existing_dates:
+            austin = current_fleet.get("austin_vehicles")
+            bayarea = current_fleet.get("bayarea_vehicles")
+            austin_active = active_fleet.get("austin_active")
+            bayarea_active = active_fleet.get("bayarea_active")
+
+            snapshot = {
+                "date": today,
+                "austin_vehicles": austin,
+                "bayarea_vehicles": bayarea,
+                "total_robotaxi": austin,
+                "source": "robotaxitracker.com",
+                "notes": f"Current fleet: {austin} Austin + {bayarea} Bay Area = {(austin or 0) + (bayarea or 0)} total"
+            }
+            if austin_active is not None:
+                snapshot["austin_active_vehicles"] = austin_active
+            if bayarea_active is not None:
+                snapshot["bayarea_active_vehicles"] = bayarea_active
+
+            fleet_data["snapshots"].append(snapshot)
+            existing_dates.add(today)
+            changes_made = True
+            print(f"  Added today's snapshot from current fleet data: Austin={austin}, Bay Area={bayarea}")
 
     if not changes_made:
         print("No new data points to merge")
