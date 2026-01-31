@@ -453,80 +453,69 @@ function initMPIChart() {
     const lastIncidentDate = new Date(incidentData[incidentData.length - 1].date);
     const today = new Date();
 
-    // Generate labels from first incident to today
-    const labels = [];
-    const mpiValues = [];
-    const trendData = [];
-    const humanBenchmarkPolice = [];    // 500K - police-reported crashes
-    const humanBenchmarkInsurance = []; // 300K - insurance claims (Swiss Re)
-    const ongoingProgress = []; // Cumulative miles since last incident
+    // Build data arrays as {x, y} objects for time scale
+    const mpiData = [];
+    const trendDataPoints = [];
+    const ongoingProgressData = [];
 
     // Add all incident data points
     incidentData.forEach(d => {
-        labels.push(d.date);
-        mpiValues.push(d.mpi);
+        mpiData.push({ x: d.date, y: d.mpi });
         const currentDate = new Date(d.date);
         const daysSinceStart = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
-        trendData.push(Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)));
-        humanBenchmarkPolice.push(500000);
-        humanBenchmarkInsurance.push(300000);
-        ongoingProgress.push(null); // No ongoing data for past incidents
+        trendDataPoints.push({ x: d.date, y: Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)) });
     });
 
-    // Extend projection to today (add monthly points after last incident)
+    // Extend trend projection to today (add monthly points after last incident)
     let projectionDate = new Date(lastIncidentDate);
-    projectionDate.setDate(projectionDate.getDate() + 30); // Start 30 days after last incident
+    projectionDate.setDate(projectionDate.getDate() + 30);
 
     while (projectionDate <= today) {
         const dateStr = projectionDate.toISOString().split('T')[0];
-        labels.push(dateStr);
-        mpiValues.push(null); // No actual incident data
         const daysSinceStart = Math.floor((projectionDate - startDate) / (1000 * 60 * 60 * 24));
-        trendData.push(Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)));
-        humanBenchmarkPolice.push(500000);
-        humanBenchmarkInsurance.push(300000);
-        ongoingProgress.push(null);
-        projectionDate.setDate(projectionDate.getDate() + 30); // Monthly intervals
+        trendDataPoints.push({ x: dateStr, y: Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)) });
+        projectionDate.setDate(projectionDate.getDate() + 30);
     }
 
     // Add today as final point with cumulative miles since last incident
     if (today > lastIncidentDate) {
         const todayStr = today.toISOString().split('T')[0];
-        if (!labels.includes(todayStr)) {
-            labels.push(todayStr);
-            mpiValues.push(null);
-            const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-            trendData.push(Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)));
-            humanBenchmarkPolice.push(500000);
-            humanBenchmarkInsurance.push(300000);
 
-            // Calculate cumulative miles since last incident (excluding stoppage days)
-            const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
-            const stoppageDays = countStoppageDays(lastIncidentDate, today);
-            const activeDays = daysSinceLastIncident - stoppageDays;
-            const currentFleetSize = fleetData[fleetData.length - 1].size; // Latest fleet size
-            const cumulativeMiles = activeDays * currentFleetSize * 115; // 115 mi/day/vehicle
-            ongoingProgress.push(cumulativeMiles);
-        } else {
-            // Today already in labels, find its index and set ongoing progress
-            const todayIndex = labels.indexOf(todayStr);
-            const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
-            const stoppageDays = countStoppageDays(lastIncidentDate, today);
-            const activeDays = daysSinceLastIncident - stoppageDays;
-            const currentFleetSize = fleetData[fleetData.length - 1].size;
-            const cumulativeMiles = activeDays * currentFleetSize * 115;
-            ongoingProgress[todayIndex] = cumulativeMiles;
+        // Add trend for today if not already the last point
+        const lastTrendDate = trendDataPoints[trendDataPoints.length - 1].x;
+        if (lastTrendDate !== todayStr) {
+            const daysSinceStart = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+            trendDataPoints.push({ x: todayStr, y: Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)) });
         }
+
+        // Calculate cumulative miles since last incident (excluding stoppage days)
+        const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
+        const stoppageDays = countStoppageDays(lastIncidentDate, today);
+        const activeDays = daysSinceLastIncident - stoppageDays;
+        const currentFleetSize = fleetData[fleetData.length - 1].size;
+        const cumulativeMiles = activeDays * currentFleetSize * 115;
+        ongoingProgressData.push({ x: todayStr, y: cumulativeMiles });
     }
+
+    // Benchmark lines - two points each (start to end) for constant horizontal lines
+    const firstDate = incidentData[0].date;
+    const lastDate = today.toISOString().split('T')[0];
+    const humanBenchmarkPoliceData = [
+        { x: firstDate, y: 500000 },
+        { x: lastDate, y: 500000 }
+    ];
+    const humanBenchmarkInsuranceData = [
+        { x: firstDate, y: 300000 },
+        { x: lastDate, y: 300000 }
+    ];
 
     mpiChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: labels,
             datasets: [
                 {
                     label: 'Miles per Incident',
-                    data: mpiValues,
+                    data: mpiData,
                     borderColor: colors.danger,
                     backgroundColor: colors.danger,
                     borderWidth: 2,
@@ -541,7 +530,7 @@ function initMPIChart() {
                 },
                 {
                     label: 'Exponential Trend',
-                    data: trendData,
+                    data: trendDataPoints,
                     borderColor: colors.primary,
                     backgroundColor: 'transparent',
                     borderWidth: 2,
@@ -552,7 +541,7 @@ function initMPIChart() {
                 },
                 {
                     label: 'Human Benchmark - Police Reports (500K)',
-                    data: humanBenchmarkPolice,
+                    data: humanBenchmarkPoliceData,
                     borderColor: colors.success,
                     backgroundColor: 'transparent',
                     borderWidth: 2,
@@ -562,7 +551,7 @@ function initMPIChart() {
                 },
                 {
                     label: 'Human Benchmark - Insurance Claims (300K)',
-                    data: humanBenchmarkInsurance,
+                    data: humanBenchmarkInsuranceData,
                     borderColor: colors.purple,
                     backgroundColor: 'transparent',
                     borderWidth: 2,
@@ -572,7 +561,7 @@ function initMPIChart() {
                 },
                 {
                     label: 'Miles Since Last Incident',
-                    data: ongoingProgress,
+                    data: ongoingProgressData,
                     borderColor: colors.warning,
                     backgroundColor: 'transparent',
                     borderWidth: 0,
@@ -590,7 +579,26 @@ function initMPIChart() {
         options: {
             ...options,
             scales: {
-                x: options.scales.x,
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'month',
+                        displayFormats: {
+                            month: 'yyyy-MM-dd'
+                        }
+                    },
+                    grid: {
+                        color: colors.grid,
+                        drawBorder: false
+                    },
+                    ticks: {
+                        color: colors.muted,
+                        font: {
+                            family: "'Inter', sans-serif",
+                            size: 11
+                        }
+                    }
+                },
                 y: {
                     type: 'logarithmic',
                     grid: {
