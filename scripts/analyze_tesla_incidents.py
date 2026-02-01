@@ -626,6 +626,36 @@ def plot_mpi_trend(results: list[dict], analyzer: MPITrendAnalyzer, output_path:
     print(f"\n  Chart saved to: {output_path}")
 
 
+def update_html_meta_tags(docs_dir: Path, latest_mpi: int, doubling_time: int):
+    """Update meta description, OG, and Twitter tags in index.html with latest computed values."""
+    import re
+    index_path = docs_dir / "index.html"
+    if not index_path.exists():
+        print(f"  Warning: {index_path} not found, skipping meta tag update")
+        return
+
+    html = index_path.read_text(encoding='utf-8')
+    mpi_formatted = f"{latest_mpi:,}"
+
+    replacements = [
+        # Meta description
+        (r'(<meta\s+name="description"\s+content=")([^"]*)(">)',
+         rf'\g<1>Live Tesla Robotaxi safety data: {mpi_formatted} miles per incident, {doubling_time}-day doubling time, Austin fleet status. Independent tracking of Cybercab crash rates vs human drivers and Waymo.\3'),
+        # OG description
+        (r'(<meta\s+property="og:description"\s+content=")([^"]*)(">)',
+         rf'\g<1>Independent safety tracking: Tesla Cybercab achieving {mpi_formatted} miles between incidents in Austin. Safety doubling every {doubling_time} days. Compare to human drivers & Waymo.\3'),
+        # Twitter description
+        (r'(<meta\s+name="twitter:description"\s+content=")([^"]*)(">)',
+         rf'\g<1>Live safety data: {mpi_formatted} MPI, {doubling_time}-day doubling time. Track Tesla Cybercab incidents vs human drivers.\3'),
+    ]
+
+    for pattern, replacement in replacements:
+        html = re.sub(pattern, replacement, html)
+
+    index_path.write_text(html, encoding='utf-8')
+    print(f"  Updated meta tags in {index_path} (MPI: {mpi_formatted}, doubling: {doubling_time} days)")
+
+
 def main():
     """Main analysis function."""
     script_dir = Path(__file__).parent
@@ -797,6 +827,15 @@ def main():
     with open(output_file, 'w') as f:
         json.dump(output, f, indent=2)
     print(f"  Results saved to: {output_file}")
+
+    # Update meta tags in docs/index.html with latest computed values
+    if results and trend_data:
+        best_fit = trend_data.get("best_fit", {})
+        dt_days = best_fit.get("doubling_time_days")
+        latest_mpi = results[-1]['mpi_since_previous']
+        if dt_days is not None and latest_mpi:
+            docs_dir = script_dir.parent / "docs"
+            update_html_meta_tags(docs_dir, int(latest_mpi), round(dt_days))
 
     return 0
 
