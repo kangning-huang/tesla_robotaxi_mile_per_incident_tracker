@@ -1049,6 +1049,14 @@ function updateFaqValues() {
             "mainEntity": [
                 {
                     "@type": "Question",
+                    "name": "How is robotaxi safety measured and tracked?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Robotaxi safety is primarily measured using miles per incident (MPI) — the average distance a robotaxi drives between crashes or reportable incidents. Higher MPI means better safety. In the U.S., all autonomous driving system (ADS) incidents must be reported to NHTSA under Standing General Order 2021-01, providing a transparent public record of robotaxi safety performance. This tracker monitors robotaxi safety for Tesla's Cybercab fleet in Austin, TX — the only fully unsupervised (Level 4) Tesla robotaxi deployment. Key robotaxi safety metrics include MPI trend over time, comparison to human driver crash rates, and fleet-wide incident frequency. Waymo, the other major U.S. robotaxi operator, publishes its own safety data showing over 1,000,000 MPI."
+                    }
+                },
+                {
+                    "@type": "Question",
                     "name": "How safe are Tesla robotaxis compared to human drivers?",
                     "acceptedAnswer": {
                         "@type": "Answer",
