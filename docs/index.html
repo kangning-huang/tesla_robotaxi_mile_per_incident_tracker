@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robotaxi Safety: Tesla Miles Per Incident Tracker | Real-Time Data 2026</title>
-    <meta name="description" content="Robotaxi safety data updated daily — track Tesla Cybercab miles per incident (MPI) with real-time trend analysis. Compare robotaxi safety vs human drivers and Waymo. Independent Austin autonomous vehicle data.">
+    <title>Tesla Robotaxi Safety Tracker 2026 | Fleet Status, Incidents & Crash Data</title>
+    <meta name="description" content="Live Tesla Robotaxi safety data: 92,500 miles per incident, 69-day doubling time, Austin fleet status. Independent tracking of Cybercab crash rates vs human drivers and Waymo.">
     <meta name="keywords" content="robotaxi safety, robotaxi safety data, robotaxi safety comparison, Tesla Robotaxi safety tracker, miles per incident Tesla, Cybercab incidents Austin, Tesla vs Waymo safety, unsupervised Robotaxi crashes, Tesla Robotaxi crash rate, Robotaxi fleet size, autonomous vehicle safety 2026">
     <meta name="author" content="Kangning Huang">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -14,16 +14,16 @@
     <!-- Open Graph / Social Media Preview -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://robotaxi-safety-tracker.com/">
-    <meta property="og:title" content="Robotaxi Safety Data | Tesla Miles Per Incident Tracker">
-    <meta property="og:description" content="Robotaxi safety data updated daily. Track Tesla Cybercab miles per incident with real-time trend analysis — compare robotaxi safety vs human drivers and Waymo.">
+    <meta property="og:title" content="Tesla Robotaxi Safety Tracker 2026 | Live Incident Data">
+    <meta property="og:description" content="Independent safety tracking: Tesla Cybercab achieving 92,500 miles between incidents in Austin. Safety doubling every 69 days. Compare to human drivers & Waymo.">
     <meta property="og:image" content="https://robotaxi-safety-tracker.com/chart-preview.png">
     <meta property="og:image:width" content="1782">
     <meta property="og:image:height" content="1481">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Robotaxi Safety Data | Tesla Miles Per Incident Tracker">
-    <meta name="twitter:description" content="Robotaxi safety data updated daily. Track Tesla Cybercab miles per incident with real-time trend analysis — compare robotaxi safety vs human drivers and Waymo.">
+    <meta name="twitter:title" content="Tesla Robotaxi Safety Tracker 2026">
+    <meta name="twitter:description" content="Live safety data: 92,500 MPI, 69-day doubling time. Track Tesla Cybercab incidents vs human drivers.">
     <meta name="twitter:image" content="https://robotaxi-safety-tracker.com/chart-preview.png">
 
     <!-- Performance: DNS prefetch for CDN resources -->
@@ -200,12 +200,69 @@
     }
     </script>
 
-    <!-- FAQ Schema / JSON-LD (dynamically updated by app.js) -->
+    <!-- FAQ Schema / JSON-LD -->
     <script id="faq-schema" type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        "mainEntity": []
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "How is robotaxi safety measured and tracked?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Robotaxi safety is primarily measured using miles per incident (MPI) — the average distance a robotaxi drives between crashes or reportable incidents. Higher MPI means better safety. In the U.S., all autonomous driving system (ADS) incidents must be reported to NHTSA under Standing General Order 2021-01, providing a transparent public record. This tracker monitors Tesla's Cybercab fleet in Austin, TX — the only fully unsupervised (Level 4) deployment."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How safe are Tesla robotaxis compared to human drivers?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Tesla robotaxis in Austin achieve approximately 92,500 miles between incidents (latest interval). Human drivers average about 500,000 miles between police-reported crashes, or 300,000 miles between insurance claims. Tesla's safety is doubling approximately every 69 days."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How many Tesla robotaxi incidents have occurred?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Tesla has reported 10 incidents to NHTSA since launching in Austin in June 2025. All incidents occurred in Austin, Texas — the only location with true unsupervised Level 4 autonomous driving."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Is Tesla robotaxi safety improving?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes, significantly. Safety is doubling approximately every 69 days. The most recent interval reached 92,500 miles — a 61% improvement. The exponential trend (R² = 0.955) suggests the system is learning and becoming safer."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How does Tesla robotaxi compare to Waymo?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Waymo reports approximately 1,000,000+ miles per incident. Tesla's latest interval is 92,500 miles — roughly 10x less. However, Tesla's rapid improvement rate (doubling every ~69 days) could narrow this gap if the trend continues."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is Tesla's robotaxi fleet size?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "As of Q4 2025, Tesla reported over 500 vehicles across Austin and Bay Area. The Austin unsupervised fleet grew from 10 to 72 vehicles since June 2025. Elon Musk stated the fleet is expected to double every month."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Where does Tesla operate robotaxis?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Tesla operates robotaxis in Austin, TX (unsupervised) and San Francisco Bay Area (with safety drivers). Expansion planned for Dallas, Houston, Phoenix, Miami, Orlando, Tampa, and Las Vegas in H1 2026."
+                }
+            }
+        ]
     }
     </script>
 </head>
@@ -227,9 +284,10 @@
                 <nav class="nav">
                     <a href="#trend" class="nav-link">Trend</a>
                     <a href="expansion.html" class="nav-link">Cities</a>
-                    <a href="#methodology" class="nav-link">Methods</a>
+                    <a href="fleet-size.html" class="nav-link">Fleet Size</a>
+                    <a href="crash-rate.html" class="nav-link">Crash Rate</a>
+                    <a href="austin-status.html" class="nav-link">Austin Status</a>
                     <a href="#faq" class="nav-link">FAQ</a>
-                    <a href="#creator" class="nav-link">Creator</a>
                     <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" class="nav-link github" target="_blank" rel="noopener noreferrer">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
