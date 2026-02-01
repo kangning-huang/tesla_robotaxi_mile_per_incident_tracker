@@ -1167,6 +1167,21 @@ function updateFaqValues() {
             // Schema update failed silently
         }
     }
+
+    // Dynamically update meta tags with computed values
+    const setMeta = (selector, content) => {
+        const el = document.querySelector(selector);
+        if (el) el.setAttribute('content', content);
+    };
+    const latestMPIFormatted = latestMPI.toLocaleString();
+    const dt = trendParams.doublingTime;
+
+    setMeta('meta[name="description"]',
+        'Live Tesla Robotaxi safety data: ' + latestMPIFormatted + ' miles per incident, ' + dt + '-day doubling time, Austin fleet status. Independent tracking of Cybercab crash rates vs human drivers and Waymo.');
+    setMeta('meta[property="og:description"]',
+        'Independent safety tracking: Tesla Cybercab achieving ' + latestMPIFormatted + ' miles between incidents in Austin. Safety doubling every ' + dt + ' days. Compare to human drivers & Waymo.');
+    setMeta('meta[name="twitter:description"]',
+        'Live safety data: ' + latestMPIFormatted + ' MPI, ' + dt + '-day doubling time. Track Tesla Cybercab incidents vs human drivers.');
 }
 
 // ===== Initialize =====
