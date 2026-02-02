@@ -248,6 +248,15 @@ a:hover {
     background-clip: text;
 }
 
+.hero-detail {
+    font-size: 14px;
+    color: var(--text-secondary);
+    max-width: 640px;
+    margin: 0 auto 32px;
+    line-height: 1.7;
+    opacity: 0.85;
+}
+
 /* Hero Streak Card */
 .hero-streak-card {
     max-width: 420px;
@@ -1132,6 +1141,59 @@ a:hover {
     font-size: 13px;
     color: var(--text-secondary);
     line-height: 1.7;
+}
+
+/* ===== Safety-Driver Removal Inference Section ===== */
+.inference-section {
+    padding: 60px 0;
+}
+
+.inference-content {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 32px;
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.inference-content > p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 16px;
+}
+
+.inference-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+}
+
+.inference-list li {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    padding: 8px 0 8px 24px;
+    position: relative;
+}
+
+.inference-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 16px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+}
+
+.inference-distinction {
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+    margin-top: 8px;
+    font-style: italic;
 }
 
 /* ===== FAQ Section ===== */
