@@ -1355,25 +1355,37 @@ a:hover {
     }
 
     .hero {
-        padding: 120px 0 40px;
+        padding: 100px 0 32px;
     }
 
     .hero-title {
-        font-size: 28px;
-        letter-spacing: -1px;
+        font-size: 26px;
+        letter-spacing: -0.5px;
+        line-height: 1.2;
+        margin-bottom: 12px;
+    }
+
+    .hero-title br.desktop-only {
+        display: none;
     }
 
     .hero-subtitle {
-        font-size: 16px;
-        margin-bottom: 32px;
+        font-size: 15px;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    .hero-detail {
+        font-size: 13px;
+        margin-bottom: 24px;
     }
 
     .hero-streak-card {
-        padding: 24px 20px;
+        padding: 20px 16px;
     }
 
     .hero-streak-value {
-        font-size: 48px;
+        font-size: 44px;
     }
 
     .chart-legend {
@@ -1396,6 +1408,48 @@ a:hover {
     .footer-content {
         flex-direction: column;
         text-align: center;
+    }
+}
+
+/* Small phone hero optimizations */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 16px;
+    }
+
+    .hero {
+        padding: 88px 0 24px;
+    }
+
+    .hero-label {
+        font-size: 11px;
+        padding: 5px 12px;
+        margin-bottom: 14px;
+    }
+
+    .hero-title {
+        font-size: 22px;
+        line-height: 1.25;
+        margin-bottom: 10px;
+    }
+
+    .hero-subtitle {
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 16px;
+    }
+
+    .hero-detail {
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    .hero-streak-value {
+        font-size: 38px;
+    }
+
+    .hero-streak-sublabel {
+        font-size: 13px;
     }
 }
 
@@ -2107,7 +2161,7 @@ a:hover {
 /* ===== Expansion Page Responsive ===== */
 @media (max-width: 768px) {
     .expansion-hero {
-        padding: 120px 20px 40px;
+        padding: 100px 20px 32px;
     }
 
     .stats-row {
