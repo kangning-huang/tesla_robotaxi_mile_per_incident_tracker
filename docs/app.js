@@ -1068,7 +1068,7 @@ function updateFaqValues() {
                     "name": "How many Tesla robotaxi incidents have occurred?",
                     "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "Tesla has reported " + totalIncidents + " incidents to NHTSA since launching in Austin in June 2025. All incidents occurred in Austin, Texas, which is the only location where Tesla operates true unsupervised autonomous driving (Level 4). The Bay Area fleet operates with safety drivers and follows different reporting requirements."
+                        "text": "Tesla has reported " + totalIncidents + " incidents to NHTSA since launching in Austin in June 2025. All incidents occurred in Austin, Texas, where Tesla operates unsupervised autonomous driving (Level 4). Some Austin vehicles now run without safety monitors, though most still have monitors present. The Bay Area fleet operates with safety drivers as required by California law, and follows different reporting requirements."
                     }
                 },
                 {
@@ -1092,7 +1092,7 @@ function updateFaqValues() {
                     "name": "Where does Tesla operate robotaxis?",
                     "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "Tesla currently operates robotaxis in two markets: Austin, Texas (with some unsupervised vehicles) and the San Francisco Bay Area (with safety drivers). Tesla has announced plans to expand to Dallas, Houston, Phoenix, Miami, Orlando, Tampa, and Las Vegas in the first half of 2026."
+                        "text": "Tesla currently operates robotaxis in two markets: Austin, Texas (unsupervised, with some vehicles already running without safety monitors) and the San Francisco Bay Area (with safety drivers, required by California law). Tesla has announced plans to expand to Dallas, Houston, Phoenix, Miami, Orlando, Tampa, and Las Vegas in the first half of 2026."
                     }
                 },
                 {
@@ -1116,7 +1116,7 @@ function updateFaqValues() {
                     "name": "Why does this tracker focus only on Austin data?",
                     "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "Austin is the only location where Tesla operates true unsupervised Level 4 autonomous driving, which requires incident reporting to NHTSA under Standing General Order 2021-01. The Bay Area fleet operates with safety drivers (Level 2), which has different reporting requirements. Comparing only Austin data ensures consistency."
+                        "text": "Austin is the only location where Tesla operates unsupervised Level 4 autonomous driving, which requires incident reporting to NHTSA under Standing General Order 2021-01. Some Austin vehicles already run without safety monitors, though most still have monitors. The Bay Area fleet operates with safety drivers (Level 2) as required by California law — Tesla must accumulate sufficient supervised miles before applying for driverless permits. Comparing only Austin data ensures consistency."
                     }
                 },
                 {
