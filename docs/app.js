@@ -996,6 +996,8 @@ function updateFaqValues() {
     setValue('faq-latest-vs-avg', latestVsAvg);
     setValue('faq-news-doubling', trendParams.doublingTime);
     setValue('faq-news-r-squared', trendParams.rSquared.toFixed(3));
+    setValue('faq-news-current-streak', milesSinceLastIncident.toLocaleString());
+    setValue('faq-news-fleet-size', currentFleetSize);
     setValue('faq-redact-r-squared', trendParams.rSquared.toFixed(3));
     setValue('faq-redact-doubling', trendParams.doublingTime);
 
@@ -1168,7 +1170,7 @@ function updateFaqValues() {
                     "name": "Are reports that Tesla Robotaxi crashes 10x-12x more than humans accurate?",
                     "acceptedAnswer": {
                         "@type": "Answer",
-                        "text": "Headlines claiming Tesla Robotaxis crash '10x' or '12x more than human drivers' are based on simple averages that divide total incidents by total fleet miles. While mathematically correct, this method is misleading. The simple average across all " + totalIncidents + " incidents is ~" + simpleAvgMPI.toLocaleString() + " MPI, but the latest interval is " + latestMPI.toLocaleString() + " MPI — " + latestVsAvg + "x better than the average. Safety is doubling every " + trendParams.doublingTime + " days (R² = " + trendParams.rSquared.toFixed(3) + "). Additionally, NHTSA SGO 2021-01 requires reporting all incidents including minor ones human drivers would never report to police, making direct comparisons inherently unfair. Sources: Carscoops, Common Dreams, Electrek, Futurism, PHTM."
+                        "text": "Headlines claiming Tesla Robotaxis crash '10x' or '12x more than human drivers' are based on simple averages of past performance that miss a critical trend. The current incident-free streak is " + milesSinceLastIncident.toLocaleString() + " miles — already approaching the human driver benchmark of 500,000 miles between police-reported crashes. Safety is doubling every " + trendParams.doublingTime + " days (R² = " + trendParams.rSquared.toFixed(3) + "), an exponential improvement that simple averages completely hide. The latest completed interval was " + latestMPI.toLocaleString() + " MPI, already " + latestVsAvg + "x better than the simple average of ~" + simpleAvgMPI.toLocaleString() + " MPI. These news articles treat crash data as a static snapshot; our trend analysis shows a system improving at an exponential rate toward human-level safety. Sources: Carscoops, Common Dreams, Electrek, Futurism, PHTM."
                     }
                 },
                 {
