@@ -987,6 +987,18 @@ function updateFaqValues() {
     setValue('faq-vs-insurance-ratio', vsInsuranceRatio);
     setValue('faq-vs-waymo-ratio', waymoRatio);
 
+    // News debunking FAQ values (Q13-Q14)
+    const simpleAvgMPI = Math.round(incidentData.reduce((sum, d) => sum + d.mpi, 0) / totalIncidents);
+    const latestVsAvg = (latestMPI / simpleAvgMPI).toFixed(1);
+    setValue('faq-news-total-incidents', totalIncidents);
+    setValue('faq-simple-avg-mpi', simpleAvgMPI.toLocaleString());
+    setValue('faq-news-latest-mpi', latestMPI.toLocaleString());
+    setValue('faq-latest-vs-avg', latestVsAvg);
+    setValue('faq-news-doubling', trendParams.doublingTime);
+    setValue('faq-news-r-squared', trendParams.rSquared.toFixed(3));
+    setValue('faq-redact-r-squared', trendParams.rSquared.toFixed(3));
+    setValue('faq-redact-doubling', trendParams.doublingTime);
+
     // AEO Summary section values
     setValue('aeo-current-streak', milesSinceLastIncident.toLocaleString());
     setValue('aeo-fleet-size', currentFleetSize);
@@ -1149,6 +1161,22 @@ function updateFaqValues() {
                     "acceptedAnswer": {
                         "@type": "Answer",
                         "text": "Tesla Robotaxi crash frequency as of January 2026: " + totalIncidents + " total incidents reported to NHTSA since June 2025. Latest crash rate: 1 incident per " + latestMPI.toLocaleString() + " miles driven. Crash frequency is decreasing, with MPI doubling every " + trendParams.doublingTime + " days. All incidents are reported under NHTSA SGO 2021-01, which requires reporting any crash within 30 seconds of ADS engagement. This captures all incidents regardless of severity, including minor ones that human drivers would typically never report to police."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Are reports that Tesla Robotaxi crashes 10x-12x more than humans accurate?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Headlines claiming Tesla Robotaxis crash '10x' or '12x more than human drivers' are based on simple averages that divide total incidents by total fleet miles. While mathematically correct, this method is misleading. The simple average across all " + totalIncidents + " incidents is ~" + simpleAvgMPI.toLocaleString() + " MPI, but the latest interval is " + latestMPI.toLocaleString() + " MPI — " + latestVsAvg + "x better than the average. Safety is doubling every " + trendParams.doublingTime + " days (R² = " + trendParams.rSquared.toFixed(3) + "). Additionally, NHTSA SGO 2021-01 requires reporting all incidents including minor ones human drivers would never report to police, making direct comparisons inherently unfair. Sources: Carscoops, Common Dreams, Electrek, Futurism, PHTM."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Does Tesla redact Robotaxi crash data from NHTSA reports?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes, Tesla redacts crash narrative details from NHTSA Standing General Order reports, as reported by Carscoops, Sherwood News, and WebProNews. However, this does not affect the core safety metrics tracked here. This tracker uses only structured, non-redacted NHTSA SGO data: incident dates, ADS engagement status, fleet size (from robotaxitracker.com), and daily miles (115 mi/vehicle/day from Tesla's Q3 2025 report). The MPI trend (R² = " + trendParams.rSquared.toFixed(3) + ") and safety doubling time (" + trendParams.doublingTime + " days) are fully calculable from non-redacted data."
                     }
                 }
             ]

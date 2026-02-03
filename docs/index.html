@@ -3,9 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FC4RG249V0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-FC4RG249V0');
+    </script>
+
     <title>Tesla Robotaxi Safety Tracker: When Will Safety Monitors Be Removed at Large Scale?</title>
     <meta name="description" content="Data-driven tracker estimating when Tesla robotaxis will operate without safety monitors at large scale. Some Austin vehicles already run without monitors, but fleet-wide removal depends on safety signals—not announcements.">
-    <meta name="keywords" content="robotaxi safety, Tesla remove safety monitors, when will Tesla robotaxis be unsupervised, robotaxi safety monitor removal, Tesla robotaxi safety signals, conditions for unsupervised robotaxi, Tesla Robotaxi safety tracker, miles per incident Tesla, safety parity thresholds, Tesla vs Waymo safety, robotaxi scaling feasibility, autonomous vehicle safety 2026, Tesla safety drivers Bay Area">
+    <meta name="keywords" content="robotaxi safety, Tesla remove safety monitors, when will Tesla robotaxis be unsupervised, robotaxi safety monitor removal, Tesla robotaxi safety signals, conditions for unsupervised robotaxi, Tesla Robotaxi safety tracker, miles per incident Tesla, safety parity thresholds, Tesla vs Waymo safety, robotaxi scaling feasibility, autonomous vehicle safety 2026, Tesla safety drivers Bay Area, Tesla robotaxi crash rate, Tesla robotaxi accidents Austin, Tesla robotaxi 10x crash rate, Tesla robotaxi redacted data, Tesla robotaxi NHTSA incidents, Tesla Cybercab crash frequency, robotaxi crash statistics 2026">
     <meta name="author" content="Kangning Huang">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
     <meta name="google-site-verification" content="abZJn0glSeK0F1M5tJWNACVXJlmNoQoKrvEIEybbd8o" />
@@ -922,7 +932,7 @@
         <div class="container">
             <div class="section-header">
                 <h2>Robotaxi Safety FAQ</h2>
-                <p>Common questions about robotaxi safety, Tesla Cybercab crash rates, incident data, and MPI methodology</p>
+                <p>Common questions about robotaxi safety, Tesla Cybercab crash rates, incident data, MPI methodology, and what the headlines get wrong</p>
             </div>
 
             <div class="faq-grid">
@@ -1155,6 +1165,60 @@
                                 <li><strong>Data source:</strong> All incidents reported under <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA SGO 2021-01</a>, which requires reporting any crash within 30 seconds of ADS engagement</li>
                             </ul>
                             <p>Note: This crash frequency captures <em>all</em> incidents regardless of severity, including minor ones that human drivers would typically never report to police.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q13 - News debunking: "Are reports that Tesla Robotaxi crashes 10x–12x more than humans accurate?" -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Are reports that Tesla Robotaxi crashes "10x–12x more than humans" accurate?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Several news outlets have reported alarming crash rate comparisons:</p>
+                            <ul class="faq-news-refs">
+                                <li><a href="https://www.carscoops.com/2026/01/tesla-robotaxi-crash-rate-redacted-data-austin/" target="_blank" rel="noopener noreferrer">Carscoops</a>: "Tesla's Robotaxi Crash Rate Is Way Worse Than We First Thought"</li>
+                                <li><a href="https://www.commondreams.org/news/tesla-robotaxi-crash-rate" target="_blank" rel="noopener noreferrer">Common Dreams</a>: "Tesla Robotaxis Are Crashing More Than 12 Times as Frequently as Human Drivers"</li>
+                                <li><a href="https://www.phtm.co.uk/news/8387/phtm-news/tesla-robotaxi-crash-rate-jumps-10x-higher-than-human-drivers-as-safety-monitors-are-removed" target="_blank" rel="noopener noreferrer">PHTM</a>: "Tesla Robotaxi Crash Rate Jumps 10X Higher Than Human Drivers"</li>
+                                <li><a href="https://electrek.co/2025/11/17/tesla-robotaxi-had-3-more-crashes-now-7-total/" target="_blank" rel="noopener noreferrer">Electrek</a>: "Tesla Robotaxi had 3 more crashes, now 7 total"</li>
+                                <li><a href="https://futurism.com/advanced-transport/tesla-robotaxi-crash-four-times-month" target="_blank" rel="noopener noreferrer">Futurism</a>: "Tesla's Robotaxi Crashes Four Times In a Single Month"</li>
+                            </ul>
+                            <p>These figures are based on <strong>simple averages</strong> — dividing total incidents by total fleet miles since launch. While mathematically correct, this method is misleading because it hides a critical trend:</p>
+                            <ul>
+                                <li><strong>Simple average across all <span id="faq-news-total-incidents">--</span> incidents:</strong> ~<span id="faq-simple-avg-mpi">--</span> miles per incident</li>
+                                <li><strong>Latest interval:</strong> <span id="faq-news-latest-mpi">--</span> miles per incident — <span id="faq-latest-vs-avg">--</span>x better than the simple average</li>
+                                <li><strong>Trend:</strong> Safety is doubling every <span id="faq-news-doubling">--</span> days (R² = <span id="faq-news-r-squared">--</span>), meaning today's fleet is vastly safer than at launch</li>
+                            </ul>
+                            <p>Additionally, <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA SGO 2021-01</a> requires reporting <em>all</em> incidents — including minor ones that human drivers would never report to police. Human crash statistics (1 per 500,000 miles) only count police-reported crashes, making direct comparisons inherently unfair. An apples-to-apples comparison would use insurance claims (~300,000 miles per claim) as the human benchmark.</p>
+                            <p><strong>Bottom line:</strong> The early crash rate was genuinely concerning, but the exponential improvement trend shows a rapidly maturing system. Judging current safety by a simple average is like judging a student's current ability by their lifetime GPA instead of their latest semester.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q14 - News reference: "Does Tesla redact Robotaxi crash data?" -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Does Tesla redact Robotaxi crash data from NHTSA reports?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Yes. Multiple news outlets have reported that Tesla redacts crash narrative details from NHTSA Standing General Order reports:</p>
+                            <ul class="faq-news-refs">
+                                <li><a href="https://www.carscoops.com/2026/01/tesla-robotaxi-crash-rate-redacted-data-austin/" target="_blank" rel="noopener noreferrer">Carscoops</a> reported that Tesla redacts the "narrative" section of each crash report, preventing the public from knowing how crashes happened</li>
+                                <li><a href="https://sherwood.news/tech/teslas-29-austin-robotaxis-have-crashed-8-times-since-june-as-data-suggests/" target="_blank" rel="noopener noreferrer">Sherwood News</a> noted that one crash was more heavily redacted than usual, with no disclosure of what the robotaxi hit</li>
+                                <li><a href="https://www.webpronews.com/teslas-robotaxi-safety-data-reveals-collision-rates-triple-that-of-human-drivers-despite-oversight/" target="_blank" rel="noopener noreferrer">WebProNews</a> highlighted the contrast with Waymo's more transparent reporting</li>
+                            </ul>
+                            <p>While this is a legitimate transparency concern, it does <strong>not</strong> affect the core safety metrics tracked here. This tracker uses only the structured, non-redacted NHTSA SGO data fields:</p>
+                            <ul>
+                                <li><strong>Incident dates</strong> — reported to NHTSA (not redacted)</li>
+                                <li><strong>ADS engagement status</strong> — whether autonomous driving was active (not redacted)</li>
+                                <li><strong>Fleet size</strong> — tracked daily from <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a></li>
+                                <li><strong>Daily miles</strong> — estimated at 115 mi/vehicle/day from Tesla's Q3 2025 report</li>
+                            </ul>
+                            <p>The MPI trend (R² = <span id="faq-redact-r-squared">--</span>) and safety doubling time (<span id="faq-redact-doubling">--</span> days) are fully calculable from non-redacted data. More narrative transparency from Tesla would be welcome, but the quantitative safety trajectory is clear from the data we do have.</p>
                         </div>
                     </div>
                 </div>
