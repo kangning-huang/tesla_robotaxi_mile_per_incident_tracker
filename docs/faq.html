@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FC4RG249V0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-FC4RG249V0');
+    </script>
+
+    <title>Tesla Robotaxi FAQ: Safety Data, Methodology, and Common Questions | Robotaxi Safety Tracker</title>
+    <meta name="description" content="Comprehensive FAQ about Tesla robotaxi safety data, NHTSA SGO reporting, miles per incident methodology, comparisons to human drivers, and what the crash statistics actually show.">
+    <meta name="keywords" content="Tesla robotaxi FAQ, robotaxi crash rate explained, NHTSA Standing General Order 2021-01, miles per incident explained, Tesla vs human drivers, robotaxi safety methodology, Tesla Cybercab safety, autonomous vehicle crash reporting, robotaxi incident definition, Tesla safety data transparency">
+    <meta name="author" content="Kangning Huang">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="google-site-verification" content="abZJn0glSeK0F1M5tJWNACVXJlmNoQoKrvEIEybbd8o" />
+    <link rel="canonical" href="https://robotaxi-safety-tracker.com/faq.html">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://robotaxi-safety-tracker.com/faq.html">
+    <meta property="og:title" content="Tesla Robotaxi FAQ: Safety Data, Methodology, and Common Questions">
+    <meta property="og:description" content="Answers to common questions about Tesla robotaxi safety data, crash reporting, methodology, and how to interpret the statistics.">
+    <meta property="og:site_name" content="Robotaxi Safety Tracker">
+    <meta property="og:image" content="https://robotaxi-safety-tracker.com/chart-preview.png">
+    <meta property="og:image:width" content="1782">
+    <meta property="og:image:height" content="1481">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://robotaxi-safety-tracker.com/faq.html">
+    <meta name="twitter:title" content="Tesla Robotaxi FAQ: Safety Data, Methodology, and Common Questions">
+    <meta name="twitter:description" content="Answers to common questions about Tesla robotaxi safety data, crash reporting, methodology, and how to interpret the statistics.">
+    <meta name="twitter:image" content="https://robotaxi-safety-tracker.com/chart-preview.png">
+    <meta name="twitter:creator" content="@FytasoK60918">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "https://robotaxi-safety-tracker.com/#website",
+                "url": "https://robotaxi-safety-tracker.com/",
+                "name": "Robotaxi Safety Tracker",
+                "description": "Data-driven tracker for Tesla robotaxi safety metrics including miles per incident, fleet growth, and comparison to human drivers.",
+                "publisher": {
+                    "@id": "https://robotaxi-safety-tracker.com/#person"
+                }
+            },
+            {
+                "@type": "WebPage",
+                "@id": "https://robotaxi-safety-tracker.com/faq.html#webpage",
+                "url": "https://robotaxi-safety-tracker.com/faq.html",
+                "name": "Tesla Robotaxi FAQ: Safety Data, Methodology, and Common Questions",
+                "description": "Comprehensive FAQ about Tesla robotaxi safety data, NHTSA SGO reporting, miles per incident methodology, and common questions about robotaxi crash statistics.",
+                "isPartOf": {
+                    "@id": "https://robotaxi-safety-tracker.com/#website"
+                },
+                "breadcrumb": {
+                    "@id": "https://robotaxi-safety-tracker.com/faq.html#breadcrumb"
+                }
+            },
+            {
+                "@type": "Person",
+                "@id": "https://robotaxi-safety-tracker.com/#person",
+                "name": "Kangning Huang",
+                "url": "https://open.substack.com/pub/kangninghuang",
+                "sameAs": [
+                    "https://x.com/FytasoK60918",
+                    "https://open.substack.com/pub/kangninghuang",
+                    "https://github.com/kangning-huang"
+                ]
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": "https://robotaxi-safety-tracker.com/faq.html#breadcrumb",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://robotaxi-safety-tracker.com/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "FAQ",
+                        "item": "https://robotaxi-safety-tracker.com/faq.html"
+                    }
+                ]
+            }
+        ]
+    }
+    </script>
+
+    <!-- FAQ Schema / JSON-LD (dynamically updated by faq.js) -->
+    <script id="faq-schema" type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": []
+    }
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit;">
+                        <span class="logo-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                <path d="M2 17l10 5 10-5"/>
+                                <path d="M2 12l10 5 10-5"/>
+                            </svg>
+                        </span>
+                        <span class="logo-text">Tesla Robotaxi <span class="highlight">Safety</span> Tracker</span>
+                    </a>
+                </div>
+                <nav class="nav">
+                    <a href="index.html#trend" class="nav-link">Trend</a>
+                    <a href="expansion.html" class="nav-link">Cities</a>
+                    <a href="index.html#methodology" class="nav-link">Methods</a>
+                    <a href="faq.html" class="nav-link active">FAQ</a>
+                    <a href="index.html#creator" class="nav-link">Creator</a>
+                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" class="nav-link github" target="_blank" rel="noopener noreferrer">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="faq-hero">
+        <div class="container">
+            <div class="faq-hero-content">
+                <p class="hero-label">Frequently Asked Questions</p>
+                <h1 class="hero-title">Tesla Robotaxi Safety FAQ</h1>
+                <p class="hero-subtitle">Everything you need to know about our methodology, data sources, incident definitions, and how to interpret robotaxi safety statistics</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Stats Banner -->
+    <section class="faq-stats-banner">
+        <div class="container">
+            <div class="faq-stats-row">
+                <div class="faq-stat">
+                    <span class="faq-stat-value" id="stat-latest-mpi">--</span>
+                    <span class="faq-stat-label">Latest MPI</span>
+                </div>
+                <div class="faq-stat">
+                    <span class="faq-stat-value" id="stat-doubling-time">--</span>
+                    <span class="faq-stat-label">Days to Double</span>
+                </div>
+                <div class="faq-stat">
+                    <span class="faq-stat-value" id="stat-total-incidents">--</span>
+                    <span class="faq-stat-label">Total Incidents</span>
+                </div>
+                <div class="faq-stat">
+                    <span class="faq-stat-value" id="stat-data-through">--</span>
+                    <span class="faq-stat-label">Data Through</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Table of Contents -->
+    <section class="faq-toc">
+        <div class="container">
+            <div class="faq-toc-grid">
+                <a href="#methodology" class="faq-toc-item">
+                    <span class="faq-toc-icon">📊</span>
+                    <span class="faq-toc-title">Methodology & Data</span>
+                    <span class="faq-toc-desc">How we calculate MPI and where our data comes from</span>
+                </a>
+                <a href="#reporting-lag" class="faq-toc-item">
+                    <span class="faq-toc-icon">⏱️</span>
+                    <span class="faq-toc-title">Reporting Lag</span>
+                    <span class="faq-toc-desc">Understanding data freshness and reporting delays</span>
+                </a>
+                <a href="#comparisons" class="faq-toc-item">
+                    <span class="faq-toc-icon">⚖️</span>
+                    <span class="faq-toc-title">Comparisons</span>
+                    <span class="faq-toc-desc">Why comparing to human drivers is complicated</span>
+                </a>
+                <a href="#incidents" class="faq-toc-item">
+                    <span class="faq-toc-icon">🚗</span>
+                    <span class="faq-toc-title">Incident Definitions</span>
+                    <span class="faq-toc-desc">What counts as an incident and fault attribution</span>
+                </a>
+                <a href="#supervision" class="faq-toc-item">
+                    <span class="faq-toc-icon">👤</span>
+                    <span class="faq-toc-title">Supervision</span>
+                    <span class="faq-toc-desc">Safety monitors and intervention rates</span>
+                </a>
+                <a href="#charts" class="faq-toc-item">
+                    <span class="faq-toc-icon">📈</span>
+                    <span class="faq-toc-title">Chart Interpretation</span>
+                    <span class="faq-toc-desc">Log scales, trend lines, and statistical caveats</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Categories -->
+
+    <!-- Category 1: Methodology & Data Sources -->
+    <section id="methodology" class="faq-category">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Methodology & Data Sources</h2>
+                <p>How we calculate miles per incident and where our data comes from</p>
+            </div>
+
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>What is NHTSA Standing General Order 2021-01?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p><a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA SGO 2021-01</a> is a federal requirement that mandates manufacturers and operators of vehicles equipped with SAE Level 2 ADAS or Levels 3-5 ADS to report certain crashes to NHTSA.</p>
+                            <p><strong>Key reporting requirements:</strong></p>
+                            <ul>
+                                <li>Crashes must be reported if ADS was engaged within 30 seconds of the crash</li>
+                                <li>Reports are required for crashes involving any injury, fatality, vehicle tow-away, airbag deployment, or vulnerable road user</li>
+                                <li>Reports must be submitted within 1 day for serious incidents, 10 days for others</li>
+                            </ul>
+                            <p>This is the primary public data source for tracking autonomous vehicle incidents across all manufacturers, including Tesla, Waymo, Cruise, and others.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>How is Miles Per Incident (MPI) calculated?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p><strong>MPI = Fleet Miles Driven ÷ Number of Incidents</strong></p>
+                            <p>We calculate this for each interval between consecutive incidents:</p>
+                            <ol>
+                                <li><strong>Fleet size:</strong> Daily vehicle count from <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a></li>
+                                <li><strong>Daily miles:</strong> 115 miles/vehicle/day (based on Tesla's Q3 2025 disclosure)</li>
+                                <li><strong>Interval miles:</strong> Sum of daily fleet miles between consecutive incident dates</li>
+                            </ol>
+                            <p>This gives us the actual distance driven between each incident, accounting for fleet growth over time.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Where does the 115 miles/vehicle/day estimate come from?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Tesla disclosed in their Q3 2025 earnings report that their Austin robotaxi fleet was averaging approximately 115 miles per vehicle per day. This is consistent with typical robotaxi utilization rates (compared to ~30 miles/day for private vehicles).</p>
+                            <p><strong>Limitations:</strong></p>
+                            <ul>
+                                <li>This is an average; individual vehicles may drive more or less</li>
+                                <li>Utilization may vary by day of week or time of year</li>
+                                <li>If Tesla updates this figure, we will adjust our calculations</li>
+                            </ul>
+                            <p>Even with some uncertainty in this estimate, the exponential improvement <em>trend</em> (R² = <span id="faq-method-r-squared">--</span>) is robust to reasonable variations in daily mileage assumptions.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Why do you only track Austin data?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Austin is the only location where Tesla operates <strong>unsupervised Level 4 autonomous driving</strong>. This is the only deployment that:</p>
+                            <ul>
+                                <li>Requires mandatory NHTSA SGO incident reporting</li>
+                                <li>Operates without a safety driver ready to intervene</li>
+                                <li>Represents true autonomous vehicle performance</li>
+                            </ul>
+                            <p>The Bay Area fleet operates with safety drivers (Level 2) as required by California law. Different reporting requirements apply, and including that data would conflate different operational modes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>How do you determine the fleet size?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>We track daily fleet size using multiple sources:</p>
+                            <ul>
+                                <li><strong>Primary:</strong> <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a>, which monitors Tesla's API for active vehicles</li>
+                                <li><strong>Secondary:</strong> Tesla earnings calls and press releases</li>
+                                <li><strong>Cross-reference:</strong> News reports and third-party tracking</li>
+                            </ul>
+                            <p>The current Austin fleet is approximately <span id="faq-method-fleet">--</span> unsupervised vehicles.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category 2: Reporting Lag -->
+    <section id="reporting-lag" class="faq-category faq-category-alt">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Reporting Lag & Data Freshness</h2>
+                <p>Understanding when incidents are reported and how this affects the data</p>
+            </div>
+
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>What is reporting lag and why does it matter?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p><strong>Reporting lag</strong> is the delay between when an incident occurs and when it appears in NHTSA's public database. Under SGO 2021-01:</p>
+                            <ul>
+                                <li>Serious incidents: 1 day to report</li>
+                                <li>Other incidents: 10 days to report</li>
+                                <li>NHTSA processing: Additional days before public posting</li>
+                            </ul>
+                            <p><strong>Why it matters:</strong> If you count "miles driven through Sunday" but incidents haven't been reported yet, you may be calculating MPI with an incomplete incident count, making safety appear better than it actually is.</p>
+                            <p>This tracker displays both <strong>"Data Through"</strong> (latest mileage date) and <strong>"Latest Report"</strong> (most recent incident report date) so you can assess data freshness.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>How fresh is the data on this tracker?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p><strong>Current data status:</strong></p>
+                            <ul>
+                                <li><strong>Fleet miles through:</strong> <span id="faq-lag-data-through">--</span></li>
+                                <li><strong>Latest incident report:</strong> <span id="faq-lag-latest-incident">--</span></li>
+                                <li><strong>Last NHTSA check:</strong> Updated daily</li>
+                            </ul>
+                            <p>We check NHTSA's SGO database daily and update incident data as new reports are published. The "current streak" metric (miles without an incident) is inherently provisional until sufficient time has passed for any incidents to be reported.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Should I trust the "current incident-free streak" number?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>The current streak (<span id="faq-lag-streak">--</span> miles) should be treated as <strong>provisional</strong>, especially for the most recent 7-14 days.</p>
+                            <p><strong>Guidance:</strong></p>
+                            <ul>
+                                <li>If the last incident was 14+ days ago: streak is likely accurate</li>
+                                <li>If the last incident was 7-14 days ago: treat with caution</li>
+                                <li>If the last incident was &lt;7 days ago: expect possible updates</li>
+                            </ul>
+                            <p>The <strong>completed interval MPI</strong> values (between known incidents) are the most reliable metrics, as both the start and end incidents have been reported.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Why might news reports show different crash counts?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Different sources may show different incident counts due to:</p>
+                            <ul>
+                                <li><strong>Timing:</strong> They may have checked NHTSA at a different time</li>
+                                <li><strong>Scope:</strong> They may include Bay Area (supervised) incidents</li>
+                                <li><strong>Definition:</strong> They may count incidents differently (e.g., including disengagements)</li>
+                            </ul>
+                            <p>This tracker specifically counts only Austin (unsupervised) incidents from NHTSA SGO ADS reports. Our methodology is documented and consistent.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category 3: Comparisons -->
+    <section id="comparisons" class="faq-category">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Comparisons to Human Drivers</h2>
+                <p>Why "robotaxi vs human" comparisons are more complicated than they appear</p>
+            </div>
+
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Why are comparisons to human crash rates tricky?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Comparing robotaxi incident rates to human crash rates involves several mismatches:</p>
+                            <ol>
+                                <li><strong>Reporting threshold:</strong> NHTSA SGO captures incidents that human drivers would never report to police (minor parking lot bumps, low-speed contacts)</li>
+                                <li><strong>Operating environment:</strong> Robotaxis operate in geofenced urban areas; human stats include highways, rural roads, and all conditions</li>
+                                <li><strong>Fault attribution:</strong> SGO reports include incidents where the robotaxi was not at fault (e.g., being rear-ended)</li>
+                                <li><strong>Severity:</strong> Most robotaxi incidents are low-severity; human crash stats weight differently by severity</li>
+                            </ol>
+                            <p>These factors can make comparisons unfair in <em>either direction</em>, depending on what you're measuring.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>What human baselines exist for comparison?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Several benchmarks exist, each measuring something different:</p>
+                            <table class="faq-table">
+                                <tr>
+                                    <th>Baseline</th>
+                                    <th>MPI</th>
+                                    <th>What it measures</th>
+                                </tr>
+                                <tr>
+                                    <td>Police-reported crashes</td>
+                                    <td>~500,000</td>
+                                    <td>Crashes serious enough for police report</td>
+                                </tr>
+                                <tr>
+                                    <td>Insurance claims</td>
+                                    <td>~300,000</td>
+                                    <td>Crashes where insurance was involved</td>
+                                </tr>
+                                <tr>
+                                    <td>All crashes (estimated)</td>
+                                    <td>~100,000-200,000</td>
+                                    <td>Including unreported minor incidents</td>
+                                </tr>
+                                <tr>
+                                    <td>Urban taxi/rideshare</td>
+                                    <td>Unknown</td>
+                                    <td>Most relevant but not publicly tracked</td>
+                                </tr>
+                            </table>
+                            <p>The insurance claim baseline (~300,000 MPI) is arguably the most appropriate comparison for robotaxis since SGO captures incidents that would result in claims.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>What would a fair "apples-to-apples" comparison look like?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>An ideal comparison would control for:</p>
+                            <ul>
+                                <li><strong>Geography:</strong> Same city, same streets</li>
+                                <li><strong>Time:</strong> Same hours of operation (e.g., no late-night drunk driving hours)</li>
+                                <li><strong>Vehicle type:</strong> Similar vehicle class</li>
+                                <li><strong>Reporting standard:</strong> Same incident threshold</li>
+                                <li><strong>Fault:</strong> Only at-fault incidents for both</li>
+                            </ul>
+                            <p>Unfortunately, no public dataset exists for "Austin urban taxi/rideshare incident rate using SGO-equivalent reporting." The closest would be comparing to Uber/Lyft incident rates in Austin, but that data isn't public.</p>
+                            <p><strong>What we can say:</strong> Tesla's trend shows rapid improvement. Whether the current rate is "better" or "worse" than humans depends heavily on what comparison you choose.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>How does Tesla compare to Waymo?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Waymo reports approximately <strong>1,000,000+ miles per incident</strong> based on their published safety data and the Swiss Re study.</p>
+                            <p>Tesla's current MPI (<span id="faq-compare-latest-mpi">--</span> miles) is approximately <span id="faq-compare-waymo-ratio">--</span>x less than Waymo's reported figures.</p>
+                            <p><strong>Important caveats:</strong></p>
+                            <ul>
+                                <li>Waymo has been operating for longer and in more cities</li>
+                                <li>Waymo uses different sensor suites (LiDAR + cameras vs. Tesla's vision-only)</li>
+                                <li>Waymo's data is self-reported; Tesla's comes from NHTSA SGO</li>
+                                <li>Tesla's rapid improvement rate (doubling every ~<span id="faq-compare-doubling">--</span> days) could narrow this gap</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Does the geofenced operating area make robotaxis look safer?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>This is a fair criticism. Tesla's Austin robotaxis operate in a <strong>limited Operational Design Domain (ODD)</strong>:</p>
+                            <ul>
+                                <li>Urban/suburban streets only</li>
+                                <li>Specific geofenced areas</li>
+                                <li>Good weather conditions</li>
+                                <li>Mapped routes</li>
+                            </ul>
+                            <p>National human crash statistics include:</p>
+                            <ul>
+                                <li>Highway driving (higher speeds, different risks)</li>
+                                <li>Rural roads (less infrastructure, wildlife)</li>
+                                <li>All weather conditions</li>
+                                <li>All driver conditions (fatigue, impairment)</li>
+                            </ul>
+                            <p><strong>The geofence cuts both ways:</strong> Urban areas have more pedestrians, cyclists, and complex intersections than highways. The "easy" vs "hard" comparison isn't straightforward.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category 4: Incident Definitions -->
+    <section id="incidents" class="faq-category faq-category-alt">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Incident Definitions & Fault</h2>
+                <p>What counts as an incident and who's at fault</p>
+            </div>
+
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>What counts as an "incident" on this tracker?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>An "incident" on this site means a crash event that appears in <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA SGO 2021-01</a> ADS reports for Tesla's Austin robotaxi program.</p>
+                            <p><strong>This includes:</strong></p>
+                            <ul>
+                                <li>Any crash where ADS was engaged within 30 seconds</li>
+                                <li>Crashes involving injury, tow-away, airbag deployment, or vulnerable road users</li>
+                                <li>Minor contacts that meet SGO reporting thresholds</li>
+                            </ul>
+                            <p><strong>This does NOT include:</strong></p>
+                            <ul>
+                                <li>Near-misses or close calls</li>
+                                <li>Disengagements without contact</li>
+                                <li>Bay Area (supervised) incidents</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Do NHTSA SGO reports include minor incidents that humans wouldn't report?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p><strong>Yes.</strong> SGO 2021-01 has a lower reporting threshold than police reports. It can capture:</p>
+                            <ul>
+                                <li>Low-speed parking lot contacts</li>
+                                <li>Minor fender benders with no injuries</li>
+                                <li>Incidents that human drivers would handle without police</li>
+                            </ul>
+                            <p>This is a legitimate criticism of direct MPI comparisons. A robotaxi might have a "worse" MPI than police-reported human stats while actually being safer, simply because more incidents are being reported.</p>
+                            <p><strong>Counterpoint:</strong> SGO doesn't capture <em>all</em> minor incidents — only those meeting specific criteria. Many true minor contacts may still go unreported.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Are incidents at-fault or not-at-fault?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p><strong>SGO reports do not include fault determination.</strong> This is a significant limitation of the public data.</p>
+                            <p>What we know:</p>
+                            <ul>
+                                <li>Some incidents are clearly not the robotaxi's fault (e.g., being rear-ended at a stop)</li>
+                                <li>Tesla redacts crash narratives, making fault analysis difficult</li>
+                                <li>Without video or detailed reports, we cannot reliably categorize fault</li>
+                            </ul>
+                            <p><strong>Why this matters:</strong> If a significant portion of incidents are other vehicles hitting the robotaxi, the "true" at-fault MPI would be much better than the overall MPI.</p>
+                            <p>We are exploring ways to provide provisional fault categorization based on available evidence, but this is inherently uncertain.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>What is the severity distribution of incidents?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Based on available SGO data for Tesla's Austin fleet:</p>
+                            <ul>
+                                <li><strong>Fatalities:</strong> 0</li>
+                                <li><strong>Serious injuries:</strong> 0</li>
+                                <li><strong>Minor injuries:</strong> Rare</li>
+                                <li><strong>Property damage only:</strong> Most incidents</li>
+                            </ul>
+                            <p>The lack of serious injuries or fatalities is notable, though the sample size is still relatively small. This suggests that even when incidents occur, they tend to be low-severity.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Does Tesla redact crash details?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p><strong>Yes.</strong> Tesla redacts the narrative section of SGO crash reports, preventing the public from knowing specific details about how crashes occurred.</p>
+                            <p>What is NOT redacted:</p>
+                            <ul>
+                                <li>Incident dates</li>
+                                <li>ADS engagement status</li>
+                                <li>Injury/fatality status</li>
+                                <li>Vehicle identification</li>
+                            </ul>
+                            <p>This is a legitimate transparency concern. Waymo, by comparison, provides more detailed incident descriptions. However, the core metrics tracked here (MPI, trend) are calculable from non-redacted data.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category 5: Supervision -->
+    <section id="supervision" class="faq-category">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Supervision & Interventions</h2>
+                <p>Understanding the role of safety monitors and remote operators</p>
+            </div>
+
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Do Austin robotaxis have safety monitors?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>The situation is mixed:</p>
+                            <ul>
+                                <li><strong>Some vehicles:</strong> Operate fully unsupervised (no human in vehicle)</li>
+                                <li><strong>Other vehicles:</strong> Still have safety monitors present who can intervene</li>
+                            </ul>
+                            <p>Tesla has been progressively removing safety monitors from Austin vehicles as confidence increases. The exact split is not publicly disclosed.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Does having a safety monitor affect the data?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p><strong>This is a key confound.</strong> If safety monitors intervene to prevent crashes, the observed MPI reflects "FSD + human backup" rather than "FSD alone."</p>
+                            <p>What we don't know:</p>
+                            <ul>
+                                <li>Intervention rate (how often monitors take over)</li>
+                                <li>Which specific incidents involved monitored vs unmonitored vehicles</li>
+                                <li>Whether interventions are preventing crashes or just providing comfort</li>
+                            </ul>
+                            <p><strong>As Tesla removes more monitors</strong>, the data will increasingly reflect true autonomous performance. If MPI stays strong with fewer monitors, that's a positive signal.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>What about remote teleoperation?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Tesla has remote operators who can assist vehicles that get stuck or need guidance. However:</p>
+                            <ul>
+                                <li>Remote operators cannot directly control the vehicle (unlike Waymo's teleops)</li>
+                                <li>They can provide route guidance or approve certain maneuvers</li>
+                                <li>This is not real-time driving assistance</li>
+                            </ul>
+                            <p>The extent to which remote assistance affects safety performance is unknown.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>When will Tesla remove safety monitors at large scale?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Fleet-wide removal of safety monitors is expected when:</p>
+                            <ul>
+                                <li><strong>Safety metrics:</strong> Sustained MPI at or above human-driver benchmarks (300,000-500,000 miles)</li>
+                                <li><strong>Geographic consistency:</strong> Performance maintained across expansion cities</li>
+                                <li><strong>Regulatory approval:</strong> Permits obtained in states that require them (e.g., California)</li>
+                                <li><strong>Insurance/liability:</strong> Appropriate coverage in place</li>
+                            </ul>
+                            <p>This tracker focuses on the quantitative signals that predict when removal becomes operationally rational.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category 6: Chart Interpretation -->
+    <section id="charts" class="faq-category faq-category-alt">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Chart Interpretation & Statistics</h2>
+                <p>How to read the charts and understand the statistical methods</p>
+            </div>
+
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Why is the Y-axis on a logarithmic scale?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>We use a logarithmic (log) scale because:</p>
+                            <ul>
+                                <li><strong>Exponential trends appear as straight lines</strong> on a log scale, making it easier to see whether improvement is consistent</li>
+                                <li><strong>Percentage changes are visually equal:</strong> A doubling from 10K to 20K looks the same as 50K to 100K</li>
+                                <li><strong>Large variations are visible:</strong> Without log scale, early low values would be squished at the bottom</li>
+                            </ul>
+                            <p><strong>What to watch for:</strong> On a log scale, linear improvement looks like it's slowing down. Our trend line shows the data is consistent with exponential (not linear) improvement.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>What is the trend line fitting?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>The trend line is an <strong>exponential regression</strong> of the form:</p>
+                            <p><code>MPI = a × e^(b × days)</code></p>
+                            <p>This model assumes safety improves at a constant <em>percentage rate</em> over time (like compound interest). Key outputs:</p>
+                            <ul>
+                                <li><strong>Doubling time:</strong> <span id="faq-chart-doubling">--</span> days for MPI to double</li>
+                                <li><strong>R²:</strong> <span id="faq-chart-r-squared">--</span> (how well the model fits the data)</li>
+                            </ul>
+                            <p>An R² close to 1.0 means the exponential model explains most of the variation in the data.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Is the trend sensitive to the last data point?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p><strong>Yes, somewhat.</strong> With a small number of data points (currently <span id="faq-chart-total">--</span> incidents), each new incident affects the trend.</p>
+                            <p>How we address this:</p>
+                            <ul>
+                                <li>We report the R² value so you can see fit quality</li>
+                                <li>We show all data points, not just the trend line</li>
+                                <li>The doubling time is a derived metric — if the trend breaks, doubling time will change significantly</li>
+                            </ul>
+                            <p>As more incidents occur, the trend becomes more robust. Early-stage data naturally has higher uncertainty.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Does the log scale make Tesla look better than it is?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Some people argue log scales "compress" the gap between Tesla and human baselines. This is both true and misleading:</p>
+                            <ul>
+                                <li><strong>True:</strong> On a log scale, 50K vs 500K looks "closer" than on a linear scale</li>
+                                <li><strong>Misleading:</strong> The log scale is the <em>correct</em> way to visualize exponential data — using a linear scale would misrepresent the improvement rate</li>
+                            </ul>
+                            <p>We show the numeric values clearly. Tesla's latest MPI is <span id="faq-chart-latest-mpi">--</span> miles. Human baseline (police-reported) is ~500,000 miles. You can judge the gap yourself.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>What would cause the trend to break?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>The exponential improvement trend could break if:</p>
+                            <ul>
+                                <li><strong>Fleet expansion:</strong> New cities/vehicles might have different performance</li>
+                                <li><strong>Software changes:</strong> A new FSD version could perform differently</li>
+                                <li><strong>Operational changes:</strong> Removing more safety monitors might reveal hidden issues</li>
+                                <li><strong>Statistical regression:</strong> Early data might have been unusually lucky/unlucky</li>
+                            </ul>
+                            <p>We update daily and will note any significant deviations from the trend. If MPI stops improving exponentially, the doubling time estimate will increase or become undefined.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category 7: Common Misconceptions -->
+    <section id="misconceptions" class="faq-category">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Common Misconceptions & News Coverage</h2>
+                <p>Addressing frequent misunderstandings and media claims</p>
+            </div>
+
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Are reports that Tesla crashes "10x-12x more than humans" accurate?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>These reports are <strong>mathematically correct but contextually incomplete</strong>:</p>
+                            <ul>
+                                <li>They divide total incidents by total miles since launch (simple average)</li>
+                                <li>This yields ~<span id="faq-misc-simple-avg">--</span> MPI, which is indeed worse than human rates</li>
+                            </ul>
+                            <p><strong>What they miss:</strong></p>
+                            <ul>
+                                <li>The data shows exponential improvement over time</li>
+                                <li>The latest interval (<span id="faq-misc-latest-mpi">--</span> miles) is much better than the average</li>
+                                <li>Judging by simple average is like grading a student by lifetime GPA instead of their most recent semester</li>
+                            </ul>
+                            <p>The question isn't "what was Tesla's average safety?" but "what is Tesla's current safety and trajectory?"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Why do I keep seeing different crash numbers in the news?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>Different numbers arise from:</p>
+                            <ul>
+                                <li><strong>Different dates:</strong> Checking NHTSA at different times</li>
+                                <li><strong>Different scope:</strong> Some include Bay Area (supervised) incidents</li>
+                                <li><strong>Different definitions:</strong> Some count all ADS incidents (including non-crash events)</li>
+                                <li><strong>Outdated data:</strong> Articles written weeks/months ago</li>
+                            </ul>
+                            <p>This tracker uses consistent methodology: Austin unsupervised ADS crashes from NHTSA SGO, updated daily.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Is this website biased toward Tesla?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>This site aims to be <strong>data-driven and transparent</strong>:</p>
+                            <ul>
+                                <li>All data comes from public sources (NHTSA SGO, robotaxitracker.com)</li>
+                                <li>Methodology is fully documented</li>
+                                <li>Limitations and caveats are explicitly stated</li>
+                                <li>The code is <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" target="_blank" rel="noopener noreferrer">open source</a></li>
+                            </ul>
+                            <p><strong>What the data shows:</strong> Tesla's robotaxi safety is improving exponentially but currently lags behind Waymo and human baselines. We present both the positive trend and the current gap.</p>
+                            <p>If you find errors or methodological issues, please report them on GitHub.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Should I trust robotaxis with my safety?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>This is a personal decision that depends on your risk tolerance and how you weigh different factors:</p>
+                            <ul>
+                                <li><strong>Current data:</strong> Tesla's robotaxis have had <span id="faq-misc-total">--</span> incidents with no fatalities or serious injuries</li>
+                                <li><strong>Trend:</strong> Safety is improving rapidly</li>
+                                <li><strong>Comparison:</strong> Still below human and Waymo benchmarks on raw MPI</li>
+                                <li><strong>Severity:</strong> Robotaxi incidents tend to be low-severity</li>
+                            </ul>
+                            <p>We provide the data; you decide what it means for you.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="faq-cta">
+        <div class="container">
+            <div class="faq-cta-content">
+                <h2>See the Latest Data</h2>
+                <p>Track Tesla robotaxi safety metrics in real-time with our interactive dashboard</p>
+                <a href="index.html" class="faq-cta-button">View Safety Tracker</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>Created by <a href="https://x.com/FytasoK60918" target="_blank" rel="noopener noreferrer">Kangning Huang</a></p>
+                    <p>Data sources: <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA SGO</a>, <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a>, <a href="https://crashstats.nhtsa.dot.gov/Api/Public/Publication/813705" target="_blank" rel="noopener noreferrer">NHTSA CRSS</a>, <a href="https://waymo.com/blog/2023/09/waymos-autonomous-vehicles-are-significantly-safer-than-human-driven-ones/" target="_blank" rel="noopener noreferrer">Swiss Re/Waymo</a></p>
+                    <p class="disclaimer">This is an independent robotaxi safety analysis tool. Not affiliated with Tesla, Inc.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <span class="divider">|</span>
+                    <a href="https://x.com/FytasoK60918" target="_blank" rel="noopener noreferrer">X</a>
+                    <span class="divider">|</span>
+                    <a href="https://open.substack.com/pub/kangninghuang" target="_blank" rel="noopener noreferrer">Substack</a>
+                    <span class="divider">|</span>
+                    <span>Updated: <span id="last-updated">Feb 4, 2026</span></span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="faq.js"></script>
+</body>
+</html>
