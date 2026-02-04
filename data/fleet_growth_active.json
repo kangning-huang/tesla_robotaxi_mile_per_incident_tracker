@@ -1,8 +1,8 @@
 {
-  "scraped_at": "2026-02-03T06:35:23.748976+00:00",
+  "scraped_at": "2026-02-04T06:35:28.352718+00:00",
   "source": "robotaxitracker.com",
   "description": "Active fleet growth time series",
-  "data_points": 33,
+  "data_points": 37,
   "data": [
     {
       "date": "2025-07-30",
@@ -21,60 +21,72 @@
       "austin": 12
     },
     {
-      "date": "2025-10-31",
-      "austin": 12
-    },
-    {
-      "date": "2025-11-05",
+      "date": "2025-10-01",
       "austin": 13
     },
     {
-      "date": "2025-11-09",
+      "date": "2025-10-02",
       "austin": 14
     },
     {
-      "date": "2025-11-12",
+      "date": "2025-10-03",
       "austin": 15
     },
     {
-      "date": "2025-11-18",
-      "austin": 21
+      "date": "2025-10-08",
+      "austin": 17
     },
     {
-      "date": "2025-11-22",
+      "date": "2025-10-21",
+      "austin": 18
+    },
+    {
+      "date": "2025-11-05",
+      "austin": 19
+    },
+    {
+      "date": "2025-11-09",
+      "austin": 20
+    },
+    {
+      "date": "2025-11-10",
+      "austin": 22
+    },
+    {
+      "date": "2025-11-12",
       "austin": 22
     },
     {
       "date": "2025-12-21",
-      "austin": 22
+      "austin": 23
     },
     {
       "date": "2025-12-26",
-      "austin": 18
+      "austin": 22
     },
     {
       "date": "2025-12-29",
-      "austin": 17
+      "austin": 20
     },
     {
       "date": "2026-01-01",
-      "austin": 17
+      "austin": 20
     },
     {
       "date": "2026-01-02",
-      "austin": 18
-    },
-    {
-      "date": "2026-01-05",
-      "austin": 19
-    },
-    {
-      "date": "2026-01-06",
       "austin": 21
     },
     {
-      "date": "2026-01-09",
+      "date": "2026-01-05",
       "austin": 22
+    },
+    {
+      "date": "2026-01-06",
+      "austin": 23
+    },
+    {
+      "date": "2026-01-09",
+      "austin": 24
     },
     {
       "date": "2026-01-11",
@@ -85,44 +97,48 @@
       "austin": 24
     },
     {
-      "date": "2026-01-14",
-      "austin": 27
+      "date": "2026-01-13",
+      "austin": 25
     },
     {
-      "date": "2026-01-15",
+      "date": "2026-01-14",
       "austin": 28
     },
     {
+      "date": "2026-01-15",
+      "austin": 29
+    },
+    {
       "date": "2026-01-16",
-      "austin": 30
+      "austin": 31
     },
     {
       "date": "2026-01-17",
-      "austin": 32
+      "austin": 33
     },
     {
       "date": "2026-01-18",
-      "austin": 34
+      "austin": 35
     },
     {
       "date": "2026-01-19",
-      "austin": 36
+      "austin": 37
     },
     {
       "date": "2026-01-20",
-      "austin": 38
-    },
-    {
-      "date": "2026-01-21",
       "austin": 39
     },
     {
+      "date": "2026-01-21",
+      "austin": 40
+    },
+    {
       "date": "2026-01-22",
-      "austin": 42
+      "austin": 43
     },
     {
       "date": "2026-01-23",
-      "austin": 55
+      "austin": 56
     },
     {
       "date": "2026-01-24",
