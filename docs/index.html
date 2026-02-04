@@ -188,12 +188,7 @@
         "description": "Data-driven analysis tracking quantitative safety and deployment signals to estimate when Tesla robotaxis will operate without safety monitors at large scale. Some Austin vehicles already run without monitors — this tracker analyzes fleet growth, incident rates, and deployment patterns to estimate when fleet-wide removal becomes inevitable.",
         "datePublished": "2025-06-25",
         "dateModified": "2026-02-04",
-        "image": {
-            "@type": "ImageObject",
-            "url": "https://robotaxi-safety-tracker.com/chart-preview.png",
-            "width": 1782,
-            "height": 1481
-        },
+        "image": "https://robotaxi-safety-tracker.com/chart-preview.png",
         "author": {
             "@type": "Person",
             "name": "Kangning Huang",
@@ -242,12 +237,37 @@
     }
     </script>
 
-    <!-- FAQ Schema / JSON-LD (dynamically updated by app.js) -->
+    <!-- FAQ Schema / JSON-LD -->
     <script id="faq-schema" type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        "mainEntity": []
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "When will Tesla robotaxis operate without safety monitors?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Tesla has already begun removing safety monitors from some Austin robotaxis. This tracker estimates when fleet-wide, large-scale removal becomes inevitable by analyzing real-world incident data, safety trends, and fleet growth patterns rather than relying on announcements."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is Miles Per Incident (MPI)?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Miles Per Incident (MPI) measures how many miles a robotaxi fleet drives between incidents. It's calculated by dividing total fleet miles driven by the number of NHTSA-reported incidents. Higher MPI indicates better safety performance."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Where does Tesla robotaxi safety data come from?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Incident data comes from NHTSA Standing General Order 2021-01 reports, which require manufacturers to report autonomous vehicle crashes. Fleet size and mileage data comes from robotaxitracker.com and Tesla's official disclosures."
+                }
+            }
+        ]
     }
     </script>
 </head>
@@ -272,8 +292,8 @@
                     <a href="#methodology" class="nav-link">Methods</a>
                     <a href="/faq.html" class="nav-link">FAQ</a>
                     <a href="#creator" class="nav-link">Creator</a>
-                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" class="nav-link github" target="_blank" rel="noopener noreferrer">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" class="nav-link github" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                         </svg>
                     </a>
@@ -1307,7 +1327,7 @@
                     <span class="divider">|</span>
                     <a href="/contact.html">Contact</a>
                     <span class="divider">|</span>
-                    <a href="/privacy.html">Privacy</a>
+                    <a href="/privacy.html">Privacy Policy</a>
                     <span class="divider">|</span>
                     <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" target="_blank" rel="noopener noreferrer">GitHub</a>
                     <span class="divider">|</span>
@@ -1343,9 +1363,10 @@
             <form class="subscribe-form" id="subscribe-form" action="https://formsubmit.co/ajax/weekly-update@robotaxi-safety-tracker.com" method="POST">
                 <input type="hidden" name="_subject" value="New Subscriber - Tesla Robotaxi Safety Tracker">
                 <input type="hidden" name="_template" value="table">
-                <input type="text" name="_honey" style="display:none">
+                <input type="text" name="_honey" style="display:none" aria-hidden="true" tabindex="-1" autocomplete="off">
                 <input type="hidden" name="_captcha" value="false">
                 <div class="subscribe-input-row">
+                    <label for="subscribe-email" class="visually-hidden">Email address</label>
                     <input
                         type="email"
                         name="email"
