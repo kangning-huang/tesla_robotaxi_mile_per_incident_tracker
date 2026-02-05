@@ -112,12 +112,61 @@
     }
     </script>
 
-    <!-- FAQ Schema / JSON-LD (dynamically updated by faq.js) -->
+    <!-- FAQ Schema / JSON-LD -->
     <script id="faq-schema" type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "FAQPage",
-        "mainEntity": []
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "What is NHTSA Standing General Order 2021-01?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "NHTSA SGO 2021-01 is a federal requirement that mandates manufacturers and operators of vehicles equipped with SAE Level 2 ADAS or Levels 3-5 ADS to report certain crashes to NHTSA. Crashes must be reported if ADS was engaged within 30 seconds of the crash, and reports are required for crashes involving any injury, fatality, vehicle tow-away, airbag deployment, or vulnerable road user."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "How is Miles Per Incident (MPI) calculated?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "MPI = Fleet Miles Driven ÷ Number of Incidents. We calculate this for each interval between consecutive incidents using daily vehicle count from robotaxitracker.com, 115 miles/vehicle/day based on Tesla's Q3 2025 disclosure, and the sum of daily fleet miles between consecutive incident dates."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What is reporting lag and why does it matter?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Reporting lag is the delay between when an incident occurs and when it appears in NHTSA's public database. Under SGO 2021-01, serious incidents must be reported within 1 day, other incidents within 10 days, plus additional NHTSA processing time. This matters because counting miles driven before incidents are reported may make safety appear better than it actually is."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Why are comparisons to human crash rates tricky?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Comparing robotaxi incident rates to human crash rates involves several mismatches: different reporting thresholds (NHTSA SGO captures minor incidents humans wouldn't report), different operating environments (robotaxis operate in geofenced urban areas while human stats include all conditions), fault attribution issues, and severity differences."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "What counts as an incident on this tracker?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "An incident means a crash event that appears in NHTSA SGO 2021-01 ADS reports for Tesla's Austin robotaxi program. This includes any crash where ADS was engaged within 30 seconds, crashes involving injury, tow-away, airbag deployment, or vulnerable road users. It does NOT include near-misses, disengagements without contact, or Bay Area supervised incidents."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Why is the Y-axis on a logarithmic scale?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "We use a logarithmic scale because exponential trends appear as straight lines, making it easier to see whether improvement is consistent. Percentage changes are visually equal (doubling from 10K to 20K looks the same as 50K to 100K), and large variations remain visible without squishing early low values at the bottom."
+                }
+            }
+        ]
     }
     </script>
 </head>
@@ -144,8 +193,8 @@
                     <a href="/#methodology" class="nav-link">Methods</a>
                     <a href="/faq.html" class="nav-link active">FAQ</a>
                     <a href="/#creator" class="nav-link">Creator</a>
-                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" class="nav-link github" target="_blank" rel="noopener noreferrer">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" class="nav-link github" target="_blank" rel="noopener noreferrer" aria-label="View source code on GitHub" title="View source code on GitHub">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                             <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
                         </svg>
                     </a>
