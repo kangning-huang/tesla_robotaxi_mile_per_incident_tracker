@@ -1,5 +1,5 @@
 {
-  "scraped_at": "2026-02-06T06:36:36.354038+00:00",
+  "scraped_at": "2026-02-07T06:30:14.623501+00:00",
   "source": "robotaxitracker.com",
   "description": "Active fleet growth time series",
   "data_points": 38,
@@ -62,59 +62,59 @@
     },
     {
       "date": "2025-12-26",
-      "austin": 22
-    },
-    {
-      "date": "2025-12-29",
-      "austin": 20
-    },
-    {
-      "date": "2026-01-01",
-      "austin": 20
-    },
-    {
-      "date": "2026-01-02",
-      "austin": 21
-    },
-    {
-      "date": "2026-01-05",
-      "austin": 22
-    },
-    {
-      "date": "2026-01-06",
       "austin": 23
     },
     {
-      "date": "2026-01-09",
-      "austin": 24
+      "date": "2025-12-29",
+      "austin": 21
     },
     {
-      "date": "2026-01-11",
+      "date": "2026-01-01",
+      "austin": 21
+    },
+    {
+      "date": "2026-01-02",
       "austin": 22
     },
     {
-      "date": "2026-01-12",
+      "date": "2026-01-05",
+      "austin": 23
+    },
+    {
+      "date": "2026-01-06",
       "austin": 24
     },
     {
-      "date": "2026-01-13",
+      "date": "2026-01-09",
       "austin": 25
     },
     {
-      "date": "2026-01-14",
-      "austin": 28
+      "date": "2026-01-11",
+      "austin": 23
     },
     {
-      "date": "2026-01-15",
+      "date": "2026-01-12",
+      "austin": 25
+    },
+    {
+      "date": "2026-01-13",
+      "austin": 26
+    },
+    {
+      "date": "2026-01-14",
       "austin": 29
     },
     {
+      "date": "2026-01-15",
+      "austin": 30
+    },
+    {
       "date": "2026-01-16",
-      "austin": 31
+      "austin": 32
     },
     {
       "date": "2026-01-17",
-      "austin": 33
+      "austin": 34
     },
     {
       "date": "2026-01-18",
