@@ -1,8 +1,8 @@
 {
-  "scraped_at": "2026-02-08T06:34:55.000495+00:00",
+  "scraped_at": "2026-02-09T06:44:19.669754+00:00",
   "source": "robotaxitracker.com",
   "description": "Active fleet growth time series",
-  "data_points": 38,
+  "data_points": 39,
   "data": [
     {
       "date": "2025-07-30",
@@ -154,6 +154,10 @@
     },
     {
       "date": "2026-02-07",
+      "austin": 55
+    },
+    {
+      "date": "2026-02-08",
       "austin": 55
     }
   ]
