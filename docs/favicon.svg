@@ -1,17 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1e40af"/>
-      <stop offset="100%" style="stop-color:#3b82f6"/>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4a843"/>
+      <stop offset="100%" style="stop-color:#c49b38"/>
     </linearGradient>
   </defs>
-  <rect width="32" height="32" rx="6" fill="url(#bg)"/>
-  <!-- Sleek robotaxi car silhouette -->
-  <path d="M4 22v-4l3-1.5L10.5 11h11L25 16.5l3 1.5v4z" fill="white"/>
+  <!-- Dark background like Robotaxi branding -->
+  <rect width="32" height="32" rx="4" fill="#1a1a1a"/>
+  <!-- Stylized angular car silhouette in gold -->
+  <path d="M3 21l2-3 4-6h14l4 6 2 3z" fill="url(#gold)" opacity="0.9"/>
+  <!-- Windshield cut -->
+  <path d="M10.5 12.5l1.5-2h8l1.5 2z" fill="#1a1a1a" opacity="0.6"/>
   <!-- Wheels -->
-  <circle cx="10" cy="22" r="2.5" fill="#1e3a8a"/>
-  <circle cx="22" cy="22" r="2.5" fill="#1e3a8a"/>
-  <!-- Autonomous sensor waves -->
-  <path d="M13.5 8.5a4 3.5 0 0 1 5 0" fill="none" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-  <path d="M11.5 6a6 5 0 0 1 9 0" fill="none" stroke="white" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/>
+  <circle cx="9" cy="21.5" r="2" fill="#1a1a1a" stroke="url(#gold)" stroke-width="0.8"/>
+  <circle cx="23" cy="21.5" r="2" fill="#1a1a1a" stroke="url(#gold)" stroke-width="0.8"/>
+  <!-- Sensor/lidar pulse lines above car -->
+  <path d="M14 8.5l2-2 2 2" fill="none" stroke="url(#gold)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M12 6.5l4-3 4 3" fill="none" stroke="url(#gold)" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+  <!-- Road line -->
+  <line x1="2" y1="25" x2="8" y2="25" stroke="url(#gold)" stroke-width="0.6" opacity="0.4"/>
+  <line x1="12" y1="25" x2="20" y2="25" stroke="url(#gold)" stroke-width="0.6" opacity="0.4"/>
+  <line x1="24" y1="25" x2="30" y2="25" stroke="url(#gold)" stroke-width="0.6" opacity="0.4"/>
 </svg>
