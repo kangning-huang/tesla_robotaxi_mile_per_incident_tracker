@@ -6,7 +6,12 @@
     </linearGradient>
   </defs>
   <rect width="32" height="32" rx="6" fill="url(#bg)"/>
-  <path d="M16 6L8 10l8 4 8-4-8-4z" fill="none" stroke="white" stroke-width="1.5"/>
-  <path d="M8 18l8 4 8-4" fill="none" stroke="white" stroke-width="1.5"/>
-  <path d="M8 14l8 4 8-4" fill="none" stroke="white" stroke-width="1.5"/>
+  <!-- Sleek robotaxi car silhouette -->
+  <path d="M4 22v-4l3-1.5L10.5 11h11L25 16.5l3 1.5v4z" fill="white"/>
+  <!-- Wheels -->
+  <circle cx="10" cy="22" r="2.5" fill="#1e3a8a"/>
+  <circle cx="22" cy="22" r="2.5" fill="#1e3a8a"/>
+  <!-- Autonomous sensor waves -->
+  <path d="M13.5 8.5a4 3.5 0 0 1 5 0" fill="none" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
+  <path d="M11.5 6a6 5 0 0 1 9 0" fill="none" stroke="white" stroke-width="1.3" stroke-linecap="round" opacity="0.6"/>
 </svg>
