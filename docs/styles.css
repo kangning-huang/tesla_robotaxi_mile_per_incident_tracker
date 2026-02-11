@@ -2919,11 +2919,12 @@ a:hover {
    ========================================================================== */
 
 .chart-scale-toggle {
-    display: flex;
+    display: inline-flex;
     border: 1px solid var(--border-color);
     border-radius: var(--radius-sm);
     overflow: hidden;
     margin-top: 12px;
+    align-self: center;
 }
 
 .scale-toggle-btn {
