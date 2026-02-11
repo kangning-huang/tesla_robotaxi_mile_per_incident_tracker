@@ -2962,6 +2962,68 @@ a:hover {
     background: var(--bg-primary);
 }
 
+.explainer-collapsible {
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    overflow: hidden;
+}
+
+.explainer-summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 28px 32px;
+    position: relative;
+    user-select: none;
+}
+
+.explainer-summary::-webkit-details-marker {
+    display: none;
+}
+
+.explainer-summary::after {
+    content: '';
+    position: absolute;
+    right: 32px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid var(--text-muted);
+    border-bottom: 2px solid var(--text-muted);
+    transform: translateY(-50%) rotate(45deg);
+    transition: transform 0.2s ease;
+}
+
+.explainer-collapsible[open] > .explainer-summary::after {
+    transform: translateY(-30%) rotate(-135deg);
+}
+
+.explainer-summary h2 {
+    margin-bottom: 4px;
+}
+
+.explainer-summary p {
+    margin-bottom: 0;
+}
+
+.explainer-toggle-hint {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.explainer-collapsible[open] .explainer-toggle-hint {
+    display: none;
+}
+
+.explainer-collapsible .explainer-grid {
+    padding: 0 32px 28px;
+}
+
 .explainer-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);

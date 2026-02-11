@@ -686,11 +686,10 @@ function initMPIChart() {
                         drawBorder: false
                     },
                     min: 0,
-                    max: 600000,
+                    beginAtZero: true,
                     ticks: {
                         color: colors.muted,
                         font: { family: "'JetBrains Mono', monospace", size: 11 },
-                        stepSize: 100000,
                         callback: function(value) {
                             if (value === 0) return '0';
                             if (value >= 1000000) return (value / 1000000) + 'M';
@@ -1377,6 +1376,11 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => setFleetMode(btn.dataset.mode));
     });
 
+    // Set up scale toggle buttons
+    document.querySelectorAll('.scale-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => setChartScale(btn.dataset.scale));
+    });
+
     // Update Best Fit Model card with equation and R² details
     const statEquationEl = document.getElementById('stat-equation');
     if (statEquationEl) {
@@ -1449,13 +1453,12 @@ function setChartScale(scale) {
     });
 
     // Reinitialize chart with new scale
+    if (mpiChartInstance) {
+        mpiChartInstance.destroy();
+        mpiChartInstance = null;
+    }
     initMPIChart();
 }
-
-// Set up scale toggle buttons
-document.querySelectorAll('.scale-toggle-btn').forEach(btn => {
-    btn.addEventListener('click', () => setChartScale(btn.dataset.scale));
-});
 
 // ===== Fleet Size Calculator (Task 10) =====
 function initCalculator() {

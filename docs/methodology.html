@@ -51,6 +51,12 @@
 
     <link rel="stylesheet" href="styles.css">
 
+    <!-- KaTeX for LaTeX equation rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"
+        onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '\\\\(', right: '\\\\)', display: false}]});"></script>
+
     <!-- Structured Data / JSON-LD -->
     <script type="application/ld+json">
     {
@@ -249,9 +255,9 @@
                     <h3>The Formula</h3>
                     <p>For each interval between consecutive NHTSA-reported incidents, miles per incident (MPI) is calculated as:</p>
                     <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin: 16px 0; text-align: center;">
-                        <code style="font-family: var(--font-mono); font-size: 1rem; color: var(--accent-primary);">MPI = fleet_size x 115 mi/day x (days_between_incidents - stoppage_days)</code>
+                        <span style="font-size: 1.1rem; color: var(--accent-primary);">$$\text{MPI} = \text{fleet\_size} \times 115\;\text{mi/day} \times (\text{days\_between\_incidents} - \text{stoppage\_days})$$</span>
                     </div>
-                    <p>Where <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">fleet_size</code> is the interpolated Austin fleet count on each day, <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">115 mi/day</code> is the per-vehicle daily mileage, and <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">stoppage_days</code> accounts for known periods when the fleet was offline (see <a href="#service-stoppages">Service Stoppages</a>). More precisely, fleet miles are summed day by day across the interval, since fleet size changes over time.</p>
+                    <p>Where \(\text{fleet\_size}\) is the interpolated Austin fleet count on each day, \(115\;\text{mi/day}\) is the per-vehicle daily mileage, and \(\text{stoppage\_days}\) accounts for known periods when the fleet was offline (see <a href="#service-stoppages">Service Stoppages</a>). More precisely, fleet miles are summed day by day across the interval, since fleet size changes over time.</p>
                 </div>
 
                 <div class="method-card" style="margin-bottom: 24px;">
@@ -281,14 +287,14 @@
                     <h3>Exponential Fit</h3>
                     <p>The trend line on the main chart fits the model:</p>
                     <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin: 16px 0; text-align: center;">
-                        <code style="font-family: var(--font-mono); font-size: 1rem; color: var(--accent-primary);">MPI = a * e^(b * t)</code>
+                        <span style="font-size: 1.1rem; color: var(--accent-primary);">$$\text{MPI} = a \cdot e^{b \cdot t}$$</span>
                     </div>
-                    <p>where <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">a</code> is the baseline MPI at time zero, <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">b</code> is the growth rate, and <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">t</code> is time in days. An exponential model is chosen because safety improvements in autonomous systems often compound: software updates improve all vehicles simultaneously, and more miles driven generate more training data.</p>
+                    <p>where \(a\) is the baseline MPI at time zero, \(b\) is the growth rate, and \(t\) is time in days. An exponential model is chosen because safety improvements in autonomous systems often compound: software updates improve all vehicles simultaneously, and more miles driven generate more training data.</p>
                 </div>
 
                 <div class="method-card" style="margin-bottom: 24px;">
                     <h3>Log-Linear Regression</h3>
-                    <p>The fit is computed by taking the natural logarithm of each MPI value and performing ordinary least-squares (OLS) linear regression on <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">ln(MPI)</code> vs. <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">t</code>. This yields the slope <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">b</code> and intercept <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">ln(a)</code>. The regression is equivalent to maximizing likelihood under a log-normal error model.</p>
+                    <p>The fit is computed by taking the natural logarithm of each MPI value and performing ordinary least-squares (OLS) linear regression on \(\ln(\text{MPI})\) vs. \(t\). This yields the slope \(b\) and intercept \(\ln(a)\). The regression is equivalent to maximizing likelihood under a log-normal error model.</p>
                 </div>
 
                 <div class="method-card" style="margin-bottom: 24px;">
@@ -298,9 +304,9 @@
 
                 <div class="method-card" style="margin-bottom: 24px;">
                     <h3>Doubling Time</h3>
-                    <p>Doubling time is derived directly from the growth rate <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">b</code>:</p>
+                    <p>Doubling time is derived directly from the growth rate \(b\):</p>
                     <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin: 16px 0; text-align: center;">
-                        <code style="font-family: var(--font-mono); font-size: 1rem; color: var(--accent-primary);">Doubling Time = ln(2) / b</code>
+                        <span style="font-size: 1.1rem; color: var(--accent-primary);">$$\text{Doubling Time} = \frac{\ln(2)}{b}$$</span>
                     </div>
                     <p>This tells you how many days it takes, on average, for MPI to double -- assuming the exponential trend continues. A 41-day doubling time, for example, means MPI is expected to double roughly every six weeks at the current trajectory.</p>
                 </div>
@@ -330,6 +336,13 @@
                 <div class="method-card" style="margin-bottom: 24px;">
                     <h3>Linear Scale Is Available</h3>
                     <p>The main tracker page provides a toggle to switch between log and linear scale. The linear view is useful for seeing the absolute magnitude of recent improvements and understanding just how far MPI has risen in raw terms. However, it makes it difficult to assess early-period performance or judge whether the growth rate is accelerating, decelerating, or holding steady. We default to log scale because it is the more informative view for trend analysis.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Why FSD Improvement Is Naturally Exponential</h3>
+                    <p>Autonomous driving improvement follows an inherently exponential pattern due to how edge-case resolution compounds. As Tesla's VP of Autopilot Software Ashok Elluswamy has <a href="https://www.youtube.com/watch?v=LFh9GAzHg1c" target="_blank" rel="noopener noreferrer">explained</a>, once the system handles 99% of driving scenarios correctly, the remaining 1% of edge cases are what cause interventions. Fixing half of those remaining edge cases doesn't just improve performance by 0.5% — it <strong>doubles</strong> the miles between incidents, because incidents now occur half as often.</p>
+                    <p>Put concretely: if the system intervenes once every 1,000 miles and engineers fix the edge cases responsible for 90% of remaining interventions, MPI jumps from 1,000 to 10,000 — a <strong>10× improvement</strong>. Then fixing 90% of the <em>next</em> set of edge cases pushes MPI from 10,000 to 100,000. Each round of fixes addresses rarer and rarer scenarios, but each round also multiplies MPI by the same factor. This is why a log-scale chart is the natural way to visualize progress: equal vertical distances represent equal multiplicative improvements, making it easy to see whether the rate of edge-case resolution is consistent, accelerating, or slowing down.</p>
+                    <p>Tesla's approach leverages its fleet data — collectively generating hundreds of years of driving daily — to identify and train on these rare edge cases using targeted data triggers. Combined with increasing model capacity (e.g., the 10× parameter increase in FSD v14) and the addition of reasoning capabilities, each software generation can resolve a larger fraction of remaining failure modes, sustaining the exponential improvement trajectory.</p>
                 </div>
             </div>
         </div>
