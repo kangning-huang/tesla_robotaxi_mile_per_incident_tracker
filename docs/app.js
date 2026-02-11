@@ -644,7 +644,7 @@ function initMPIChart() {
                         }
                     }
                 },
-                y: {
+                y: chartScaleMode === 'log' ? {
                     type: 'logarithmic',
                     grid: {
                         color: colors.grid,
@@ -677,6 +677,24 @@ function initMPIChart() {
                             if (value === 500000) return '500K';
                             if (value === 1000000) return '1M';
                             return '';
+                        }
+                    }
+                } : {
+                    type: 'linear',
+                    grid: {
+                        color: colors.grid,
+                        drawBorder: false
+                    },
+                    min: 0,
+                    max: 600000,
+                    ticks: {
+                        color: colors.muted,
+                        font: { family: "'JetBrains Mono', monospace", size: 11 },
+                        stepSize: 100000,
+                        callback: function(value) {
+                            if (value === 0) return '0';
+                            if (value >= 1000000) return (value / 1000000) + 'M';
+                            return (value / 1000) + 'K';
                         }
                     }
                 }
@@ -1052,6 +1070,10 @@ function updateFaqValues() {
     setValue('faq-redact-r-squared', trendParams.rSquared.toFixed(3));
     setValue('faq-redact-doubling', trendParams.doublingTime);
 
+    // New Task 12 FAQ values
+    setValue('faq-safe-mpi', latestMPI.toLocaleString());
+    setValue('faq-safe-doubling', trendParams.doublingTime);
+
     // AEO Summary section values
     setValue('aeo-current-streak', milesSinceLastIncident.toLocaleString());
     setValue('aeo-fleet-size', currentFleetSize);
@@ -1226,6 +1248,38 @@ function updateFaqValues() {
                 },
                 {
                     "@type": "Question",
+                    "name": "Is Tesla robotaxi safer than human drivers?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Not yet, on a simple average basis. Tesla Robotaxi's latest interval between incidents is " + latestMPI.toLocaleString() + " miles, compared to human drivers' 500,000 miles between police-reported crashes. However, safety is doubling every ~" + trendParams.doublingTime + " days, meaning Tesla is on an exponential trajectory toward parity. The comparison is complicated by reporting differences: NHTSA SGO 2021-01 captures all incidents including minor ones, while human crash statistics only count police-reported events."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "What is miles per incident and why does it matter?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Miles per incident (MPI) measures the average distance an autonomous vehicle drives between reportable incidents. It is the primary safety metric for comparing AV performance against human drivers and other AV operators like Waymo. Higher MPI equals a safer vehicle. Human drivers average ~500,000 miles between police-reported crashes (~300,000 between insurance claims). Waymo reports 1,000,000+ MPI."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Does NHTSA SGO 2021-01 include minor crashes?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "Yes. NHTSA Standing General Order 2021-01 requires AV operators to report any crash where the automated driving system was engaged within 30 seconds of the incident, regardless of severity. This includes minor fender-benders and incidents where the AV was stationary. By contrast, human crash statistics only count police-reported crashes, which miss an estimated 60% of property-damage-only incidents."
+                    }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How does reporting lag affect the safety streak?",
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": "NHTSA SGO 2021-01 requires initial crash reports within 1 day and updated reports within 10 days. However, Tesla has been cited for delayed reporting. This means the current streak number may be artificially high if an incident occurred recently but hasn't appeared in the public NHTSA database. We treat streak data as provisional until the reporting window catches up (typically 2-4 weeks)."
+                    }
+                },
+                {
+                    "@type": "Question",
                     "name": "Does Tesla redact Robotaxi crash data from NHTSA reports?",
                     "acceptedAnswer": {
                         "@type": "Answer",
@@ -1381,6 +1435,146 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// ===== Chart Scale Toggle (Task 5) =====
+let chartScaleMode = 'log'; // 'log' or 'linear'
+
+function setChartScale(scale) {
+    if (scale === chartScaleMode) return;
+    chartScaleMode = scale;
+
+    // Update toggle button states
+    document.querySelectorAll('.scale-toggle-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.scale === scale);
+    });
+
+    // Reinitialize chart with new scale
+    initMPIChart();
+}
+
+// Set up scale toggle buttons
+document.querySelectorAll('.scale-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => setChartScale(btn.dataset.scale));
+});
+
+// ===== Fleet Size Calculator (Task 10) =====
+function initCalculator() {
+    const milesSlider = document.getElementById('calc-miles-per-day');
+    const hoursSlider = document.getElementById('calc-active-hours');
+    const utilSlider = document.getElementById('calc-utilization');
+    const fleetSlider = document.getElementById('calc-fleet-size');
+
+    if (!milesSlider) return;
+
+    function updateCalculator() {
+        const milesPerDay = parseInt(milesSlider.value);
+        const activeHours = parseInt(hoursSlider.value);
+        const utilization = parseInt(utilSlider.value);
+        const fleetSize = parseInt(fleetSlider.value);
+
+        // Update display values
+        document.getElementById('calc-miles-display').textContent = milesPerDay + ' mi/day';
+        document.getElementById('calc-hours-display').textContent = activeHours + ' hrs';
+        document.getElementById('calc-util-display').textContent = utilization + '%';
+        document.getElementById('calc-fleet-display').textContent = fleetSize + ' vehicles';
+
+        // Calculate results
+        const dailyMiles = fleetSize * milesPerDay;
+        const monthlyMiles = dailyMiles * 30;
+        const avgSpeed = milesPerDay / activeHours;
+
+        // Calculate streak at these assumptions
+        const currentData = getIncidentData();
+        const lastIncident = currentData[currentData.length - 1];
+        const lastIncidentDate = new Date(lastIncident.date);
+        const today = new Date();
+        const daysSince = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
+        const stoppageDays = countStoppageDays(lastIncidentDate, today);
+        const activeDays = daysSince - stoppageDays;
+        const streakMiles = activeDays * fleetSize * milesPerDay;
+
+        // Update DOM
+        document.getElementById('calc-daily-miles').textContent = dailyMiles.toLocaleString();
+        document.getElementById('calc-monthly-miles').textContent = monthlyMiles.toLocaleString();
+        document.getElementById('calc-avg-speed').textContent = avgSpeed.toFixed(1) + ' mph';
+        document.getElementById('calc-streak-miles').textContent = streakMiles.toLocaleString();
+    }
+
+    [milesSlider, hoursSlider, utilSlider, fleetSlider].forEach(slider => {
+        slider.addEventListener('input', updateCalculator);
+    });
+
+    updateCalculator();
+}
+
+initCalculator();
+
+// ===== Dataset Download (Task 16) =====
+function generateCSV() {
+    const currentData = getIncidentData();
+    const collisionPartners = ['Passenger Car', 'Passenger Car', 'SUV', 'Passenger Car', 'Pickup Truck', 'Passenger Car', 'SUV', 'Passenger Car', 'Passenger Car', 'SUV'];
+    let csv = 'date,incident_number,days_since_previous,avg_fleet_size,miles_between_incidents,mpi,speed_mph,collision_partner,severity\n';
+    currentData.forEach((d, i) => {
+        csv += d.date + ',' + (i + 1) + ',' + d.days + ',' + d.fleet + ',' + d.miles + ',' + d.mpi + ',0,' + collisionPartners[i] + ',Property Damage\n';
+    });
+    return csv;
+}
+
+function generateJSON() {
+    const currentData = getIncidentData();
+    const collisionPartners = ['Passenger Car', 'Passenger Car', 'SUV', 'Passenger Car', 'Pickup Truck', 'Passenger Car', 'SUV', 'Passenger Car', 'Passenger Car', 'SUV'];
+    const dataset = {
+        metadata: {
+            title: 'Tesla Robotaxi Safety Incident Data',
+            source: 'NHTSA SGO 2021-01 / robotaxitracker.com',
+            license: 'MIT',
+            updated: new Date().toISOString().split('T')[0],
+            url: 'https://robotaxi-safety-tracker.com/',
+            methodology: 'https://robotaxi-safety-tracker.com/methodology.html',
+            miles_per_day_assumption: 115,
+            fleet_source: 'robotaxitracker.com (Austin total fleet)'
+        },
+        incidents: currentData.map((d, i) => ({
+            date: d.date,
+            incident_number: i + 1,
+            days_since_previous: d.days,
+            avg_fleet_size: d.fleet,
+            miles_between_incidents: d.miles,
+            mpi: d.mpi,
+            speed_mph: 0,
+            collision_partner: collisionPartners[i],
+            severity: 'Property Damage',
+            airbags_deployed: false,
+            narrative_available: false
+        })),
+        trend: {
+            model: 'exponential',
+            r_squared: trendParams.rSquared,
+            doubling_time_days: trendParams.doublingTime,
+            daily_growth_rate: trendParams.dailyGrowth,
+            forecast_30day_mpi: trendParams.forecast30Day
+        }
+    };
+    return JSON.stringify(dataset, null, 2);
+}
+
+function downloadFile(content, filename, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+const csvBtn = document.getElementById('download-csv');
+if (csvBtn) csvBtn.addEventListener('click', () => downloadFile(generateCSV(), 'tesla-robotaxi-incidents.csv', 'text/csv'));
+
+const jsonBtn = document.getElementById('download-json');
+if (jsonBtn) jsonBtn.addEventListener('click', () => downloadFile(generateJSON(), 'tesla-robotaxi-incidents.json', 'application/json'));
 
 // ===== Fetch Latest Data =====
 // Note: Trend parameters for the chart are computed in-browser from incidentData
