@@ -14,9 +14,40 @@ const incidentData = [
     { date: '2025-12-10', days: 28, fleet: 28, miles: 92500, mpi: 92500 },
 ];
 
+// Active fleet MPI data (using active fleet from fleet_growth_active.json)
+// Active fleet = vehicles actually on the road (subset of total fleet)
+const incidentDataActive = [
+    { date: '2025-07-05', days: 10, fleet: 14, miles: 17700, mpi: 17700 },
+    { date: '2025-07-18', days: 13, fleet: 14, miles: 22500, mpi: 22500 },
+    { date: '2025-08-02', days: 15, fleet: 14, miles: 25800, mpi: 25800 },
+    { date: '2025-08-20', days: 18, fleet: 14, miles: 31300, mpi: 31300 },
+    { date: '2025-09-05', days: 16, fleet: 15, miles: 29300, mpi: 29300 },
+    { date: '2025-09-22', days: 17, fleet: 13, miles: 27500, mpi: 27500 },
+    { date: '2025-10-08', days: 16, fleet: 14, miles: 28300, mpi: 28300 },
+    { date: '2025-10-25', days: 17, fleet: 18, miles: 37800, mpi: 37800 },
+    { date: '2025-11-12', days: 18, fleet: 21, miles: 45200, mpi: 45200 },
+    { date: '2025-12-10', days: 28, fleet: 25, miles: 82600, mpi: 82600 },
+];
+
+// Latest active fleet size (from fleet_growth_active.json)
+const latestActiveFleetSize = 56;
+
+// Fleet mode toggle state: 'total' or 'active'
+let fleetMode = 'total';
+
+// Get current incident data based on fleet mode
+function getIncidentData() {
+    return fleetMode === 'active' ? incidentDataActive : incidentData;
+}
+
+// Get current fleet size based on fleet mode
+function getCurrentFleetSize() {
+    return fleetMode === 'active' ? latestActiveFleetSize : fleetData[fleetData.length - 1].size;
+}
+
 // Total fleet size data (Austin unsupervised robotaxis)
 // Interpolated daily from fleet_data.json austin_vehicles field
-// Active fleet data is preserved in fleet_growth_active.json for future use
+// Used for fleet growth chart and total fleet MPI calculations
 const fleetData = [
     { date: '2025-06-25', size: 10 },
     { date: '2025-06-26', size: 10 },
@@ -286,13 +317,26 @@ function computeExponentialFit(data) {
 }
 
 const fit = computeExponentialFit(incidentData);
-const trendParams = {
+let trendParams = {
     exponential: { a: fit.a, b: fit.b },
     rSquared: fit.rSquared,
     doublingTime: fit.doublingTime,
     dailyGrowth: fit.dailyGrowth,
     forecast30Day: fit.forecast30Day
 };
+
+// Recompute trend params for the current fleet mode
+function recomputeTrendParams() {
+    const currentData = getIncidentData();
+    const currentFit = computeExponentialFit(currentData);
+    trendParams = {
+        exponential: { a: currentFit.a, b: currentFit.b },
+        rSquared: currentFit.rSquared,
+        doublingTime: currentFit.doublingTime,
+        dailyGrowth: currentFit.dailyGrowth,
+        forecast30Day: currentFit.forecast30Day
+    };
+}
 
 // Service stoppage dates — days when Tesla Robotaxi was not operating (0 miles accumulated)
 // January 2026 winter storm: ice storm, roads impassable, CapMetro suspended, city facilities closed
@@ -448,9 +492,10 @@ function initMPIChart() {
         mpiChartInstance.destroy();
     }
 
-    // Prepare base data from incidents
-    const startDate = new Date(incidentData[0].date);
-    const lastIncidentDate = new Date(incidentData[incidentData.length - 1].date);
+    // Prepare base data from incidents (uses current fleet mode)
+    const currentIncidentData = getIncidentData();
+    const startDate = new Date(currentIncidentData[0].date);
+    const lastIncidentDate = new Date(currentIncidentData[currentIncidentData.length - 1].date);
     const today = new Date();
 
     // Build data arrays as {x, y} objects for time scale
@@ -459,7 +504,7 @@ function initMPIChart() {
     const ongoingProgressData = [];
 
     // Add all incident data points
-    incidentData.forEach(d => {
+    currentIncidentData.forEach(d => {
         mpiData.push({ x: d.date, y: d.mpi });
         const currentDate = new Date(d.date);
         const daysSinceStart = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
@@ -492,13 +537,13 @@ function initMPIChart() {
         const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
         const stoppageDays = countStoppageDays(lastIncidentDate, today);
         const activeDays = daysSinceLastIncident - stoppageDays;
-        const currentFleetSize = fleetData[fleetData.length - 1].size;
+        const currentFleetSize = getCurrentFleetSize();
         const cumulativeMiles = activeDays * currentFleetSize * 115;
         ongoingProgressData.push({ x: todayStr, y: cumulativeMiles });
     }
 
     // Benchmark lines - two points each (start to end) for constant horizontal lines
-    const firstDate = incidentData[0].date;
+    const firstDate = currentIncidentData[0].date;
     const lastDate = today.toISOString().split('T')[0];
     const humanBenchmarkPoliceData = [
         { x: firstDate, y: 500000 },
@@ -740,8 +785,10 @@ function initFleetChart() {
 // ===== Populate Table =====
 function populateIncidentTable() {
     const tbody = document.getElementById('incident-table-body');
+    tbody.innerHTML = '';
+    const currentIncidentData = getIncidentData();
 
-    incidentData.forEach((incident, index) => {
+    currentIncidentData.forEach((incident, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${index + 1}</td>
@@ -756,20 +803,21 @@ function populateIncidentTable() {
 
 // ===== Update Metrics =====
 function updateMetrics() {
-    // Calculate metrics
-    const latestMPI = incidentData[incidentData.length - 1].mpi;
-    const previousMPI = incidentData[incidentData.length - 2].mpi;
-    const totalIncidents = incidentData.length;
+    // Calculate metrics (uses current fleet mode)
+    const currentIncidentData = getIncidentData();
+    const latestMPI = currentIncidentData[currentIncidentData.length - 1].mpi;
+    const previousMPI = currentIncidentData[currentIncidentData.length - 2].mpi;
+    const totalIncidents = currentIncidentData.length;
     const vsHuman = (500000 / latestMPI).toFixed(1);
 
     // Calculate miles since last incident (excluding stoppage days)
-    const lastIncident = incidentData[incidentData.length - 1];
+    const lastIncident = currentIncidentData[currentIncidentData.length - 1];
     const lastIncidentDate = new Date(lastIncident.date);
     const today = new Date();
     const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
     const stoppageDays = countStoppageDays(lastIncidentDate, today);
     const activeDays = daysSinceLastIncident - stoppageDays;
-    const currentFleetSize = fleetData[fleetData.length - 1].size;
+    const currentFleetSize = getCurrentFleetSize();
     const milesSinceLastIncident = activeDays * currentFleetSize * 115;
 
     // Calculate change percentage
@@ -809,13 +857,14 @@ document.querySelectorAll('a[href^="#"]:not(.share-icon):not(.btn-share-x):not(.
 
 // ===== Update Current Streak Comparison =====
 function updateCurrentStreakComparison() {
-    const lastIncident = incidentData[incidentData.length - 1];
+    const currentIncidentData = getIncidentData();
+    const lastIncident = currentIncidentData[currentIncidentData.length - 1];
     const lastIncidentDate = new Date(lastIncident.date);
     const today = new Date();
     const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
     const stoppageDays = countStoppageDays(lastIncidentDate, today);
     const activeDays = daysSinceLastIncident - stoppageDays;
-    const currentFleetSize = fleetData[fleetData.length - 1].size;
+    const currentFleetSize = getCurrentFleetSize();
     const milesSinceLastIncident = activeDays * currentFleetSize * 115;
 
     // Update the value display
@@ -834,13 +883,14 @@ function updateCurrentStreakComparison() {
 
 // ===== Update Hero Streak Card =====
 function updateHeroStreak() {
-    const lastIncident = incidentData[incidentData.length - 1];
+    const currentIncidentData = getIncidentData();
+    const lastIncident = currentIncidentData[currentIncidentData.length - 1];
     const lastIncidentDate = new Date(lastIncident.date);
     const today = new Date();
     const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
     const stoppageDays = countStoppageDays(lastIncidentDate, today);
     const activeDays = daysSinceLastIncident - stoppageDays;
-    const currentFleetSize = fleetData[fleetData.length - 1].size;
+    const currentFleetSize = getCurrentFleetSize();
     const milesSinceLastIncident = activeDays * currentFleetSize * 115;
 
     const targetMiles = 500000;
@@ -920,17 +970,18 @@ function animateComparisonBars() {
 
 // ===== Update FAQ Dynamic Values =====
 function updateFaqValues() {
-    const latestMPI = incidentData[incidentData.length - 1].mpi;
-    const previousMPI = incidentData[incidentData.length - 2].mpi;
-    const totalIncidents = incidentData.length;
+    const currentIncidentData = getIncidentData();
+    const latestMPI = currentIncidentData[currentIncidentData.length - 1].mpi;
+    const previousMPI = currentIncidentData[currentIncidentData.length - 2].mpi;
+    const totalIncidents = currentIncidentData.length;
     const changePercent = Math.round(((latestMPI - previousMPI) / previousMPI) * 100);
     const waymoRatio = Math.round(1000000 / latestMPI);
     const vsHumanRatio = (500000 / latestMPI).toFixed(1);
     const vsInsuranceRatio = (300000 / latestMPI).toFixed(1);
-    const currentFleetSize = fleetData[fleetData.length - 1].size;
+    const currentFleetSize = getCurrentFleetSize();
 
     // Calculate current streak
-    const lastIncident = incidentData[incidentData.length - 1];
+    const lastIncident = currentIncidentData[currentIncidentData.length - 1];
     const lastIncidentDate = new Date(lastIncident.date);
     const today = new Date();
     const daysSinceLastIncident = Math.floor((today - lastIncidentDate) / (1000 * 60 * 60 * 24));
@@ -988,7 +1039,7 @@ function updateFaqValues() {
     setValue('faq-vs-waymo-ratio', waymoRatio);
 
     // News debunking FAQ values (Q13-Q14)
-    const simpleAvgMPI = Math.round(incidentData.reduce((sum, d) => sum + d.mpi, 0) / totalIncidents);
+    const simpleAvgMPI = Math.round(currentIncidentData.reduce((sum, d) => sum + d.mpi, 0) / totalIncidents);
     const latestVsAvg = (latestMPI / simpleAvgMPI).toFixed(1);
     setValue('faq-news-total-incidents', totalIncidents);
     setValue('faq-simple-avg-mpi', simpleAvgMPI.toLocaleString());
@@ -1214,6 +1265,48 @@ function updateFaqValues() {
         'Live safety data: ' + latestMPIFormatted + ' MPI, ' + dt + '-day doubling time. Track Tesla Cybercab incidents vs human drivers.');
 }
 
+// ===== Fleet Mode Toggle =====
+function setFleetMode(mode) {
+    if (mode === fleetMode) return;
+    fleetMode = mode;
+
+    // Recompute trend params for new data
+    recomputeTrendParams();
+
+    // Update toggle button states
+    document.querySelectorAll('.fleet-toggle-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+    });
+
+    // Reinitialize chart and metrics with new data
+    initMPIChart();
+    populateIncidentTable();
+    updateMetrics();
+    updateHeroStreak();
+    updateCurrentStreakComparison();
+
+    // Update stat cards
+    const statDoublingEl = document.getElementById('stat-doubling-time');
+    if (statDoublingEl) statDoublingEl.textContent = trendParams.doublingTime + ' days';
+    const statDoublingDetailEl = document.getElementById('stat-doubling-detail');
+    if (statDoublingDetailEl) {
+        const months = (trendParams.doublingTime / 30).toFixed(1);
+        statDoublingDetailEl.textContent = 'Safety doubles every ~' + months + ' months';
+    }
+    const statRSquaredEl = document.getElementById('stat-r-squared');
+    if (statRSquaredEl) statRSquaredEl.textContent = 'R\u00B2 = ' + trendParams.rSquared.toFixed(3);
+    const statGrowthEl = document.getElementById('stat-daily-growth');
+    if (statGrowthEl) statGrowthEl.textContent = '+' + (trendParams.dailyGrowth * 100).toFixed(1) + '%';
+    const statForecastEl = document.getElementById('stat-forecast');
+    if (statForecastEl) statForecastEl.textContent = trendParams.forecast30Day.toLocaleString();
+    const statEquationEl = document.getElementById('stat-equation');
+    if (statEquationEl) {
+        const aVal = Math.round(trendParams.exponential.a).toLocaleString();
+        const bVal = trendParams.exponential.b.toFixed(4);
+        statEquationEl.innerHTML = 'MPI = ' + aVal + '·e<sup>' + bVal + 't</sup>';
+    }
+}
+
 // ===== Initialize =====
 document.addEventListener('DOMContentLoaded', () => {
     initMPIChart();
@@ -1224,6 +1317,11 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCurrentStreakComparison();
     updateFaqValues();
     animateComparisonBars();
+
+    // Set up fleet mode toggle buttons
+    document.querySelectorAll('.fleet-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', () => setFleetMode(btn.dataset.mode));
+    });
 
     // Update Best Fit Model card with equation and R² details
     const statEquationEl = document.getElementById('stat-equation');

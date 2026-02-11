@@ -14,7 +14,7 @@
     </script>
 
     <title>Tesla Robotaxi Safety Tracker | MPI Trends & Incident Data</title>
-    <meta name="description" content="Track Tesla robotaxi safety with real-time MPI data. 92,500 miles per incident, doubling every 79 days. Independent analysis of Austin fleet.">
+    <meta name="description" content="Live Tesla Robotaxi safety data: 66,585 miles per incident, 41-day doubling time, Austin fleet status. Independent tracking of Cybercab crash rates vs human drivers and Waymo.">
     <meta name="keywords" content="robotaxi safety, Tesla remove safety monitors, when will Tesla robotaxis be unsupervised, robotaxi safety monitor removal, Tesla robotaxi safety signals, conditions for unsupervised robotaxi, Tesla Robotaxi safety tracker, miles per incident Tesla, safety parity thresholds, Tesla vs Waymo safety, robotaxi scaling feasibility, autonomous vehicle safety 2026, Tesla safety drivers Bay Area, Tesla robotaxi crash rate, Tesla robotaxi accidents Austin, Tesla robotaxi 10x crash rate, Tesla robotaxi redacted data, Tesla robotaxi NHTSA incidents, Tesla Cybercab crash frequency, robotaxi crash statistics 2026">
     <meta name="author" content="Kangning Huang">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -30,7 +30,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://robotaxi-safety-tracker.com/">
     <meta property="og:title" content="Tesla Robotaxi Safety Tracker: When Will Safety Monitors Be Removed at Large Scale?">
-    <meta property="og:description" content="Some Austin robotaxis already run without safety monitors. This tracker estimates when Tesla will remove monitors fleet-wide, based on real-world safety signals.">
+    <meta property="og:description" content="Independent safety tracking: Tesla Cybercab achieving 66,585 miles between incidents in Austin. Safety doubling every 41 days. Compare to human drivers & Waymo.">
     <meta property="og:site_name" content="Robotaxi Safety Tracker">
     <meta property="og:image" content="https://robotaxi-safety-tracker.com/chart-preview.png">
     <meta property="og:image:width" content="1782">
@@ -40,7 +40,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://robotaxi-safety-tracker.com/">
     <meta name="twitter:title" content="Tesla Robotaxi Safety Tracker: When Will Safety Monitors Be Removed at Large Scale?">
-    <meta name="twitter:description" content="Some Austin robotaxis already run without safety monitors. This tracker estimates when Tesla will remove monitors fleet-wide, based on real-world safety signals.">
+    <meta name="twitter:description" content="Live safety data: 66,585 MPI, 41-day doubling time. Track Tesla Cybercab incidents vs human drivers.">
     <meta name="twitter:image" content="https://robotaxi-safety-tracker.com/chart-preview.png">
     <meta name="twitter:creator" content="@FytasoK60918">
 
@@ -329,17 +329,23 @@
                         <h2>Robotaxi Safety Trend Analysis</h2>
                         <p>Each data point shows miles driven between consecutive Tesla Robotaxi incidents, with an exponential trendline toward human driver crash rates</p>
                     </div>
-                    <div class="share-icons">
-                        <a href="#" id="share-x" class="share-icon" target="_blank" rel="noopener noreferrer" aria-label="Share on X" title="Post on X">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                            </svg>
-                        </a>
-                        <a href="#" id="share-reddit" class="share-icon" target="_blank" rel="noopener noreferrer" aria-label="Share on Reddit" title="Share on Reddit">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
-                            </svg>
-                        </a>
+                    <div class="section-header-controls">
+                        <div class="fleet-toggle" role="group" aria-label="Fleet metric toggle">
+                            <button class="fleet-toggle-btn active" data-mode="total" title="Use total fleet size (all registered vehicles)">Total Fleet</button>
+                            <button class="fleet-toggle-btn" data-mode="active" title="Use active fleet size (vehicles actually on road)">Active Fleet</button>
+                        </div>
+                        <div class="share-icons">
+                            <a href="#" id="share-x" class="share-icon" target="_blank" rel="noopener noreferrer" aria-label="Share on X" title="Post on X">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                                </svg>
+                            </a>
+                            <a href="#" id="share-reddit" class="share-icon" target="_blank" rel="noopener noreferrer" aria-label="Share on Reddit" title="Share on Reddit">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
+                                </svg>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

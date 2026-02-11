@@ -45,23 +45,26 @@ except ImportError:
 
 
 class FleetInterpolator:
-    """Interpolate fleet size for any given date based on total fleet snapshots.
+    """Interpolate fleet size for any given date based on fleet snapshots.
 
-    Uses total fleet counts (all vehicles in the Austin fleet), interpolated
-    linearly between known data points. Missing days are filled via linear
-    interpolation.
+    Uses fleet counts interpolated linearly between known data points.
+    Missing days are filled via linear interpolation.
     """
 
-    def __init__(self, snapshots: list[dict]):
+    def __init__(self, snapshots: list[dict], field: str = "austin_vehicles", label: str = "total"):
         """Initialize with fleet snapshots.
 
-        Uses austin_vehicles (total Austin fleet). Snapshots without
-        austin_vehicles data are skipped.
+        Args:
+            snapshots: List of snapshot dicts with 'date' and fleet count fields.
+            field: The field name to extract fleet count from (e.g. 'austin_vehicles'
+                   or 'austin_active_vehicles').
+            label: Human-readable label for logging (e.g. 'total' or 'active').
         """
         self.snapshots = []
+        self.label = label
         skipped_count = 0
         for s in snapshots:
-            total = s.get("austin_vehicles")
+            total = s.get(field)
             if total is not None:
                 dt = datetime.strptime(s["date"], "%Y-%m-%d")
                 self.snapshots.append((dt, total))
@@ -69,8 +72,8 @@ class FleetInterpolator:
                 skipped_count += 1
         self.snapshots.sort(key=lambda x: x[0])
 
-        print(f"  FleetInterpolator: {len(self.snapshots)} fleet data points "
-              f"({skipped_count} snapshots without Austin total skipped, interpolating between known dates)")
+        print(f"  FleetInterpolator ({label}): {len(self.snapshots)} fleet data points "
+              f"({skipped_count} snapshots without {field} skipped, interpolating between known dates)")
 
     def get_fleet_size(self, target_date: datetime) -> int:
         """Get interpolated fleet size for a specific date."""
@@ -322,8 +325,9 @@ def load_fleet_data(data_dir: Path) -> list[dict]:
     """Load fleet size snapshots from JSON, enriched with active fleet data.
 
     Loads fleet_data.json (total fleet snapshots). Active fleet data from
-    fleet_growth_active.json is also loaded and preserved for future use,
-    but MPI calculations use total fleet size (austin_vehicles).
+    fleet_growth_active.json is also loaded and merged. MPI calculations
+    are available for both total fleet (austin_vehicles) and active fleet
+    (austin_active_vehicles).
     """
     fleet_file = data_dir / "fleet_data.json"
 
@@ -681,7 +685,8 @@ def main():
 
     ads_df, adas_df = load_nhtsa_data(data_dir)
     fleet_snapshots = load_fleet_data(data_dir)
-    fleet_interpolator = FleetInterpolator(fleet_snapshots)
+    fleet_interpolator = FleetInterpolator(fleet_snapshots, field="austin_vehicles", label="total")
+    fleet_interpolator_active = FleetInterpolator(fleet_snapshots, field="austin_active_vehicles", label="active")
     excluded_dates, stoppages_list = load_service_stoppages(data_dir)
 
     # Filter for Tesla Robotaxi in Austin (ADS = Level 4 unsupervised)
@@ -713,7 +718,12 @@ def main():
     daily_miles = 115  # Moderate scenario (based on Tesla's 250K miles / 97 days / ~20 vehicles)
     results = calculate_mpi_between_incidents(all_tesla, fleet_interpolator, daily_miles, service_start, excluded_dates)
 
-    print_mpi_analysis(results, "Moderate", daily_miles)
+    print_mpi_analysis(results, "Moderate (Total Fleet)", daily_miles)
+
+    # Active fleet MPI calculation
+    results_active = calculate_mpi_between_incidents(all_tesla, fleet_interpolator_active, daily_miles, service_start, excluded_dates)
+    if results_active:
+        print_mpi_analysis(results_active, "Moderate (Active Fleet)", daily_miles)
 
     # Trend analysis
     if results:
@@ -723,6 +733,10 @@ def main():
         # Generate chart
         chart_path = data_dir / "mpi_trend_chart.png"
         plot_mpi_trend(results, analyzer, chart_path)
+
+    analyzer_active = None
+    if results_active:
+        analyzer_active = MPITrendAnalyzer(results_active)
 
     # Comparison
     print("\n" + "=" * 75)
@@ -793,6 +807,10 @@ def main():
         analyzer = MPITrendAnalyzer(results)
         trend_data = analyzer.get_best_fit()
 
+    trend_data_active = {}
+    if results_active and analyzer_active:
+        trend_data_active = analyzer_active.get_best_fit()
+
     # Build stoppage summary for output
     stoppage_summary = []
     for stoppage in stoppages_list:
@@ -803,6 +821,21 @@ def main():
 
     # Fleet source is total (all vehicles in the Austin fleet)
     fleet_source = "total"
+
+    # Active fleet summary
+    active_fleet_output = {}
+    if results_active:
+        active_fleet_output = {
+            "incidents": results_active,
+            "trend_analysis": trend_data_active,
+            "summary": {
+                "average_mpi": sum(r['mpi_since_previous'] for r in results_active) / len(results_active),
+                "latest_mpi": results_active[-1]['mpi_since_previous'],
+                "cumulative_mpi": results_active[-1]['cumulative_mpi'],
+                "total_miles": results_active[-1]['cumulative_miles'],
+                "total_excluded_days": len(excluded_dates)
+            }
+        }
 
     output = {
         "analysis_date": datetime.now().isoformat(),
@@ -821,7 +854,8 @@ def main():
             "cumulative_mpi": results[-1]['cumulative_mpi'] if results else 0,
             "total_miles": results[-1]['cumulative_miles'] if results else 0,
             "total_excluded_days": len(excluded_dates)
-        }
+        },
+        "active_fleet": active_fleet_output
     }
 
     with open(output_file, 'w') as f:

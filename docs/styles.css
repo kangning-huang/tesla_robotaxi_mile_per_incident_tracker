@@ -425,6 +425,48 @@ a:hover {
     flex-shrink: 0;
 }
 
+/* ===== Fleet Toggle ===== */
+.section-header-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.fleet-toggle {
+    display: flex;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.fleet-toggle-btn {
+    padding: 6px 14px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.fleet-toggle-btn:not(:last-child) {
+    border-right: 1px solid var(--border-color);
+}
+
+.fleet-toggle-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+}
+
+.fleet-toggle-btn.active {
+    background: var(--accent-primary);
+    color: #fff;
+}
+
 /* ===== Metrics Cards ===== */
 .metrics {
     padding: 40px 0;
@@ -1386,6 +1428,19 @@ a:hover {
 
     .hero-streak-value {
         font-size: 44px;
+    }
+
+    .section-header-row {
+        flex-wrap: wrap;
+    }
+
+    .section-header-controls {
+        flex-wrap: wrap;
+    }
+
+    .fleet-toggle-btn {
+        padding: 5px 10px;
+        font-size: 0.75rem;
     }
 
     .chart-legend {
