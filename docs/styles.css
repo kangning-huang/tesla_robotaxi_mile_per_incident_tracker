@@ -2900,3 +2900,622 @@ a:hover {
         padding: 8px 12px;
     }
 }
+
+/* ==========================================================================
+   CHART SCALE TOGGLE (Task 5)
+   ========================================================================== */
+
+.chart-scale-toggle {
+    display: flex;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.scale-toggle-btn {
+    padding: 6px 14px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.scale-toggle-btn:not(:last-child) {
+    border-right: 1px solid var(--border-color);
+}
+
+.scale-toggle-btn:hover {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+}
+
+.scale-toggle-btn.active {
+    background: var(--accent-primary);
+    color: #fff;
+}
+
+/* ==========================================================================
+   CHART READING EXPLAINER (Task 5)
+   ========================================================================== */
+
+.chart-explainer-section {
+    padding: 60px 0;
+    background: var(--bg-primary);
+}
+
+.explainer-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 700px) {
+    .explainer-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.explainer-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    transition: all 0.2s ease;
+}
+
+.explainer-card:hover {
+    border-color: var(--border-light);
+}
+
+.explainer-icon {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-primary-bg);
+    border-radius: var(--radius-sm);
+    color: var(--accent-primary);
+    margin-bottom: 16px;
+}
+
+.explainer-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.explainer-card p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+/* ==========================================================================
+   INCIDENT COMPOSITION BREAKDOWN (Task 7)
+   ========================================================================== */
+
+.incident-composition-section {
+    padding: 60px 0;
+    background: var(--bg-secondary);
+}
+
+.composition-table td {
+    font-size: 13px;
+}
+
+.speed-low {
+    color: var(--accent-success) !important;
+    font-weight: 600;
+}
+
+.severity-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--font-sans);
+}
+
+.severity-badge.minor {
+    background: var(--accent-success-bg);
+    color: var(--accent-success);
+}
+
+.severity-badge.injury {
+    background: rgba(245, 158, 11, 0.15);
+    color: var(--accent-warning);
+}
+
+.fault-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--font-sans);
+}
+
+.fault-badge.unknown {
+    background: var(--accent-muted-bg);
+    color: var(--text-muted);
+}
+
+.fault-badge.not-at-fault {
+    background: var(--accent-success-bg);
+    color: var(--accent-success);
+}
+
+.composition-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+}
+
+@media (max-width: 700px) {
+    .composition-summary {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.composition-stat {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    text-align: center;
+}
+
+.composition-stat-value {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.composition-stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   FLEET SIZE CALCULATOR (Task 10)
+   ========================================================================== */
+
+.calculator-section {
+    padding: 60px 0;
+    background: var(--bg-secondary);
+}
+
+.calculator-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+}
+
+.calculator-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 700px) {
+    .calculator-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.calc-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.calc-input-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.calc-input-group input[type="range"] {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--bg-secondary);
+    border-radius: 3px;
+    outline: none;
+    cursor: pointer;
+}
+
+.calc-input-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--bg-card);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.calc-input-group input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: var(--accent-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid var(--bg-card);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.calc-range-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.calc-current-value {
+    font-weight: 600;
+    font-family: var(--font-mono);
+    color: var(--accent-primary);
+    font-size: 12px;
+}
+
+.calc-results {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    padding: 20px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+@media (max-width: 700px) {
+    .calc-results {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.calc-result-item {
+    text-align: center;
+}
+
+.calc-result-item.highlight {
+    grid-column: span 1;
+}
+
+.calc-result-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.calc-result-value {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+}
+
+.calc-result-item.highlight .calc-result-value {
+    color: var(--accent-success);
+}
+
+.calc-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: var(--scope-note-bg);
+    border: 1px solid var(--scope-note-border);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.calc-note svg {
+    flex-shrink: 0;
+    color: var(--accent-primary);
+    margin-top: 2px;
+}
+
+/* ==========================================================================
+   DOWNLOADABLE DATASET (Task 16)
+   ========================================================================== */
+
+.dataset-section {
+    padding: 60px 0;
+    background: var(--bg-primary);
+}
+
+.dataset-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+}
+
+.dataset-formats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.dataset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: var(--accent-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dataset-btn:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.dataset-fields h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.dataset-field-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 700px) {
+    .dataset-field-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+.dataset-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.dataset-field code {
+    padding: 2px 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--accent-primary);
+    white-space: nowrap;
+}
+
+.dataset-source {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 12px;
+}
+
+/* ==========================================================================
+   METHODOLOGY HUB PAGE STYLES (Task 13)
+   ========================================================================== */
+
+.methodology-toc {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 48px;
+}
+
+.toc-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+    line-height: 1.3;
+}
+
+.toc-link:hover {
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
+    transform: translateX(4px);
+}
+
+.toc-number {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent-primary);
+    width: 24px;
+    flex-shrink: 0;
+}
+
+.methodology-hub-section {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.methodology-hub-section:last-child {
+    border-bottom: none;
+}
+
+.methodology-hub-section h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.methodology-hub-section p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 16px;
+}
+
+.methodology-hub-section ul,
+.methodology-hub-section ol {
+    color: var(--text-secondary);
+    margin: 12px 0 16px 24px;
+    line-height: 1.7;
+}
+
+.methodology-hub-section li {
+    margin-bottom: 8px;
+}
+
+.methodology-hub-section code {
+    padding: 2px 6px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--accent-primary);
+}
+
+.limitation-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.limitation-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+}
+
+.limitation-card h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+}
+
+.limitation-card p {
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+/* ==========================================================================
+   KEYWORD PAGE STYLES (Task 15)
+   ========================================================================== */
+
+.keyword-hero {
+    text-align: center;
+    padding: 100px 24px 48px;
+    background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+}
+
+.keyword-hero h1 {
+    font-size: clamp(24px, 4vw, 36px);
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.keyword-hero p {
+    color: var(--text-secondary);
+    font-size: 16px;
+    max-width: 640px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.keyword-content {
+    padding: 48px 0;
+}
+
+.keyword-content h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.keyword-content p {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 16px;
+}
+
+.keyword-content ul,
+.keyword-content ol {
+    color: var(--text-secondary);
+    margin: 12px 0 16px 24px;
+    line-height: 1.7;
+}
+
+.keyword-content li {
+    margin-bottom: 8px;
+}
+
+.keyword-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--accent-primary);
+    color: #ffffff;
+    border-radius: var(--radius-md);
+    font-size: 15px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    margin-top: 8px;
+}
+
+.keyword-cta:hover {
+    background: #2563eb;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}

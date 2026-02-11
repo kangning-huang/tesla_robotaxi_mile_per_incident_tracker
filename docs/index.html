@@ -242,6 +242,51 @@
     }
     </script>
 
+    <!-- Dataset Schema / JSON-LD (Task 16) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Dataset",
+        "name": "Tesla Robotaxi Safety Incident Data - Miles Per Incident",
+        "description": "Open dataset tracking Tesla Cybercab autonomous vehicle incidents reported under NHTSA Standing General Order 2021-01. Includes incident dates, fleet size estimates, miles between incidents, pre-crash speeds, collision partner types, and severity classifications for the Austin, TX unsupervised robotaxi fleet.",
+        "url": "https://robotaxi-safety-tracker.com/",
+        "license": "https://opensource.org/licenses/MIT",
+        "isAccessibleForFree": true,
+        "creator": {
+            "@type": "Person",
+            "name": "Kangning Huang",
+            "url": "https://open.substack.com/pub/kangninghuang"
+        },
+        "distribution": [
+            {
+                "@type": "DataDownload",
+                "encodingFormat": "text/csv",
+                "contentUrl": "https://robotaxi-safety-tracker.com/tesla-robotaxi-incidents.csv"
+            },
+            {
+                "@type": "DataDownload",
+                "encodingFormat": "application/json",
+                "contentUrl": "https://robotaxi-safety-tracker.com/tesla-robotaxi-incidents.json"
+            }
+        ],
+        "temporalCoverage": "2025-06-25/..",
+        "spatialCoverage": {
+            "@type": "Place",
+            "name": "Austin, Texas, USA"
+        },
+        "variableMeasured": [
+            {"@type": "PropertyValue", "name": "Incident Date", "description": "Date of NHTSA-reported incident"},
+            {"@type": "PropertyValue", "name": "Miles Per Incident", "unitText": "miles", "description": "Fleet miles driven between consecutive incidents"},
+            {"@type": "PropertyValue", "name": "Fleet Size", "unitText": "vehicles", "description": "Average fleet size during interval"},
+            {"@type": "PropertyValue", "name": "Pre-Crash Speed", "unitText": "mph", "description": "Subject vehicle speed before impact"},
+            {"@type": "PropertyValue", "name": "Collision Partner Type", "description": "Type of other vehicle or object involved"},
+            {"@type": "PropertyValue", "name": "Severity", "description": "Highest alleged injury severity"}
+        ],
+        "dateModified": "2026-02-11",
+        "keywords": ["Tesla robotaxi", "autonomous vehicle safety", "NHTSA SGO 2021-01", "miles per incident", "Cybercab", "Austin robotaxi", "crash data", "AV incidents"]
+    }
+    </script>
+
     <!-- FAQ Schema / JSON-LD (dynamically updated by app.js) -->
     <script id="faq-schema" type="application/ld+json">
     {
@@ -271,7 +316,7 @@
                 <nav class="nav">
                     <a href="#trend" class="nav-link">Trend</a>
                     <a href="/expansion.html" class="nav-link">Cities</a>
-                    <a href="#methodology" class="nav-link">Methods</a>
+                    <a href="/methodology.html" class="nav-link">Methods</a>
                     <a href="/faq.html" class="nav-link">FAQ</a>
                     <a href="#creator" class="nav-link">Creator</a>
                     <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" class="nav-link github" target="_blank" rel="noopener noreferrer">
@@ -381,6 +426,11 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Chart Scale Toggle -->
+                    <div class="chart-scale-toggle">
+                        <button class="scale-toggle-btn active" data-scale="log" title="Logarithmic scale (default)">Log Scale</button>
+                        <button class="scale-toggle-btn" data-scale="linear" title="Linear scale">Linear Scale</button>
+                    </div>
                 </div>
                 <!-- Key Metrics Cards (side panel on desktop, below on mobile) -->
                 <div id="metrics" class="metrics-side">
@@ -472,6 +522,56 @@
                         <div class="stat-value" id="stat-forecast">137,400</div>
                         <div class="stat-detail">Projected miles/incident</div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Chart Reading Explainer (Task 5) -->
+    <section class="chart-explainer-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>How to Read This Chart</h2>
+                <p>Understanding the safety trend visualization and what the numbers mean</p>
+            </div>
+            <div class="explainer-grid">
+                <div class="explainer-card">
+                    <div class="explainer-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v18h18"/>
+                            <path d="M7 16l4-8 4 4 4-12"/>
+                        </svg>
+                    </div>
+                    <h3>Why Log Scale?</h3>
+                    <p>The Y-axis uses a <strong>logarithmic scale</strong> by default. This is standard for data spanning orders of magnitude (10K to 1M miles). On a log scale, equal vertical distances represent equal <em>multiplicative</em> changes (e.g., 10K&rarr;100K is the same distance as 100K&rarr;1M).</p>
+                </div>
+                <div class="explainer-card">
+                    <div class="explainer-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    </div>
+                    <h3>Straight Line on Log = Exponential Growth</h3>
+                    <p>A straight, upward-sloping line on a log chart means <strong>exponential improvement</strong>. Safety is doubling at a consistent rate. If the line curves upward, improvement is <em>accelerating</em>. If it flattens, growth is slowing.</p>
+                </div>
+                <div class="explainer-card">
+                    <div class="explainer-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/>
+                        </svg>
+                    </div>
+                    <h3>What's Being Fit</h3>
+                    <p>The blue trend line fits an <strong>exponential curve</strong> (MPI = a&middot;e<sup>bt</sup>) to the raw MPI data points (red dots) over time. Each red dot is the actual miles driven between two consecutive incidents. The fit is applied to MPI vs. time&mdash;not to cumulative data.</p>
+                </div>
+                <div class="explainer-card">
+                    <div class="explainer-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3>Linear vs. Log: No Tricks</h3>
+                    <p>Use the <strong>Log Scale / Linear Scale</strong> toggle above the chart to switch views. Linear shows absolute distances between values. Log reveals the growth <em>rate</em>. Both tell the same story&mdash;different emphasis. We default to log because the data naturally spans a wide range.</p>
                 </div>
             </div>
         </div>
@@ -596,6 +696,160 @@
                         <!-- Populated by JS -->
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Incident Composition Breakdown (Task 7) -->
+    <section class="incident-composition-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Incident Composition Breakdown</h2>
+                <p>Detailed characteristics of each Tesla Robotaxi incident reported to NHTSA &mdash; speed, collision type, severity, and fault context</p>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table composition-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Date</th>
+                            <th>Speed (mph)</th>
+                            <th>SV Movement</th>
+                            <th>Collision Partner</th>
+                            <th>Severity</th>
+                            <th>Airbags</th>
+                            <th>Fault Context</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>2025-07-05</td>
+                            <td class="speed-low">0</td>
+                            <td>Stopped</td>
+                            <td>Passenger Car</td>
+                            <td><span class="severity-badge minor">Property Damage</span></td>
+                            <td>No</td>
+                            <td><span class="fault-badge unknown">Redacted</span></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>2025-07-18</td>
+                            <td class="speed-low">0</td>
+                            <td>Stopped</td>
+                            <td>Passenger Car</td>
+                            <td><span class="severity-badge minor">Property Damage</span></td>
+                            <td>No</td>
+                            <td><span class="fault-badge unknown">Redacted</span></td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>2025-08-02</td>
+                            <td class="speed-low">0</td>
+                            <td>Stopped</td>
+                            <td>SUV</td>
+                            <td><span class="severity-badge minor">Property Damage</span></td>
+                            <td>No</td>
+                            <td><span class="fault-badge unknown">Redacted</span></td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>2025-08-20</td>
+                            <td class="speed-low">0</td>
+                            <td>Stopped</td>
+                            <td>Passenger Car</td>
+                            <td><span class="severity-badge minor">Property Damage</span></td>
+                            <td>No</td>
+                            <td><span class="fault-badge unknown">Redacted</span></td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>2025-09-05</td>
+                            <td class="speed-low">0</td>
+                            <td>Stopped</td>
+                            <td>Pickup Truck</td>
+                            <td><span class="severity-badge minor">Property Damage</span></td>
+                            <td>No</td>
+                            <td><span class="fault-badge unknown">Redacted</span></td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>2025-09-22</td>
+                            <td class="speed-low">0</td>
+                            <td>Proceeding Straight</td>
+                            <td>Passenger Car</td>
+                            <td><span class="severity-badge minor">Property Damage</span></td>
+                            <td>No</td>
+                            <td><span class="fault-badge unknown">Redacted</span></td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>2025-10-08</td>
+                            <td class="speed-low">0</td>
+                            <td>Stopped</td>
+                            <td>SUV</td>
+                            <td><span class="severity-badge minor">Property Damage</span></td>
+                            <td>No</td>
+                            <td><span class="fault-badge unknown">Redacted</span></td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>2025-10-25</td>
+                            <td class="speed-low">0</td>
+                            <td>Stopped</td>
+                            <td>Passenger Car</td>
+                            <td><span class="severity-badge minor">Property Damage</span></td>
+                            <td>No</td>
+                            <td><span class="fault-badge unknown">Redacted</span></td>
+                        </tr>
+                        <tr>
+                            <td>9</td>
+                            <td>2025-11-12</td>
+                            <td class="speed-low">0</td>
+                            <td>Stopped</td>
+                            <td>Passenger Car</td>
+                            <td><span class="severity-badge minor">Property Damage</span></td>
+                            <td>No</td>
+                            <td><span class="fault-badge unknown">Redacted</span></td>
+                        </tr>
+                        <tr>
+                            <td>10</td>
+                            <td>2025-12-10</td>
+                            <td class="speed-low">0</td>
+                            <td>Stopped</td>
+                            <td>SUV</td>
+                            <td><span class="severity-badge minor">Property Damage</span></td>
+                            <td>No</td>
+                            <td><span class="fault-badge unknown">Redacted</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="composition-summary">
+                <div class="composition-stat">
+                    <span class="composition-stat-value">100%</span>
+                    <span class="composition-stat-label">Property damage only (no injuries)</span>
+                </div>
+                <div class="composition-stat">
+                    <span class="composition-stat-value">90%</span>
+                    <span class="composition-stat-label">Tesla vehicle stationary or near-zero speed</span>
+                </div>
+                <div class="composition-stat">
+                    <span class="composition-stat-value">0%</span>
+                    <span class="composition-stat-label">Airbag deployments</span>
+                </div>
+                <div class="composition-stat">
+                    <span class="composition-stat-value">100%</span>
+                    <span class="composition-stat-label">Narratives redacted by Tesla</span>
+                </div>
+            </div>
+            <div class="scope-note" style="margin-top: 16px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 16v-4"/>
+                    <path d="M12 8h.01"/>
+                </svg>
+                <span>Tesla redacts the narrative field in all SGO reports, preventing determination of fault. Speed, collision partner, and severity are taken from structured NHTSA SGO fields. All 10 incidents report 0 mph pre-crash speed for the subject vehicle, suggesting the Tesla was stationary or nearly stationary at impact.</span>
             </div>
         </div>
     </section>
@@ -768,6 +1022,82 @@
         </div>
     </section>
 
+    <!-- Fleet Size Math Calculator (Task 10) -->
+    <section class="calculator-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Fleet Size Math: Check the Numbers Yourself</h2>
+                <p>The biggest uncertainty in MPI calculations is fleet size and utilization. Adjust the assumptions below to see how they affect implied fleet size and daily miles.</p>
+            </div>
+            <div class="calculator-card">
+                <div class="calculator-grid">
+                    <div class="calc-input-group">
+                        <label for="calc-miles-per-day">Miles per vehicle per day</label>
+                        <input type="range" id="calc-miles-per-day" min="50" max="250" value="115" step="5">
+                        <div class="calc-range-labels">
+                            <span>50</span>
+                            <span class="calc-current-value" id="calc-miles-display">115 mi/day</span>
+                            <span>250</span>
+                        </div>
+                    </div>
+                    <div class="calc-input-group">
+                        <label for="calc-active-hours">Active hours per day</label>
+                        <input type="range" id="calc-active-hours" min="4" max="24" value="16" step="1">
+                        <div class="calc-range-labels">
+                            <span>4h</span>
+                            <span class="calc-current-value" id="calc-hours-display">16 hrs</span>
+                            <span>24h</span>
+                        </div>
+                    </div>
+                    <div class="calc-input-group">
+                        <label for="calc-utilization">Utilization rate (% of active time with passenger)</label>
+                        <input type="range" id="calc-utilization" min="10" max="90" value="50" step="5">
+                        <div class="calc-range-labels">
+                            <span>10%</span>
+                            <span class="calc-current-value" id="calc-util-display">50%</span>
+                            <span>90%</span>
+                        </div>
+                    </div>
+                    <div class="calc-input-group">
+                        <label for="calc-fleet-size">Fleet size (Austin)</label>
+                        <input type="range" id="calc-fleet-size" min="10" max="200" value="80" step="1">
+                        <div class="calc-range-labels">
+                            <span>10</span>
+                            <span class="calc-current-value" id="calc-fleet-display">80 vehicles</span>
+                            <span>200</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="calc-results">
+                    <div class="calc-result-item">
+                        <span class="calc-result-label">Daily Fleet Miles</span>
+                        <span class="calc-result-value" id="calc-daily-miles">9,200</span>
+                    </div>
+                    <div class="calc-result-item">
+                        <span class="calc-result-label">Monthly Fleet Miles</span>
+                        <span class="calc-result-value" id="calc-monthly-miles">276,000</span>
+                    </div>
+                    <div class="calc-result-item">
+                        <span class="calc-result-label">Implied Avg Speed</span>
+                        <span class="calc-result-value" id="calc-avg-speed">7.2 mph</span>
+                    </div>
+                    <div class="calc-result-item highlight">
+                        <span class="calc-result-label">Current Streak at These Assumptions</span>
+                        <span class="calc-result-value" id="calc-streak-miles">--</span>
+                    </div>
+                </div>
+                <div class="calc-note">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4"/>
+                        <path d="M12 8h.01"/>
+                    </svg>
+                    <span><strong>Why this matters:</strong> Tesla does not publicly disclose exact daily miles per vehicle. Our default of 115 mi/day is derived from Tesla's Q3 2025 report (~250K total miles). Fleet size comes from robotaxitracker.com. Changing these assumptions shifts all MPI values proportionally&mdash;the <em>trend direction</em> stays the same, but absolute values change. This is the primary source of uncertainty.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Methodology Section -->
     <section id="methodology" class="methodology">
         <div class="container">
@@ -869,6 +1199,51 @@
                         <span class="rebuttal-label">What the Data Shows</span>
                         <p><a href="https://waymo.com/blog/2023/09/waymos-autonomous-vehicles-are-significantly-safer-than-human-driven-ones/" target="_blank" rel="noopener noreferrer">Waymo</a> does report higher MPI (~1M+ miles per incident), but Tesla's safety is doubling every ~<span id="myth-doubling">79</span> days. Waymo has been operating since 2009; Tesla's unsupervised robotaxi launched in June 2025. Tesla's rapid improvement trajectory could close the gap if the exponential trend (R² = <span id="myth-r-squared">0.955</span>) continues. Both companies are making roads safer.</p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Downloadable Dataset Section (Task 16) -->
+    <section class="dataset-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Download the Dataset</h2>
+                <p>Open data for researchers, journalists, and developers. Use it in your own analysis, cite it in articles, or feed it to LLMs.</p>
+            </div>
+            <div class="dataset-card">
+                <div class="dataset-formats">
+                    <button class="dataset-btn" id="download-csv">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download CSV
+                    </button>
+                    <button class="dataset-btn" id="download-json">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download JSON
+                    </button>
+                </div>
+                <div class="dataset-fields">
+                    <h4>Dataset Fields</h4>
+                    <div class="dataset-field-list">
+                        <div class="dataset-field"><code>date</code> <span>Incident date (YYYY-MM-DD)</span></div>
+                        <div class="dataset-field"><code>incident_number</code> <span>Sequential incident index</span></div>
+                        <div class="dataset-field"><code>days_since_previous</code> <span>Days between consecutive incidents</span></div>
+                        <div class="dataset-field"><code>avg_fleet_size</code> <span>Average fleet during interval</span></div>
+                        <div class="dataset-field"><code>miles_between_incidents</code> <span>Estimated fleet miles in interval</span></div>
+                        <div class="dataset-field"><code>mpi</code> <span>Miles per incident for this interval</span></div>
+                        <div class="dataset-field"><code>speed_mph</code> <span>Pre-crash speed of Tesla vehicle</span></div>
+                        <div class="dataset-field"><code>collision_partner</code> <span>Type of other vehicle involved</span></div>
+                        <div class="dataset-field"><code>severity</code> <span>Highest injury severity alleged</span></div>
+                    </div>
+                    <p class="dataset-source">Sources: <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA SGO 2021-01</a>, <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a>, Tesla Q3 2025 report. Licensed under MIT.</p>
                 </div>
             </div>
         </div>
@@ -1284,6 +1659,62 @@
                     </div>
                 </div>
 
+                <!-- Q: Is Tesla robotaxi safer than humans? (Task 12) -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Is Tesla robotaxi safer than human drivers?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p><strong>Not yet, on a simple average basis.</strong> Tesla Robotaxi's latest interval between incidents is <span id="faq-safe-mpi">--</span> miles, compared to human drivers' 500,000 miles between police-reported crashes. However, safety is doubling every ~<span id="faq-safe-doubling">--</span> days, meaning Tesla is on an exponential trajectory toward parity.</p>
+                            <p>The comparison is also complicated by reporting differences: NHTSA SGO 2021-01 captures <em>all</em> incidents (including minor ones), while human crash statistics only count police-reported events. Using the insurance-adjusted benchmark (300,000 miles), the gap is narrower.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q: What is miles per incident? (Task 12) -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>What is "miles per incident" and why does it matter?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p><strong>Miles per incident (MPI)</strong> measures the average distance an autonomous vehicle drives between reportable incidents. It is the primary safety metric for comparing AV performance against human drivers and other AV operators like Waymo.</p>
+                            <p>Higher MPI = safer vehicle. A human driver averages ~500,000 miles between police-reported crashes (~300,000 between insurance claims). Waymo reports 1,000,000+ MPI. MPI matters because it normalizes safety across fleets of different sizes and operating hours.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q: Does NHTSA SGO include minor crashes? (Task 12) -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>Does NHTSA SGO 2021-01 include minor crashes?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p><strong>Yes.</strong> <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA Standing General Order 2021-01</a> requires AV operators to report <em>any</em> crash where the automated driving system was engaged within 30 seconds of the incident&mdash;regardless of severity. This includes minor fender-benders, parking lot scrapes, and incidents where the AV was stationary and struck by another vehicle.</p>
+                            <p>By contrast, human crash statistics (500,000 MPI) only count police-reported crashes, which miss an estimated 60% of property-damage-only incidents. This reporting asymmetry makes direct AV-to-human comparisons inherently skewed against AVs.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q: How does reporting lag affect the streak? (Task 12) -->
+                <div class="faq-item">
+                    <button class="faq-question" aria-expanded="false">
+                        <h3>How does reporting lag affect the current streak?</h3>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <div>
+                            <p>NHTSA SGO 2021-01 requires initial crash reports within 1 day and updated reports within 10 days. However, Tesla has been cited for <strong>delayed reporting</strong>. This means the "current streak" number may be artificially high if an incident occurred recently but hasn't yet appeared in the public NHTSA database.</p>
+                            <p>We treat streak data as <strong>provisional</strong> until the reporting window catches up (typically 2-4 weeks). Historical MPI intervals for completed periods are more reliable than the ongoing streak figure.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Q16 - Why comparisons to human crash rates are tricky -->
                 <div class="faq-item">
                     <button class="faq-question" aria-expanded="false">
@@ -1311,6 +1742,8 @@
                     <p class="disclaimer">This is an independent robotaxi safety analysis tool. Not affiliated with Tesla, Inc.</p>
                 </div>
                 <div class="footer-links">
+                    <a href="/methodology.html">Methodology</a>
+                    <span class="divider">|</span>
                     <a href="/about.html">About</a>
                     <span class="divider">|</span>
                     <a href="/contact.html">Contact</a>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FC4RG249V0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-FC4RG249V0');
+    </script>
+
+    <title>Methodology & Limitations | Robotaxi Safety Tracker</title>
+    <meta name="description" content="Complete reference for how Tesla robotaxi safety data is collected, MPI is calculated, trend models are fit, and known limitations of this analysis. Includes data sources, log-scale rationale, human-driver benchmarks, and reporting-lag caveats.">
+    <meta name="keywords" content="Tesla robotaxi methodology, miles per incident calculation, NHTSA SGO data, robotaxi safety analysis, log scale safety data, human driver benchmark, robotaxi reporting lag, Austin robotaxi data, robotaxi limitations, autonomous vehicle safety methodology">
+    <meta name="author" content="Kangning Huang">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="google-site-verification" content="abZJn0glSeK0F1M5tJWNACVXJlmNoQoKrvEIEybbd8o" />
+    <link rel="canonical" href="https://robotaxi-safety-tracker.com/methodology.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/logo.svg">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://robotaxi-safety-tracker.com/methodology.html">
+    <meta property="og:title" content="Methodology & Limitations | Robotaxi Safety Tracker">
+    <meta property="og:description" content="Complete reference for how Tesla robotaxi safety data is collected, MPI is calculated, and the known limitations of this independent analysis.">
+    <meta property="og:site_name" content="Robotaxi Safety Tracker">
+    <meta property="og:image" content="https://robotaxi-safety-tracker.com/chart-preview.png">
+    <meta property="og:image:width" content="1782">
+    <meta property="og:image:height" content="1481">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://robotaxi-safety-tracker.com/methodology.html">
+    <meta name="twitter:title" content="Methodology & Limitations | Robotaxi Safety Tracker">
+    <meta name="twitter:description" content="Complete reference for how Tesla robotaxi safety data is collected, MPI is calculated, and the known limitations of this independent analysis.">
+    <meta name="twitter:image" content="https://robotaxi-safety-tracker.com/chart-preview.png">
+    <meta name="twitter:creator" content="@FytasoK60918">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "https://robotaxi-safety-tracker.com/#website",
+                "url": "https://robotaxi-safety-tracker.com/",
+                "name": "Robotaxi Safety Tracker",
+                "description": "Data-driven tracker for Tesla robotaxi safety metrics including miles per incident, fleet growth, and comparison to human drivers.",
+                "publisher": {
+                    "@id": "https://robotaxi-safety-tracker.com/#person"
+                }
+            },
+            {
+                "@type": "WebPage",
+                "@id": "https://robotaxi-safety-tracker.com/methodology.html#webpage",
+                "url": "https://robotaxi-safety-tracker.com/methodology.html",
+                "name": "Methodology & Limitations | Robotaxi Safety Tracker",
+                "description": "Complete reference for how Tesla robotaxi safety data is collected, MPI is calculated, trend models are fit, and known limitations of this analysis.",
+                "isPartOf": {
+                    "@id": "https://robotaxi-safety-tracker.com/#website"
+                },
+                "breadcrumb": {
+                    "@id": "https://robotaxi-safety-tracker.com/methodology.html#breadcrumb"
+                }
+            },
+            {
+                "@type": "Person",
+                "@id": "https://robotaxi-safety-tracker.com/#person",
+                "name": "Kangning Huang",
+                "url": "https://open.substack.com/pub/kangninghuang",
+                "sameAs": [
+                    "https://x.com/FytasoK60918",
+                    "https://open.substack.com/pub/kangninghuang",
+                    "https://github.com/kangning-huang"
+                ]
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": "https://robotaxi-safety-tracker.com/methodology.html#breadcrumb",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://robotaxi-safety-tracker.com/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Methodology & Limitations",
+                        "item": "https://robotaxi-safety-tracker.com/methodology.html"
+                    }
+                ]
+            }
+        ]
+    }
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="/" style="display: flex; align-items: center; gap: 0.75rem; text-decoration: none; color: inherit;">
+                        <span class="logo-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 18v-3l2-1.5L8.5 9h7L19 13.5l2 1.5v3"/>
+                                <circle cx="7.5" cy="18" r="2"/>
+                                <circle cx="16.5" cy="18" r="2"/>
+                                <path d="M10 6a3 2.5 0 0 1 4 0" stroke-linecap="round"/>
+                                <path d="M8 4a5.5 4 0 0 1 8 0" stroke-linecap="round" opacity="0.6"/>
+                            </svg>
+                        </span>
+                        <span class="logo-text">Tesla Robotaxi <span class="highlight">Safety</span> Tracker</span>
+                    </a>
+                </div>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Trend</a>
+                    <a href="/expansion.html" class="nav-link">Cities</a>
+                    <a href="/methodology.html" class="nav-link active">Methods</a>
+                    <a href="/faq.html" class="nav-link">FAQ</a>
+                    <a href="/#creator" class="nav-link">Creator</a>
+                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" class="nav-link github" target="_blank" rel="noopener noreferrer">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="faq-hero">
+        <div class="container">
+            <div class="faq-hero-content">
+                <p class="hero-label">Reference Document</p>
+                <h1 class="hero-title">Methodology & Limitations</h1>
+                <p class="hero-subtitle">The complete reference for how data is collected, miles per incident is calculated, trend models are fit, and where the known gaps and caveats lie. Designed to be linked and quoted.</p>
+                <p class="hero-meta" style="margin-top: 1rem; font-size: 0.875rem; opacity: 0.8;">By <a href="https://x.com/FytasoK60918" target="_blank" rel="noopener noreferrer" style="color: inherit;">Kangning Huang</a> · Last updated: February 11, 2026</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Table of Contents -->
+    <section class="faq-toc">
+        <div class="container">
+            <div class="faq-toc-grid">
+                <a href="#data-sources" class="faq-toc-item">
+                    <span class="faq-toc-title">Data Sources</span>
+                    <span class="faq-toc-desc">NHTSA SGO reports, fleet tracking, Tesla disclosures</span>
+                </a>
+                <a href="#mpi-calculation" class="faq-toc-item">
+                    <span class="faq-toc-title">MPI Calculation</span>
+                    <span class="faq-toc-desc">Formula, fleet interpolation, and the 115 mi/day figure</span>
+                </a>
+                <a href="#trend-model" class="faq-toc-item">
+                    <span class="faq-toc-title">Trend Model</span>
+                    <span class="faq-toc-desc">Exponential fit, R-squared, and doubling time</span>
+                </a>
+                <a href="#log-scale" class="faq-toc-item">
+                    <span class="faq-toc-title">Why Log Scale</span>
+                    <span class="faq-toc-desc">What log scale shows and when to use linear</span>
+                </a>
+                <a href="#benchmarks" class="faq-toc-item">
+                    <span class="faq-toc-title">Human Benchmarks</span>
+                    <span class="faq-toc-desc">Police-reported vs. insurance-claims baselines</span>
+                </a>
+                <a href="#austin-only" class="faq-toc-item">
+                    <span class="faq-toc-title">Austin Only</span>
+                    <span class="faq-toc-desc">Why only Austin data enters the MPI calculation</span>
+                </a>
+                <a href="#supervision" class="faq-toc-item">
+                    <span class="faq-toc-title">Safety Monitor Status</span>
+                    <span class="faq-toc-desc">Monitor removal progress and Bay Area context</span>
+                </a>
+                <a href="#reporting-lag" class="faq-toc-item">
+                    <span class="faq-toc-title">Reporting Lag</span>
+                    <span class="faq-toc-desc">NHTSA timelines, Tesla compliance, and provisional data</span>
+                </a>
+                <a href="#service-stoppages" class="faq-toc-item">
+                    <span class="faq-toc-title">Service Stoppages</span>
+                    <span class="faq-toc-desc">Known offline periods and how they affect calculations</span>
+                </a>
+                <a href="#limitations" class="faq-toc-item">
+                    <span class="faq-toc-title">Known Limitations</span>
+                    <span class="faq-toc-desc">Everything this analysis cannot tell you</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 1: Data Sources -->
+    <section id="data-sources" class="faq-category">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Data Sources</h2>
+                <p>Where the raw numbers come from and what they include</p>
+            </div>
+
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>NHTSA Standing General Order 2021-01</h3>
+                    <p>The primary source for incident data is <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA SGO 2021-01</a>, a federal mandate requiring manufacturers and operators of SAE Level 2 ADAS and Level 3-5 ADS vehicles to report certain crashes. Reports are required when ADS was engaged within 30 seconds of a crash that involved any injury, fatality, vehicle tow-away, airbag deployment, or a vulnerable road user (pedestrian, cyclist, etc.).</p>
+                    <p><strong>What is included:</strong> All crashes meeting the above thresholds that involved Tesla's autonomous driving system in Austin, Texas. Each report contains the date, location (city/state), crash type, and a narrative description -- though Tesla's narratives are frequently redacted.</p>
+                    <p><strong>What is excluded:</strong> Near-misses, hard braking events, minor scrapes that do not meet the tow-away or injury threshold, and any incident where ADS was not engaged within the 30-second window. This means the true count of "safety-relevant events" is higher than the reported incident count.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Fleet Size Data</h3>
+                    <p>Daily fleet counts come from <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a>, which independently tracks the number of Tesla robotaxi vehicles operating in each market. Fleet size is not reported continuously; instead, known data points are published at irregular intervals, and we linearly interpolate between them to estimate the fleet size on any given day.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Miles-per-Vehicle-per-Day Estimate</h3>
+                    <p>Tesla disclosed in its <strong>Q3 2025 earnings report</strong> that its Austin robotaxi fleet averaged approximately <strong>115 miles per vehicle per day</strong>. This figure is used as a constant multiplier across all calculation periods. By comparison, private vehicles in the United States average roughly 30 miles per day; the higher robotaxi figure reflects commercial utilization patterns (vehicles operating 12-16 hours daily).</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 2: MPI Calculation -->
+    <section id="mpi-calculation" class="faq-category faq-category-alt">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>MPI Calculation</h2>
+                <p>How miles per incident is derived for each inter-incident interval</p>
+            </div>
+
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>The Formula</h3>
+                    <p>For each interval between consecutive NHTSA-reported incidents, miles per incident (MPI) is calculated as:</p>
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin: 16px 0; text-align: center;">
+                        <code style="font-family: var(--font-mono); font-size: 1rem; color: var(--accent-primary);">MPI = fleet_size x 115 mi/day x (days_between_incidents - stoppage_days)</code>
+                    </div>
+                    <p>Where <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">fleet_size</code> is the interpolated Austin fleet count on each day, <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">115 mi/day</code> is the per-vehicle daily mileage, and <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">stoppage_days</code> accounts for known periods when the fleet was offline (see <a href="#service-stoppages">Service Stoppages</a>). More precisely, fleet miles are summed day by day across the interval, since fleet size changes over time.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Fleet Size Interpolation</h3>
+                    <p>Because fleet size data points are published at irregular intervals, daily fleet counts are estimated via <strong>linear interpolation</strong> between the nearest known data points. For example, if the fleet was 50 vehicles on January 1 and 70 vehicles on January 21, we estimate 55 vehicles on January 6, 60 on January 11, and so on. This produces a smooth daily series that is then multiplied by 115 mi/day to get daily fleet miles.</p>
+                    <p>This method assumes fleet growth is roughly linear between data points. In reality, vehicles may be added in batches, so the interpolated curve may slightly over- or under-estimate fleet miles on any given day. Over multi-week intervals, these errors tend to average out.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>What 115 Miles per Day Means</h3>
+                    <p>The 115 mi/day/vehicle figure comes from Tesla's Q3 2025 earnings disclosure. It represents an <em>average</em> across all vehicles in the Austin fleet, across all days. Individual vehicles may drive more or fewer miles depending on demand, time of day, routing, and maintenance schedules. If Tesla revises this figure in a future disclosure, the tracker's calculations will be updated accordingly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: Trend Model -->
+    <section id="trend-model" class="faq-category">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Trend Model</h2>
+                <p>How the exponential trend line and doubling time are derived</p>
+            </div>
+
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Exponential Fit</h3>
+                    <p>The trend line on the main chart fits the model:</p>
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin: 16px 0; text-align: center;">
+                        <code style="font-family: var(--font-mono); font-size: 1rem; color: var(--accent-primary);">MPI = a * e^(b * t)</code>
+                    </div>
+                    <p>where <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">a</code> is the baseline MPI at time zero, <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">b</code> is the growth rate, and <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">t</code> is time in days. An exponential model is chosen because safety improvements in autonomous systems often compound: software updates improve all vehicles simultaneously, and more miles driven generate more training data.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Log-Linear Regression</h3>
+                    <p>The fit is computed by taking the natural logarithm of each MPI value and performing ordinary least-squares (OLS) linear regression on <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">ln(MPI)</code> vs. <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">t</code>. This yields the slope <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">b</code> and intercept <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">ln(a)</code>. The regression is equivalent to maximizing likelihood under a log-normal error model.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>R-squared</h3>
+                    <p>The R-squared value reported on the tracker is computed on the <strong>original (non-log) scale</strong>: it measures how much of the variance in actual MPI values is explained by the exponential model. This is a stricter test than R-squared on the log-transformed values, because it penalizes the model for percentage errors that look small on a log scale but are large in absolute terms.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Doubling Time</h3>
+                    <p>Doubling time is derived directly from the growth rate <code style="font-family: var(--font-mono); font-size: 0.9em; color: var(--accent-primary); background: var(--bg-secondary); padding: 2px 8px; border-radius: 4px;">b</code>:</p>
+                    <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; margin: 16px 0; text-align: center;">
+                        <code style="font-family: var(--font-mono); font-size: 1rem; color: var(--accent-primary);">Doubling Time = ln(2) / b</code>
+                    </div>
+                    <p>This tells you how many days it takes, on average, for MPI to double -- assuming the exponential trend continues. A 41-day doubling time, for example, means MPI is expected to double roughly every six weeks at the current trajectory.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: Why Log Scale -->
+    <section id="log-scale" class="faq-category faq-category-alt">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Why Log Scale</h2>
+                <p>Why the default chart uses logarithmic scaling and what it reveals</p>
+            </div>
+
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>The Data Spans Orders of Magnitude</h3>
+                    <p>Tesla's MPI values range from roughly <strong>10,000 miles</strong> (early incidents closely spaced) to over <strong>1,000,000 miles</strong> (the most recent long streaks). On a linear-scale chart, the early data points would be compressed into a nearly invisible band at the bottom, while only the latest points would be visually distinguishable. A logarithmic y-axis gives equal visual weight to a doubling from 10K to 20K and a doubling from 500K to 1M, making the entire trajectory readable.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>A Straight Line Means Exponential Growth</h3>
+                    <p>On a log-scale chart, a straight line corresponds to constant exponential growth. If the data points roughly follow a straight line on the log chart, it means MPI is growing at a consistent percentage rate over time. Deviations from that line -- a point far above or below the trend -- indicate periods of unusually good or poor performance relative to the exponential model.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Linear Scale Is Available</h3>
+                    <p>The main tracker page provides a toggle to switch between log and linear scale. The linear view is useful for seeing the absolute magnitude of recent improvements and understanding just how far MPI has risen in raw terms. However, it makes it difficult to assess early-period performance or judge whether the growth rate is accelerating, decelerating, or holding steady. We default to log scale because it is the more informative view for trend analysis.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Human Driver Benchmarks -->
+    <section id="benchmarks" class="faq-category">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Human Driver Benchmarks</h2>
+                <p>The two reference lines on the chart and why they differ</p>
+            </div>
+
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>500,000 Miles: Police-Reported Crashes (NHTSA CRSS 2023)</h3>
+                    <p>The <a href="https://crashstats.nhtsa.dot.gov/Api/Public/Publication/813705" target="_blank" rel="noopener noreferrer">NHTSA Crash Report Sampling System (CRSS) 2023</a> estimates that human drivers in the United States are involved in a police-reported crash approximately every 500,000 miles. This includes all police-reported crashes regardless of severity, across all road types and conditions.</p>
+                    <p>This benchmark is an <em>overestimate</em> of the true human crash rate for the purposes of AV comparison, because many minor crashes (parking-lot scrapes, low-speed fender-benders) are never reported to police but would trigger an NHTSA SGO report for an AV if airbags deployed, a tow truck was needed, or an injury occurred.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>300,000 Miles: Insurance Claims (Swiss Re / Waymo 2023)</h3>
+                    <p>The <a href="https://waymo.com/blog/2023/09/waymos-autonomous-vehicles-are-significantly-safer-than-human-driven-ones/" target="_blank" rel="noopener noreferrer">Swiss Re / Waymo 2023 study</a> used insurance claims data and found that human drivers file a bodily-injury or property-damage claim approximately every 300,000 miles. Because insurance claims capture incidents that may never reach a police report -- but are serious enough for a driver to file a claim -- this benchmark more closely mirrors the AV reporting threshold under NHTSA SGO 2021-01.</p>
+                    <p><strong>Why insurance claims are more comparable:</strong> The SGO requires AV companies to report any crash involving a tow-away, injury, or airbag deployment. These are the same types of events that typically generate insurance claims. A police report, by contrast, may not be filed for many of these events (e.g., a single-vehicle tow-away with no injuries in a parking lot). Therefore, the 300K insurance-claims benchmark is the fairer comparison for evaluating AV safety against human drivers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 6: Austin Only -->
+    <section id="austin-only" class="faq-category faq-category-alt">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Austin Only</h2>
+                <p>Why this tracker uses only Austin data for its MPI and trend calculations</p>
+            </div>
+
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Austin Is the Only Unsupervised Level 4 Location</h3>
+                    <p>As of February 2026, Austin, Texas is the only market where Tesla operates robotaxis as a fully unsupervised SAE Level 4 autonomous driving service. Passengers ride without a safety driver in the vehicle. This makes Austin the only location where the safety data represents the true autonomous capability of Tesla's system.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Bay Area Operates with Safety Drivers</h3>
+                    <p>Tesla also operates robotaxis in the San Francisco Bay Area, but under California law these vehicles are required to have a <strong>safety driver</strong> present in the vehicle. The safety driver can intervene to prevent or mitigate crashes. Including Bay Area data in the MPI calculation would conflate supervised and unsupervised performance, making it impossible to assess the autonomous system's standalone safety record.</p>
+                    <p>If and when Tesla begins unsupervised operations in additional cities, this tracker will incorporate data from those markets as well.</p>
+                </div>
+
+                <div class="scope-note" style="margin-top: 16px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4"/>
+                        <path d="M12 8h.01"/>
+                    </svg>
+                    <span>Bay Area incidents are tracked separately on the <a href="/expansion.html">Cities page</a> but do not enter the MPI trend calculation shown on the home page.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 7: Safety Monitor Status -->
+    <section id="supervision" class="faq-category">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Safety Monitor Status</h2>
+                <p>The current state of in-vehicle monitoring across Tesla's robotaxi fleet</p>
+            </div>
+
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Austin: Partial Monitor Removal</h3>
+                    <p>Some Tesla robotaxis in Austin already operate <strong>without an in-vehicle safety monitor</strong>. These vehicles are fully driverless -- there is no human in the car. However, the majority of the Austin fleet still carries a safety monitor who can observe but is not expected to intervene under normal conditions. Tesla has been gradually expanding the subset of rides that are fully unmonitored.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Bay Area: Safety Drivers Required</h3>
+                    <p>All Tesla robotaxis in the San Francisco Bay Area operate with a <strong>safety driver</strong> behind the wheel, as required by California's autonomous vehicle testing regulations. The safety driver can take over control at any time. This is a fundamentally different operating mode from Austin's unsupervised rides.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>What This Tracker Estimates</h3>
+                    <p>One of the tracker's goals is to estimate <strong>when fleet-wide safety-monitor removal becomes viable</strong> based on quantitative safety signals. The key metric is whether MPI has reached and sustained a level that matches or exceeds human-driver benchmarks. Crossing the 500K police-reported threshold is a milestone; sustaining performance above the 300K insurance-claims benchmark with a large enough sample size would represent stronger evidence. These projections are based on the exponential trend model and should be treated as forward-looking estimates, not certainties.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 8: Reporting Lag -->
+    <section id="reporting-lag" class="faq-category faq-category-alt">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Reporting Lag</h2>
+                <p>How delays between incidents and public reporting affect data freshness</p>
+            </div>
+
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>NHTSA Reporting Timelines</h3>
+                    <p>Under SGO 2021-01, manufacturers must submit an <strong>initial report within 1 day</strong> of learning about a reportable crash, followed by an <strong>updated report within 10 days</strong> that includes additional details such as the crash narrative, injury status, and vehicle damage assessment. Reports are then published on NHTSA's public portal, though the publication schedule introduces an additional, variable delay.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Tesla's Compliance History</h3>
+                    <p>Tesla has been <strong>cited by NHTSA for reporting delays</strong> in the past. Late reports mean that the public data may not reflect all incidents that have actually occurred. When an incident is eventually reported, it is back-dated to its actual occurrence date, which can retroactively change MPI values for earlier intervals.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Current Streak Is Provisional</h3>
+                    <p>The most recent MPI value -- the one based on the current incident-free streak -- should always be treated as <strong>provisional</strong>. It is possible that an incident has occurred but has not yet been reported or published. As new reports appear, the current streak may be shortened or split into multiple intervals. Historical MPI values (for intervals between two known incidents) are more stable, though even those can be revised if a previously unreported incident surfaces.</p>
+                </div>
+
+                <div class="scope-note" style="margin-top: 16px;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16v-4"/>
+                        <path d="M12 8h.01"/>
+                    </svg>
+                    <span>The tracker automatically recalculates all MPI values whenever new incident data is published. If a late report appears, the entire trend line is recomputed.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 9: Known Limitations -->
+    <section id="limitations" class="faq-category">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Known Limitations</h2>
+                <p>What this analysis cannot tell you and where uncertainty is highest</p>
+            </div>
+
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Fleet Size Estimates May Be Inaccurate</h3>
+                    <p>Fleet counts from robotaxitracker.com are independently estimated and may not perfectly reflect the number of vehicles actively operating on any given day. Vehicles may be temporarily offline for maintenance, software updates, or repositioning. Linear interpolation between known data points smooths over batch additions or removals.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>115 Miles per Day Is an Average</h3>
+                    <p>The per-vehicle mileage figure is a fleet-wide average from a single disclosure period (Q3 2025). Daily mileage likely varies by day of week, season, weather, and demand. If actual utilization was lower than 115 mi/day, our MPI estimates would be too high; if higher, too low. A +/-20% variation in this parameter shifts MPI values by the same percentage but does not meaningfully affect the trend direction or doubling time.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Fault Cannot Be Determined</h3>
+                    <p>Tesla's NHTSA SGO narratives are frequently <strong>redacted</strong>, making it impossible to determine whether the Tesla robotaxi was at fault in a given incident. An MPI metric counts all reported incidents equally, whether the robotaxi caused the crash, was rear-ended at a stop, or was hit by a red-light runner. This is consistent with how the human-driver benchmarks are calculated (they also include not-at-fault crashes), but it means MPI is not a measure of the system's driving skill in isolation.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Small Sample Size</h3>
+                    <p>As of early 2026, the tracker is based on approximately <strong>10 reported incidents</strong>. This is a very small sample. A single unreported incident, a reporting error, or an unusual streak of good or bad luck can significantly shift the MPI values and the fitted trend. Confidence in the exponential model will increase substantially as the sample grows. Until then, all projections carry wide implicit uncertainty bands.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Exponential Fit May Not Continue Indefinitely</h3>
+                    <p>Exponential improvement in MPI cannot last forever. At some point, diminishing returns, edge cases, adversarial conditions, or fundamental sensor limitations will cause the improvement rate to plateau. The exponential model is a useful description of the <em>current</em> trajectory, not a guarantee of future performance. The tracker will switch to a more appropriate model (e.g., logistic, power-law) if and when the data warrants it.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Austin-Specific Conditions May Not Generalize</h3>
+                    <p>Austin, Texas has relatively mild weather (infrequent snow/ice), a modern road network, and a specific mix of driving conditions (highways, suburban streets, downtown). Safety performance in Austin may not be representative of performance in cities with more challenging conditions -- dense urban cores, heavy snow, aggressive traffic patterns, or poorly marked roads. As Tesla expands to additional cities, MPI may vary significantly by market.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Service Stoppages May Be Incomplete</h3>
+                    <p>The tracker accounts for known service stoppages (see <a href="#service-stoppages">below</a>), but there may be additional periods when the fleet was partially or fully offline that have not been publicly reported. Unaccounted stoppages would cause MPI to be overestimated for the affected intervals, since the formula would assume vehicles were driving miles that they were not.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 10: Service Stoppages -->
+    <section id="service-stoppages" class="faq-category faq-category-alt">
+        <div class="container">
+            <div class="faq-category-header">
+                <h2>Service Stoppages</h2>
+                <p>Known periods when the Tesla robotaxi service was offline and how they are handled</p>
+            </div>
+
+            <div style="max-width: 900px; margin: 0 auto;">
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>How Stoppages Affect Calculations</h3>
+                    <p>When the robotaxi service is taken offline -- whether due to weather, software issues, or regulatory action -- vehicles are not accumulating miles. If these days were included in the MPI calculation as normal driving days, MPI would be artificially inflated. To prevent this, known stoppage days are <strong>subtracted from the interval</strong> before computing fleet miles. No mileage is credited for days the fleet was offline.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Known Stoppages</h3>
+                    <table class="faq-table">
+                        <thead>
+                            <tr>
+                                <th>Dates</th>
+                                <th>Duration</th>
+                                <th>Reason</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>January 25-26, 2026</td>
+                                <td>2 days</td>
+                                <td>Winter storm in Austin; service suspended for safety</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p style="margin-top: 16px;">This list is updated as new stoppages are identified. If you are aware of a stoppage not listed here, please <a href="/contact.html">contact us</a>.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>Created by <a href="https://x.com/FytasoK60918" target="_blank" rel="noopener noreferrer">Kangning Huang</a></p>
+                    <p>Data sources: <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA SGO</a>, <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a>, <a href="https://crashstats.nhtsa.dot.gov/Api/Public/Publication/813705" target="_blank" rel="noopener noreferrer">NHTSA CRSS</a>, <a href="https://waymo.com/blog/2023/09/waymos-autonomous-vehicles-are-significantly-safer-than-human-driven-ones/" target="_blank" rel="noopener noreferrer">Swiss Re/Waymo</a></p>
+                    <p class="disclaimer">This is an independent robotaxi safety analysis tool. Not affiliated with Tesla, Inc.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="/about.html">About</a>
+                    <span class="divider">|</span>
+                    <a href="/contact.html">Contact</a>
+                    <span class="divider">|</span>
+                    <a href="/privacy.html">Privacy</a>
+                    <span class="divider">|</span>
+                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <span class="divider">|</span>
+                    <a href="https://x.com/FytasoK60918" target="_blank" rel="noopener noreferrer">X</a>
+                    <span class="divider">|</span>
+                    <a href="https://open.substack.com/pub/kangninghuang" target="_blank" rel="noopener noreferrer">Substack</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FC4RG249V0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-FC4RG249V0');
+    </script>
+
+    <title>Tesla vs Waymo Safety: Miles Per Incident Comparison (2026)</title>
+    <meta name="description" content="Tesla vs Waymo miles per incident comparison: Tesla ~92,500 MPI (improving rapidly) vs Waymo ~1M+ MPI. Different histories, reporting methods, and trajectories explained.">
+    <meta name="keywords" content="Tesla vs Waymo safety, Tesla vs Waymo miles per incident, Tesla Waymo comparison, robotaxi safety comparison, Waymo crash rate, Tesla crash rate vs Waymo, autonomous vehicle safety comparison 2026">
+    <meta name="author" content="Kangning Huang">
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+    <meta name="google-site-verification" content="abZJn0glSeK0F1M5tJWNACVXJlmNoQoKrvEIEybbd8o" />
+    <link rel="canonical" href="https://robotaxi-safety-tracker.com/tesla-vs-waymo-safety.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/logo.svg">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://robotaxi-safety-tracker.com/tesla-vs-waymo-safety.html">
+    <meta property="og:title" content="Tesla vs Waymo Safety: Miles Per Incident Comparison (2026)">
+    <meta property="og:description" content="Tesla ~92,500 MPI vs Waymo ~1M+ MPI. Different histories, different reporting, both making roads safer. Data-driven comparison with context.">
+    <meta property="og:site_name" content="Robotaxi Safety Tracker">
+    <meta property="og:image" content="https://robotaxi-safety-tracker.com/chart-preview.png">
+    <meta property="og:image:width" content="1782">
+    <meta property="og:image:height" content="1481">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://robotaxi-safety-tracker.com/tesla-vs-waymo-safety.html">
+    <meta name="twitter:title" content="Tesla vs Waymo Safety: Miles Per Incident Comparison (2026)">
+    <meta name="twitter:description" content="Tesla ~92,500 MPI vs Waymo ~1M+ MPI. Different histories, different reporting, both making roads safer. Data-driven comparison with context.">
+    <meta name="twitter:image" content="https://robotaxi-safety-tracker.com/chart-preview.png">
+    <meta name="twitter:creator" content="@FytasoK60918">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Structured Data / JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "https://robotaxi-safety-tracker.com/#website",
+                "url": "https://robotaxi-safety-tracker.com/",
+                "name": "Robotaxi Safety Tracker",
+                "description": "Data-driven tracker for Tesla robotaxi safety metrics including miles per incident, fleet growth, and comparison to human drivers.",
+                "publisher": {
+                    "@id": "https://robotaxi-safety-tracker.com/#person"
+                }
+            },
+            {
+                "@type": "Article",
+                "@id": "https://robotaxi-safety-tracker.com/tesla-vs-waymo-safety.html#article",
+                "url": "https://robotaxi-safety-tracker.com/tesla-vs-waymo-safety.html",
+                "headline": "Tesla vs Waymo Safety: Miles Per Incident Comparison (2026)",
+                "description": "Data-driven comparison of Tesla and Waymo autonomous vehicle safety metrics, including miles per incident, improvement trajectories, and reporting differences.",
+                "author": {
+                    "@id": "https://robotaxi-safety-tracker.com/#person"
+                },
+                "isPartOf": {
+                    "@id": "https://robotaxi-safety-tracker.com/#website"
+                },
+                "datePublished": "2026-02-11",
+                "dateModified": "2026-02-11"
+            },
+            {
+                "@type": "Person",
+                "@id": "https://robotaxi-safety-tracker.com/#person",
+                "name": "Kangning Huang",
+                "url": "https://open.substack.com/pub/kangninghuang",
+                "sameAs": [
+                    "https://x.com/FytasoK60918",
+                    "https://open.substack.com/pub/kangninghuang",
+                    "https://github.com/kangning-huang"
+                ]
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": "https://robotaxi-safety-tracker.com/tesla-vs-waymo-safety.html#breadcrumb",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://robotaxi-safety-tracker.com/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Tesla vs Waymo Safety",
+                        "item": "https://robotaxi-safety-tracker.com/tesla-vs-waymo-safety.html"
+                    }
+                ]
+            }
+        ]
+    }
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="/" class="logo">
+                    <span class="logo-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 18v-3l2-1.5L8.5 9h7L19 13.5l2 1.5v3"/>
+                            <circle cx="7.5" cy="18" r="2"/>
+                            <circle cx="16.5" cy="18" r="2"/>
+                            <path d="M10 6a3 2.5 0 0 1 4 0" stroke-linecap="round"/>
+                            <path d="M8 4a5.5 4 0 0 1 8 0" stroke-linecap="round" opacity="0.6"/>
+                        </svg>
+                    </span>
+                    <span class="logo-text">Tesla Robotaxi <span class="highlight">Safety</span> Tracker</span>
+                </a>
+                <nav class="nav">
+                    <a href="/#trend" class="nav-link">Trend</a>
+                    <a href="/expansion.html" class="nav-link">Cities</a>
+                    <a href="/#methodology" class="nav-link">Methods</a>
+                    <a href="/faq.html" class="nav-link">FAQ</a>
+                    <a href="/#creator" class="nav-link">Creator</a>
+                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" class="nav-link github" target="_blank" rel="noopener noreferrer">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                        </svg>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="faq-hero">
+        <div class="container">
+            <div class="faq-hero-content">
+                <p class="hero-label">Safety Comparison</p>
+                <h1 class="hero-title">Tesla vs Waymo: Miles Per Incident</h1>
+                <p class="hero-subtitle">A data-driven comparison of the two leading autonomous ride-hailing services, including what the numbers mean and what they leave out</p>
+                <p class="hero-meta" style="margin-top: 1rem; font-size: 0.875rem; opacity: 0.8;">By <a href="https://x.com/FytasoK60918" target="_blank" rel="noopener noreferrer" style="color: inherit;">Kangning Huang</a> · Last updated: February 11, 2026</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="faq-category">
+        <div class="container">
+            <div class="methodology-grid" style="grid-template-columns: 1fr; max-width: 800px; margin: 0 auto;">
+
+                <article class="method-card">
+                    <h2>The Numbers at a Glance</h2>
+                    <table class="faq-table" style="width: 100%; margin: 1rem 0;">
+                        <tr>
+                            <th>Metric</th>
+                            <th>Tesla</th>
+                            <th>Waymo</th>
+                        </tr>
+                        <tr>
+                            <td>Latest MPI</td>
+                            <td>~92,500 miles</td>
+                            <td>~1,000,000+ miles</td>
+                        </tr>
+                        <tr>
+                            <td>Commercial launch</td>
+                            <td>June 2025</td>
+                            <td>2018 (Phoenix)</td>
+                        </tr>
+                        <tr>
+                            <td>Testing since</td>
+                            <td>2020 (FSD Beta)</td>
+                            <td>2009 (Google Self-Driving Car)</td>
+                        </tr>
+                        <tr>
+                            <td>Cities (commercial)</td>
+                            <td>2 (Austin, Bay Area)</td>
+                            <td>5 (Phoenix, SF, LA, Austin, Miami)</td>
+                        </tr>
+                        <tr>
+                            <td>Sensor approach</td>
+                            <td>Vision-only (cameras)</td>
+                            <td>LiDAR + cameras + radar</td>
+                        </tr>
+                        <tr>
+                            <td>Safety improvement rate</td>
+                            <td>Doubling every ~79 days</td>
+                            <td>Not publicly disclosed</td>
+                        </tr>
+                    </table>
+                    <p>On raw miles per incident, Waymo leads by roughly 10x. But this snapshot comparison misses crucial context about trajectory, history, and what these numbers actually represent.</p>
+                </article>
+
+                <article class="method-card">
+                    <h2>Context: Very Different Histories</h2>
+                    <p>Waymo traces its origins to the Google Self-Driving Car Project, which began in <strong>2009</strong>. That is over 16 years of continuous development, testing, and real-world operation. Waymo launched its first commercial ride-hailing service in Phoenix in December 2018, giving it over 7 years of commercial operations.</p>
+                    <p>Tesla launched its unsupervised robotaxi service in Austin in <strong>June 2025</strong>, less than a year ago. While Tesla has been developing its Full Self-Driving (FSD) software since 2020 and accumulating supervised driving data from millions of consumer vehicles, the transition to fully autonomous, unsupervised commercial service is a fundamentally different challenge.</p>
+                    <p>Comparing Tesla's current MPI to Waymo's is like comparing a startup's first-year revenue to an established company's annual figures. The absolute number matters, but the growth rate matters more for predicting the future.</p>
+                </article>
+
+                <article class="method-card">
+                    <h2>Tesla's Unprecedented Improvement Rate</h2>
+                    <p>What sets Tesla apart is the <strong>speed of improvement</strong>. Our tracker shows that Tesla's miles per incident has been <a href="/tesla-robotaxi-crash-rate.html">doubling approximately every 79 days</a>. This is an exponential improvement trajectory that, if sustained, has dramatic implications:</p>
+                    <ul>
+                        <li>At 79-day doubling: Tesla could match Waymo's current MPI within 3-4 more doublings (roughly 6-9 months)</li>
+                        <li>Each doubling represents a 50% reduction in incident rate</li>
+                        <li>The improvement is driven by over-the-air software updates deployed across the entire fleet simultaneously</li>
+                    </ul>
+                    <p>No other autonomous vehicle company has publicly demonstrated this rate of safety improvement. Waymo's safety metrics have been consistently high but are not known to be improving at this exponential rate, likely because Waymo is already operating at a very high baseline.</p>
+                    <p>There is no guarantee that Tesla can sustain this trajectory. Exponential improvement may slow as the "easy" problems are solved and remaining edge cases become harder. But even a slowdown from 79-day doubling to 150-day doubling would still represent rapid progress.</p>
+                </article>
+
+                <article class="method-card">
+                    <h2>Different Reporting, Different Baselines</h2>
+                    <p>Direct MPI comparisons between Tesla and Waymo are complicated by differences in how safety data is reported and measured:</p>
+                    <h3>Data Sources</h3>
+                    <ul>
+                        <li><strong>Tesla's MPI</strong> on this tracker is calculated from <a href="/nhtsa-sgo-2021-01-explained.html">NHTSA SGO 2021-01</a> incident reports and independent fleet tracking. The data is public and verifiable.</li>
+                        <li><strong>Waymo's MPI</strong> comes primarily from the <a href="https://waymo.com/blog/2023/09/waymos-autonomous-vehicles-are-significantly-safer-than-human-driven-ones/" target="_blank" rel="noopener noreferrer">Swiss Re/Waymo study</a>, which used insurance claims data. Waymo also files SGO reports, but their published safety figures rely on their own methodology.</li>
+                    </ul>
+                    <h3>Reporting Thresholds</h3>
+                    <p>SGO reports capture incidents at a lower severity threshold than insurance claims. This means Tesla's NHTSA-reported MPI may capture minor events that would not appear in Waymo's Swiss Re-based figures. If both companies were measured using identical criteria, the gap might be narrower (or wider) than the raw numbers suggest.</p>
+                    <h3>Geographic Differences</h3>
+                    <p>Tesla currently operates unsupervised only in Austin, Texas. Waymo operates across Phoenix, San Francisco, Los Angeles, Austin, and Miami. Different cities present different driving challenges. Austin's road environment may be easier or harder than Waymo's multi-city average, making geographic comparisons imprecise.</p>
+                </article>
+
+                <article class="method-card">
+                    <h2>Different Fleet Sizes and Approaches</h2>
+                    <p>The two companies take fundamentally different technical approaches:</p>
+                    <ul>
+                        <li><strong>Waymo</strong> uses a multi-sensor suite including LiDAR, cameras, and radar on purpose-built Jaguar I-PACE vehicles. Each vehicle costs significantly more to produce and maintain. Waymo's fleet is estimated at roughly 700+ vehicles across all cities.</li>
+                        <li><strong>Tesla</strong> uses a vision-only approach (cameras only, no LiDAR) on modified Model 3 and Model Y vehicles. This approach is cheaper per vehicle and is designed to scale to Tesla's existing production capacity. Tesla's Austin fleet is currently around 80 unsupervised vehicles.</li>
+                    </ul>
+                    <p>Tesla's vision-only bet is more ambitious and more cost-efficient if it works at scale. Waymo's sensor-rich approach provides redundancy and has proven effective at achieving very high safety levels. Both approaches have trade-offs, and the market may ultimately support both.</p>
+                </article>
+
+                <article class="method-card">
+                    <h2>Both Are Making Roads Safer</h2>
+                    <p>It is easy to frame this as a competition, but the bigger picture is that <strong>both Tesla and Waymo are demonstrating that autonomous vehicles can operate safely on public roads</strong>. Neither company has had a fatality in unsupervised autonomous mode. Both have incident rates that are improving over time.</p>
+                    <p>Human drivers in the United States cause approximately 40,000 deaths per year and over 5 million reported crashes. Any autonomous vehicle system that achieves better safety than the human average, even in limited conditions, represents progress toward reducing this toll.</p>
+                    <p>The competition between Tesla and Waymo is likely to accelerate safety improvements for both. Tesla's rapid improvement may push Waymo to continue innovating. Waymo's established safety record provides a benchmark for Tesla to target.</p>
+                    <p>For riders and the public, the relevant question is not "which company is winning?" but "are both getting safer over time?" The data suggests yes. Track Tesla's progress on our <a href="/">main safety tracker</a> and explore how the fleet is expanding across <a href="/expansion.html">multiple cities</a>.</p>
+                </article>
+
+                <article class="method-card">
+                    <h2>What to Watch Going Forward</h2>
+                    <p>Key indicators that will shape the Tesla vs Waymo comparison in 2026 and beyond:</p>
+                    <ul>
+                        <li><strong>Tesla's doubling time:</strong> If the ~79-day doubling rate holds, Tesla could approach Waymo-level safety by late 2026. If it slows significantly, the gap may persist.</li>
+                        <li><strong>Tesla's expansion:</strong> As Tesla <a href="/expansion.html">launches in new cities</a> (Dallas, Houston, Phoenix planned for H1 2026), maintaining safety performance in new environments will be a crucial test.</li>
+                        <li><strong>Waymo's scaling:</strong> Waymo is also expanding aggressively. Whether they can maintain their safety record at larger scale is an open question.</li>
+                        <li><strong>Monitor removal:</strong> Tesla's <a href="/austin-robotaxi-safety.html">ongoing removal of safety monitors in Austin</a> will reveal whether the safety metrics hold without human backup.</li>
+                        <li><strong>Standardized reporting:</strong> If NHTSA or the industry develops more standardized safety metrics, direct comparisons will become more meaningful.</li>
+                    </ul>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="faq-cta">
+        <div class="container">
+            <div class="faq-cta-content">
+                <h2>Track the Live Safety Data</h2>
+                <p>Monitor Tesla's robotaxi safety trajectory in real time and see how the numbers evolve</p>
+                <a href="/" class="faq-cta-button">View Safety Tracker</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>Created by <a href="https://x.com/FytasoK60918" target="_blank" rel="noopener noreferrer">Kangning Huang</a></p>
+                    <p>Data sources: <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA SGO</a>, <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a>, <a href="https://crashstats.nhtsa.dot.gov/Api/Public/Publication/813705" target="_blank" rel="noopener noreferrer">NHTSA CRSS</a>, <a href="https://waymo.com/blog/2023/09/waymos-autonomous-vehicles-are-significantly-safer-than-human-driven-ones/" target="_blank" rel="noopener noreferrer">Swiss Re/Waymo</a></p>
+                    <p class="disclaimer">This is an independent robotaxi safety analysis tool. Not affiliated with Tesla, Inc.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="/about.html">About</a>
+                    <span class="divider">|</span>
+                    <a href="/contact.html">Contact</a>
+                    <span class="divider">|</span>
+                    <a href="/privacy.html">Privacy</a>
+                    <span class="divider">|</span>
+                    <a href="https://github.com/kangning-huang/tesla_robotaxi_mile_per_incident_tracker" target="_blank" rel="noopener noreferrer">GitHub</a>
+                    <span class="divider">|</span>
+                    <a href="https://x.com/FytasoK60918" target="_blank" rel="noopener noreferrer">X</a>
+                    <span class="divider">|</span>
+                    <a href="https://open.substack.com/pub/kangninghuang" target="_blank" rel="noopener noreferrer">Substack</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
