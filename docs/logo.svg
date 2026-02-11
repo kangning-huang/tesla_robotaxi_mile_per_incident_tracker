@@ -1,12 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#1e40af"/>
-      <stop offset="100%" style="stop-color:#3b82f6"/>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4a843"/>
+      <stop offset="100%" style="stop-color:#c49b38"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
-  <path d="M256 96L128 160l128 64 128-64-128-64z" fill="none" stroke="white" stroke-width="24" stroke-linejoin="round"/>
-  <path d="M128 288l128 64 128-64" fill="none" stroke="white" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M128 224l128 64 128-64" fill="none" stroke="white" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Dark background like Robotaxi branding -->
+  <rect width="512" height="512" rx="64" fill="#1a1a1a"/>
+  <!-- Stylized angular car silhouette in gold -->
+  <path d="M48 336l32-48 64-96h224l64 96 32 48z" fill="url(#gold)" opacity="0.9"/>
+  <!-- Windshield cut -->
+  <path d="M168 200l24-32h128l24 32z" fill="#1a1a1a" opacity="0.6"/>
+  <!-- Wheels -->
+  <circle cx="144" cy="344" r="32" fill="#1a1a1a" stroke="url(#gold)" stroke-width="12"/>
+  <circle cx="368" cy="344" r="32" fill="#1a1a1a" stroke="url(#gold)" stroke-width="12"/>
+  <!-- Sensor/lidar pulse lines above car -->
+  <path d="M224 136l32-32 32 32" fill="none" stroke="url(#gold)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M192 104l64-48 64 48" fill="none" stroke="url(#gold)" stroke-width="13" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+  <!-- Road lines -->
+  <line x1="32" y1="400" x2="128" y2="400" stroke="url(#gold)" stroke-width="10" opacity="0.4"/>
+  <line x1="192" y1="400" x2="320" y2="400" stroke="url(#gold)" stroke-width="10" opacity="0.4"/>
+  <line x1="384" y1="400" x2="480" y2="400" stroke="url(#gold)" stroke-width="10" opacity="0.4"/>
 </svg>

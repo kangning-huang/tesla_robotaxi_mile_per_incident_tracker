@@ -1,14 +1,14 @@
 {
   "metadata": {
     "description": "Tesla Robotaxi fleet size data from robotaxitracker.com (scraped) and news sources",
-    "last_updated": "2026-02-04",
+    "last_updated": "2026-02-11",
     "sources": [
       "robotaxitracker.com (primary - automated scraping)",
       "Tesla official announcements",
       "Electrek",
       "Teslarati"
     ],
-    "notes": "Austin vehicles are true robotaxis (unsupervised ADS). Bay Area vehicles have human safety drivers. Data from Aug 2025 onwards is scraped from robotaxitracker.com chart tooltips. Active vehicle counts (austin_active_vehicles, bayarea_active_vehicles) represent vehicles actually on the road, which is a subset of total fleet. MPI calculations use total fleet size (austin_vehicles). Active fleet data is preserved for future use."
+    "notes": "Austin vehicles are true robotaxis (unsupervised ADS). Bay Area vehicles have human safety drivers. Data from Aug 2025 onwards is scraped from robotaxitracker.com chart tooltips. Active vehicle counts (austin_active_vehicles, bayarea_active_vehicles) represent vehicles actually on the road, which is a subset of total fleet. MPI calculations are available for both total fleet (austin_vehicles) and active fleet (austin_active_vehicles). The dashboard supports toggling between the two."
   },
   "snapshots": [
     {
@@ -655,6 +655,69 @@
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 81 Austin + 188 Bay Area = 269 total (active: 59 Austin, 59 total)",
       "austin_active_vehicles": 59
+    },
+    {
+      "date": "2026-02-05",
+      "austin_vehicles": 82,
+      "bayarea_vehicles": 190,
+      "total_robotaxi": 82,
+      "source": "robotaxitracker.com",
+      "notes": "Current fleet: 82 Austin + 190 Bay Area = 272 total (active: 58 Austin, 58 total)",
+      "austin_active_vehicles": 58
+    },
+    {
+      "date": "2026-02-06",
+      "austin_vehicles": 82,
+      "bayarea_vehicles": 190,
+      "total_robotaxi": 82,
+      "source": "robotaxitracker.com",
+      "notes": "Current fleet: 82 Austin + 190 Bay Area = 272 total (active: 58 Austin, 58 total)",
+      "austin_active_vehicles": 58
+    },
+    {
+      "date": "2026-02-07",
+      "austin_vehicles": 82,
+      "bayarea_vehicles": 191,
+      "total_robotaxi": 82,
+      "source": "robotaxitracker.com",
+      "notes": "Current fleet: 82 Austin + 191 Bay Area = 273 total (active: 58 Austin, 58 total)",
+      "austin_active_vehicles": 58
+    },
+    {
+      "date": "2026-02-08",
+      "austin_vehicles": 83,
+      "bayarea_vehicles": 192,
+      "total_robotaxi": 83,
+      "source": "robotaxitracker.com",
+      "notes": "Current fleet: 83 Austin + 192 Bay Area = 275 total (active: 53 Austin, 53 total)",
+      "austin_active_vehicles": 53
+    },
+    {
+      "date": "2026-02-09",
+      "austin_vehicles": 85,
+      "bayarea_vehicles": 196,
+      "total_robotaxi": 85,
+      "source": "robotaxitracker.com",
+      "notes": "Current fleet: 85 Austin + 196 Bay Area = 281 total (active: 54 Austin, 54 total)",
+      "austin_active_vehicles": 54
+    },
+    {
+      "date": "2026-02-10",
+      "austin_vehicles": 86,
+      "bayarea_vehicles": 197,
+      "total_robotaxi": 86,
+      "source": "robotaxitracker.com",
+      "notes": "Current fleet: 86 Austin + 197 Bay Area = 283 total (active: 53 Austin, 53 total)",
+      "austin_active_vehicles": 53
+    },
+    {
+      "date": "2026-02-11",
+      "austin_vehicles": 86,
+      "bayarea_vehicles": 197,
+      "total_robotaxi": 86,
+      "source": "robotaxitracker.com",
+      "notes": "Current fleet: 86 Austin + 197 Bay Area = 283 total (active: 53 Austin, 53 total)",
+      "austin_active_vehicles": 53
     }
   ],
   "assumptions": {
