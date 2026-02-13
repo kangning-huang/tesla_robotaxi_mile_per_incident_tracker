@@ -2597,6 +2597,111 @@ a:hover {
     }
 }
 
+/* ===== Parity Projection Section ===== */
+.parity-projection-section {
+    padding: 32px 0;
+    background: var(--bg-primary);
+}
+
+.parity-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    max-width: 720px;
+    margin: 0 auto;
+}
+
+.parity-content {
+    padding: 28px 32px;
+}
+
+.parity-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: var(--text-muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+.parity-header svg {
+    color: var(--accent-primary);
+    opacity: 0.7;
+}
+
+.parity-title {
+    font-size: 15px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 8px;
+}
+
+.parity-title strong {
+    color: var(--text-primary);
+}
+
+.parity-detail {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 16px;
+}
+
+.parity-detail strong {
+    color: var(--text-secondary);
+}
+
+.parity-cta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-color);
+    flex-wrap: wrap;
+}
+
+.parity-robinhood-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--accent-success);
+    text-decoration: none;
+    font-weight: 500;
+    opacity: 0.85;
+    transition: opacity 0.2s;
+}
+
+.parity-robinhood-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.parity-robinhood-link svg {
+    flex-shrink: 0;
+}
+
+.parity-disclaimer {
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.6;
+}
+
+@media (max-width: 600px) {
+    .parity-content {
+        padding: 20px;
+    }
+
+    .parity-cta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+}
+
 /* ===== FAQ Page Specific Styles ===== */
 
 /* FAQ Hero Section */

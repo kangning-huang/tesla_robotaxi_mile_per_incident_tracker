@@ -1110,6 +1110,17 @@ function updateFaqValues() {
     setValue('share-doubling', trendParams.doublingTime);
     setValue('share-streak', milesSinceLastIncident.toLocaleString());
 
+    // Parity projection: compute predicted date when MPI reaches 500K (police-reported benchmark)
+    const lastIncidentDateForParity = new Date(currentIncidentData[currentIncidentData.length - 1].date);
+    const daysToPolice500K = Math.ceil(Math.log(500000 / latestMPI) / trendParams.dailyGrowth);
+    const parityDate = new Date(lastIncidentDateForParity);
+    parityDate.setDate(parityDate.getDate() + daysToPolice500K);
+    const parityDateStr = parityDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    setValue('parity-date', parityDateStr);
+    setValue('parity-date-2', parityDateStr);
+    setValue('parity-r-squared', trendParams.rSquared.toFixed(3));
+    setValue('parity-doubling', trendParams.doublingTime);
+
     // Update share buttons for share-data section
     const pageUrl = 'https://robotaxi-safety-tracker.com/';
     const shareDataText = 'Tesla Robotaxi Safety Data:\n\n' +
