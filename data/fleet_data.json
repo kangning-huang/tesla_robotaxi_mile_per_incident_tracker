@@ -1,7 +1,7 @@
 {
   "metadata": {
     "description": "Tesla Robotaxi fleet size data from robotaxitracker.com (scraped) and news sources",
-    "last_updated": "2026-02-12",
+    "last_updated": "2026-02-13",
     "sources": [
       "robotaxitracker.com (primary - automated scraping)",
       "Tesla official announcements",
@@ -727,6 +727,15 @@
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 86 Austin + 197 Bay Area = 283 total (active: 53 Austin, 53 total)",
       "austin_active_vehicles": 53
+    },
+    {
+      "date": "2026-02-13",
+      "austin_vehicles": 86,
+      "bayarea_vehicles": 198,
+      "total_robotaxi": 86,
+      "source": "robotaxitracker.com",
+      "notes": "Current fleet: 86 Austin + 198 Bay Area = 284 total (active: 47 Austin, 47 total)",
+      "austin_active_vehicles": 47
     }
   ],
   "assumptions": {
