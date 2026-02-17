@@ -1,5 +1,5 @@
 {
-  "analysis_date": "2026-02-16T06:40:08.637388",
+  "analysis_date": "2026-02-17T06:35:33.857366",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "fleet_data_source": "total",
@@ -256,55 +256,55 @@
         "incident_number": 9,
         "incident_date": "2025-10-01",
         "days_since_previous": 30,
-        "miles_since_previous": 50600,
-        "mpi_since_previous": 50600,
-        "avg_fleet_size": 14.193548387096774,
-        "cumulative_miles": 162035,
+        "miles_since_previous": 69805,
+        "mpi_since_previous": 69805,
+        "avg_fleet_size": 19.580645161290324,
+        "cumulative_miles": 181240,
         "cumulative_incidents": 9,
-        "cumulative_mpi": 18003.88888888889
+        "cumulative_mpi": 20137.777777777777
       },
       {
         "incident_number": 10,
         "incident_date": "2025-11-01",
         "days_since_previous": 31,
-        "miles_since_previous": 69000,
-        "mpi_since_previous": 69000,
-        "avg_fleet_size": 18.75,
-        "cumulative_miles": 231035,
+        "miles_since_previous": 80960,
+        "mpi_since_previous": 80960,
+        "avg_fleet_size": 22.0,
+        "cumulative_miles": 262200,
         "cumulative_incidents": 10,
-        "cumulative_mpi": 23103.5
+        "cumulative_mpi": 26220.0
       }
     ],
     "trend_analysis": {
       "best_model": "exponential",
       "best_fit": {
         "type": "exponential",
-        "a": 7609.428408358302,
-        "b": 0.01842840638071664,
-        "r_squared": 0.3947351596512161,
+        "a": 7944.567949320856,
+        "b": 0.01959700338307103,
+        "r_squared": 0.4773369822519693,
         "interpretation": "improving",
-        "growth_rate_per_day": 0.01842840638071664,
-        "doubling_time_days": 37.612974569805985,
+        "growth_rate_per_day": 0.01959700338307103,
+        "doubling_time_days": 35.37005974896774,
         "halving_time_days": null
       },
       "all_models": {
         "exponential": {
           "type": "exponential",
-          "a": 7609.428408358302,
-          "b": 0.01842840638071664,
-          "r_squared": 0.3947351596512161,
+          "a": 7944.567949320856,
+          "b": 0.01959700338307103,
+          "r_squared": 0.4773369822519693,
           "interpretation": "improving",
-          "growth_rate_per_day": 0.01842840638071664,
-          "doubling_time_days": 37.612974569805985,
+          "growth_rate_per_day": 0.01959700338307103,
+          "doubling_time_days": 35.37005974896774,
           "halving_time_days": null
         }
       }
     },
     "summary": {
-      "average_mpi": 23103.5,
-      "latest_mpi": 69000,
-      "cumulative_mpi": 23103.5,
-      "total_miles": 231035,
+      "average_mpi": 26220.0,
+      "latest_mpi": 80960,
+      "cumulative_mpi": 26220.0,
+      "total_miles": 262200,
       "total_excluded_days": 2
     }
   }
