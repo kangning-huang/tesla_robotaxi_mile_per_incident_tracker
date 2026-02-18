@@ -456,9 +456,9 @@ function initMPIChart() {
     const trendDataPoints = [];
     const ongoingProgressData = [];
 
-    // Add all incident data points
+    // Add all incident data points (include full data for tooltip)
     currentIncidentData.forEach(d => {
-        mpiData.push({ x: d.date, y: d.mpi });
+        mpiData.push({ x: d.date, y: d.mpi, count: d.count || 1, miles: d.miles });
         const currentDate = new Date(d.date);
         const daysSinceStart = Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24));
         trendDataPoints.push({ x: d.date, y: Math.round(trendParams.exponential.a * Math.exp(trendParams.exponential.b * daysSinceStart)) });
@@ -659,6 +659,34 @@ function initMPIChart() {
             },
             plugins: {
                 ...options.plugins,
+                tooltip: {
+                    ...options.plugins.tooltip,
+                    callbacks: {
+                        title: function(context) {
+                            // Format as "Month YYYY"
+                            const date = new Date(context[0].raw.x);
+                            return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                        },
+                        label: function(context) {
+                            const raw = context.raw;
+                            // Only show detailed info for MPI data points (red dots)
+                            if (context.dataset.label === 'Miles per Incident' && raw.count !== undefined) {
+                                return [
+                                    'Incidents: ' + raw.count,
+                                    'Total Miles: ' + raw.miles.toLocaleString(),
+                                    'MPI: ' + raw.y.toLocaleString()
+                                ];
+                            }
+                            // Default label for other datasets
+                            const value = context.parsed.y;
+                            if (value === null) return null;
+                            if (value >= 1000) {
+                                return Math.round(value / 1000) + 'K miles';
+                            }
+                            return value.toLocaleString() + ' miles';
+                        }
+                    }
+                },
                 annotation: {
                     annotations: {
                         humanLinePolice: {
@@ -789,7 +817,7 @@ function updateMetrics() {
     const currentIncidentData = getIncidentData();
     const latestMPI = currentIncidentData[currentIncidentData.length - 1].mpi;
     const previousMPI = currentIncidentData[currentIncidentData.length - 2].mpi;
-    const totalIncidents = currentIncidentData.length;
+    const totalIncidents = currentIncidentData.reduce((sum, d) => sum + (d.count || 1), 0);
     const vsHuman = (500000 / latestMPI).toFixed(1);
 
     // Calculate miles since last incident (excluding stoppage days)
@@ -955,7 +983,7 @@ function updateFaqValues() {
     const currentIncidentData = getIncidentData();
     const latestMPI = currentIncidentData[currentIncidentData.length - 1].mpi;
     const previousMPI = currentIncidentData[currentIncidentData.length - 2].mpi;
-    const totalIncidents = currentIncidentData.length;
+    const totalIncidents = currentIncidentData.reduce((sum, d) => sum + (d.count || 1), 0);
     const changePercent = Math.round(((latestMPI - previousMPI) / previousMPI) * 100);
     const waymoRatio = Math.round(1000000 / latestMPI);
     const vsHumanRatio = (500000 / latestMPI).toFixed(1);
