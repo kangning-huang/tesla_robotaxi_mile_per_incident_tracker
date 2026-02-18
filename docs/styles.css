@@ -3316,6 +3316,43 @@ a:hover {
     color: var(--text-muted);
 }
 
+.composition-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+    .composition-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.composition-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+}
+
+.composition-card h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.composition-card .composition-table {
+    margin: 0;
+}
+
+.composition-card .composition-table th,
+.composition-card .composition-table td {
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
 /* ==========================================================================
    FLEET SIZE CALCULATOR (Task 10)
    ========================================================================== */

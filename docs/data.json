@@ -1,5 +1,5 @@
 {
-  "analysis_date": "2026-02-18T09:31:58.793149",
+  "analysis_date": "2026-02-18T09:40:36.261456",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "fleet_data_source": "total",
@@ -211,23 +211,23 @@
     "best_model": "exponential",
     "best_fit": {
       "type": "exponential",
-      "a": 16088.602660107008,
-      "b": 0.005562513912959202,
-      "r_squared": 0.10558306418915508,
+      "a": 2548.183211417494,
+      "b": 0.011164797340097189,
+      "r_squared": 0.2088689662937151,
       "interpretation": "improving",
-      "growth_rate_per_day": 0.005562513912959202,
-      "doubling_time_days": 124.61041741308614,
+      "growth_rate_per_day": 0.011164797340097189,
+      "doubling_time_days": 62.083274729097006,
       "halving_time_days": null
     },
     "all_models": {
       "exponential": {
         "type": "exponential",
-        "a": 16088.602660107008,
-        "b": 0.005562513912959202,
-        "r_squared": 0.10558306418915508,
+        "a": 2548.183211417494,
+        "b": 0.011164797340097189,
+        "r_squared": 0.2088689662937151,
         "interpretation": "improving",
-        "growth_rate_per_day": 0.005562513912959202,
-        "doubling_time_days": 124.61041741308614,
+        "growth_rate_per_day": 0.011164797340097189,
+        "doubling_time_days": 62.083274729097006,
         "halving_time_days": null
       }
     }
@@ -433,23 +433,23 @@
       "best_model": "exponential",
       "best_fit": {
         "type": "exponential",
-        "a": 16511.534105740164,
-        "b": 0.005350628237382067,
-        "r_squared": 0.10406788976050896,
+        "a": 2441.1388776996805,
+        "b": 0.01086053710878246,
+        "r_squared": 0.18553289274137252,
         "interpretation": "improving",
-        "growth_rate_per_day": 0.005350628237382067,
-        "doubling_time_days": 129.5450085126986,
+        "growth_rate_per_day": 0.01086053710878246,
+        "doubling_time_days": 63.82255072812433,
         "halving_time_days": null
       },
       "all_models": {
         "exponential": {
           "type": "exponential",
-          "a": 16511.534105740164,
-          "b": 0.005350628237382067,
-          "r_squared": 0.10406788976050896,
+          "a": 2441.1388776996805,
+          "b": 0.01086053710878246,
+          "r_squared": 0.18553289274137252,
           "interpretation": "improving",
-          "growth_rate_per_day": 0.005350628237382067,
-          "doubling_time_days": 129.5450085126986,
+          "growth_rate_per_day": 0.01086053710878246,
+          "doubling_time_days": 63.82255072812433,
           "halving_time_days": null
         }
       }

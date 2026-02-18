@@ -161,50 +161,61 @@ class MPITrendAnalyzer:
                 self.dates.append(incident_date)
 
     def exponential_trend(self) -> dict:
-        """Fit exponential trend: MPI = a * exp(b*t)"""
-        if not HAS_NUMPY or not HAS_SCIPY or len(self.mpi_values) < 3:
-            return {"error": "Insufficient data or scipy not available"}
+        """Fit exponential trend: MPI = a * exp(b*t) via log-linear regression.
+
+        Uses linear regression on ln(MPI) vs t, which is equivalent to fitting
+        the exponential model but guarantees R² between 0 and 1.
+        """
+        if not HAS_NUMPY or len(self.mpi_values) < 3:
+            return {"error": "Insufficient data or numpy not available"}
 
         x = np.array(self.days_since_start)
         y = np.array(self.mpi_values)
 
-        # Exponential function
-        def exp_func(t, a, b):
-            return a * np.exp(b * t)
+        # Log-linear regression: ln(y) = A + b*x where A = ln(a)
+        log_y = np.log(y)
+        n = len(x)
 
-        try:
-            # Initial guess
-            popt, pcov = optimize.curve_fit(
-                exp_func, x, y,
-                p0=[y[0], 0.01],
-                maxfev=5000,
-                bounds=([0, -0.1], [np.inf, 0.1])
-            )
+        # Linear regression formulas
+        sum_x = np.sum(x)
+        sum_log_y = np.sum(log_y)
+        sum_x_log_y = np.sum(x * log_y)
+        sum_x2 = np.sum(x * x)
 
-            # Calculate R-squared
-            y_pred = exp_func(x, *popt)
-            ss_res = np.sum((y - y_pred) ** 2)
-            ss_tot = np.sum((y - np.mean(y)) ** 2)
-            r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
+        mean_x = sum_x / n
+        mean_log_y = sum_log_y / n
 
-            # Doubling/halving time
-            if popt[1] != 0:
-                doubling_time = np.log(2) / abs(popt[1])
-            else:
-                doubling_time = float('inf')
+        # Slope b and intercept A
+        denom = n * sum_x2 - sum_x * sum_x
+        if abs(denom) < 1e-10:
+            return {"error": "Cannot fit trend (collinear data)"}
 
-            return {
-                "type": "exponential",
-                "a": popt[0],
-                "b": popt[1],
-                "r_squared": r_squared,
-                "interpretation": "improving" if popt[1] > 0 else "worsening",
-                "growth_rate_per_day": popt[1],
-                "doubling_time_days": doubling_time if popt[1] > 0 else None,
-                "halving_time_days": doubling_time if popt[1] < 0 else None
-            }
-        except Exception as e:
-            return {"error": f"Exponential fit failed: {e}"}
+        b = (n * sum_x_log_y - sum_x * sum_log_y) / denom
+        A = mean_log_y - b * mean_x
+        a = np.exp(A)
+
+        # R² in log space (always between 0 and 1 for linear regression)
+        log_y_pred = A + b * x
+        ss_res = np.sum((log_y - log_y_pred) ** 2)
+        ss_tot = np.sum((log_y - mean_log_y) ** 2)
+        r_squared = 1 - (ss_res / ss_tot) if ss_tot > 0 else 0
+
+        # Doubling/halving time
+        if b != 0:
+            doubling_time = np.log(2) / abs(b)
+        else:
+            doubling_time = float('inf')
+
+        return {
+            "type": "exponential",
+            "a": float(a),
+            "b": float(b),
+            "r_squared": float(r_squared),
+            "interpretation": "improving" if b > 0 else "worsening",
+            "growth_rate_per_day": float(b),
+            "doubling_time_days": float(doubling_time) if b > 0 else None,
+            "halving_time_days": float(doubling_time) if b < 0 else None
+        }
 
     def get_best_fit(self) -> dict:
         """Return the exponential model fit."""

@@ -250,15 +250,16 @@ function computeExponentialFit(data) {
     const A = meanY - b * meanX;
     const a = Math.exp(A);
 
-    // R² on original scale (non-linear)
-    const meanMPI = data.reduce((s, d) => s + d.mpi, 0) / n;
-    let ssRes = 0, ssTot = 0;
+    // R² on log scale (appropriate for exponential regression)
+    // Since we fit ln(MPI) = A + b*t, we compute R² in log space
+    // This ensures R² is always between 0 and 1 for the log-linear model
+    let ssResLog = 0, ssTotLog = 0;
     for (let i = 0; i < n; i++) {
-        const pred = a * Math.exp(b * x[i]);
-        ssRes += (data[i].mpi - pred) ** 2;
-        ssTot += (data[i].mpi - meanMPI) ** 2;
+        const predLog = A + b * x[i];  // predicted ln(MPI)
+        ssResLog += (Y[i] - predLog) ** 2;
+        ssTotLog += (Y[i] - meanY) ** 2;
     }
-    const rSquared = ssTot > 0 ? 1 - ssRes / ssTot : 0;
+    const rSquared = ssTotLog > 0 ? 1 - ssResLog / ssTotLog : 0;
 
     const doublingTime = b > 0 ? Math.round(Math.log(2) / b) : Infinity;
     // 30-day forecast from last data point
@@ -763,14 +764,21 @@ function populateIncidentTable() {
     tbody.innerHTML = '';
     const currentIncidentData = getIncidentData();
 
-    currentIncidentData.forEach((incident, index) => {
+    // Format date as "Month YYYY" (e.g., "Jul 2025")
+    const formatMonth = (dateStr) => {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    };
+
+    currentIncidentData.forEach((incident) => {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${incident.date}</td>
+            <td>${formatMonth(incident.date)}</td>
+            <td>${incident.count || 1}</td>
             <td>${incident.days}</td>
             <td>${incident.fleet}</td>
             <td>${incident.miles.toLocaleString()}</td>
+            <td>${incident.mpi.toLocaleString()}</td>
         `;
         tbody.appendChild(row);
     });

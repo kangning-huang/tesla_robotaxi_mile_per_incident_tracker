@@ -14,7 +14,7 @@
     </script>
 
     <title>Tesla Robotaxi Safety Tracker | MPI Trends & Incident Data</title>
-    <meta name="description" content="Live Tesla Robotaxi safety data: 3,910 miles per incident, 125-day doubling time, Austin fleet status. Independent tracking of Cybercab crash rates vs human drivers and Waymo.">
+    <meta name="description" content="Live Tesla Robotaxi safety data: 3,910 miles per incident, 62-day doubling time, Austin fleet status. Independent tracking of Cybercab crash rates vs human drivers and Waymo.">
     <meta name="keywords" content="robotaxi safety, Tesla remove safety monitors, when will Tesla robotaxis be unsupervised, robotaxi safety monitor removal, Tesla robotaxi safety signals, conditions for unsupervised robotaxi, Tesla Robotaxi safety tracker, miles per incident Tesla, safety parity thresholds, Tesla vs Waymo safety, robotaxi scaling feasibility, autonomous vehicle safety 2026, Tesla safety drivers Bay Area, Tesla robotaxi crash rate, Tesla robotaxi accidents Austin, Tesla robotaxi 10x crash rate, Tesla robotaxi redacted data, Tesla robotaxi NHTSA incidents, Tesla Cybercab crash frequency, robotaxi crash statistics 2026">
     <meta name="author" content="Kangning Huang">
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -30,7 +30,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://robotaxi-safety-tracker.com/">
     <meta property="og:title" content="Tesla Robotaxi Safety Tracker: When Will Safety Monitors Be Removed at Large Scale?">
-    <meta property="og:description" content="Independent safety tracking: Tesla Cybercab achieving 3,910 miles between incidents in Austin. Safety doubling every 125 days. Compare to human drivers & Waymo.">
+    <meta property="og:description" content="Independent safety tracking: Tesla Cybercab achieving 3,910 miles between incidents in Austin. Safety doubling every 62 days. Compare to human drivers & Waymo.">
     <meta property="og:site_name" content="Robotaxi Safety Tracker">
     <meta property="og:image" content="https://robotaxi-safety-tracker.com/chart-preview.png">
     <meta property="og:image:width" content="1782">
@@ -40,7 +40,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://robotaxi-safety-tracker.com/">
     <meta name="twitter:title" content="Tesla Robotaxi Safety Tracker: When Will Safety Monitors Be Removed at Large Scale?">
-    <meta name="twitter:description" content="Live safety data: 3,910 MPI, 125-day doubling time. Track Tesla Cybercab incidents vs human drivers.">
+    <meta name="twitter:description" content="Live safety data: 3,910 MPI, 62-day doubling time. Track Tesla Cybercab incidents vs human drivers.">
     <meta name="twitter:image" content="https://robotaxi-safety-tracker.com/chart-preview.png">
     <meta name="twitter:creator" content="@FytasoK60918">
 
@@ -741,18 +741,19 @@
     <section class="data-table-section">
         <div class="container">
             <div class="section-header">
-                <h2>Incident-by-Incident Breakdown</h2>
-                <p>Miles driven between each consecutive incident — see <a href="#methodology">how we calculate MPI</a></p>
+                <h2>Monthly Incident Summary</h2>
+                <p>Monthly aggregated MPI estimates (NHTSA data has month-level resolution only) — see <a href="#methodology">how we calculate MPI</a></p>
             </div>
             <div class="table-wrapper">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Date</th>
-                            <th>Days</th>
+                            <th>Month</th>
+                            <th>Incidents</th>
+                            <th>Days Since Previous</th>
                             <th>Avg Fleet</th>
-                            <th>Miles Between Incidents</th>
+                            <th>Total Miles</th>
+                            <th>MPI</th>
                         </tr>
                     </thead>
                     <tbody id="incident-table-body">
@@ -763,139 +764,133 @@
         </div>
     </section>
 
-    <!-- Incident Composition Breakdown (Task 7) -->
+    <!-- Incident Composition Breakdown -->
     <section class="incident-composition-section">
         <div class="container">
             <div class="section-header">
                 <h2>Incident Composition Breakdown</h2>
-                <p>Detailed characteristics of each Tesla Robotaxi incident reported to NHTSA &mdash; speed, collision type, severity, and fault context</p>
+                <p>Aggregated incident characteristics from NHTSA SGO reports &mdash; by movement type, speed, and collision partner</p>
             </div>
-            <div class="table-wrapper">
-                <table class="data-table composition-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Date</th>
-                            <th>Speed (mph)</th>
-                            <th>SV Movement</th>
-                            <th>Collision Partner</th>
-                            <th>Severity</th>
-                            <th>Airbags</th>
-                            <th>Fault Context</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>2025-07-05</td>
-                            <td class="speed-low">0</td>
-                            <td>Stopped</td>
-                            <td>Passenger Car</td>
-                            <td><span class="severity-badge minor">Property Damage</span></td>
-                            <td>No</td>
-                            <td><span class="fault-badge unknown">Redacted</span></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>2025-07-18</td>
-                            <td class="speed-low">0</td>
-                            <td>Stopped</td>
-                            <td>Passenger Car</td>
-                            <td><span class="severity-badge minor">Property Damage</span></td>
-                            <td>No</td>
-                            <td><span class="fault-badge unknown">Redacted</span></td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>2025-08-02</td>
-                            <td class="speed-low">0</td>
-                            <td>Stopped</td>
-                            <td>SUV</td>
-                            <td><span class="severity-badge minor">Property Damage</span></td>
-                            <td>No</td>
-                            <td><span class="fault-badge unknown">Redacted</span></td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td>2025-08-20</td>
-                            <td class="speed-low">0</td>
-                            <td>Stopped</td>
-                            <td>Passenger Car</td>
-                            <td><span class="severity-badge minor">Property Damage</span></td>
-                            <td>No</td>
-                            <td><span class="fault-badge unknown">Redacted</span></td>
-                        </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>2025-09-05</td>
-                            <td class="speed-low">0</td>
-                            <td>Stopped</td>
-                            <td>Pickup Truck</td>
-                            <td><span class="severity-badge minor">Property Damage</span></td>
-                            <td>No</td>
-                            <td><span class="fault-badge unknown">Redacted</span></td>
-                        </tr>
-                        <tr>
-                            <td>6</td>
-                            <td>2025-09-22</td>
-                            <td class="speed-low">0</td>
-                            <td>Proceeding Straight</td>
-                            <td>Passenger Car</td>
-                            <td><span class="severity-badge minor">Property Damage</span></td>
-                            <td>No</td>
-                            <td><span class="fault-badge unknown">Redacted</span></td>
-                        </tr>
-                        <tr>
-                            <td>7</td>
-                            <td>2025-10-08</td>
-                            <td class="speed-low">0</td>
-                            <td>Stopped</td>
-                            <td>SUV</td>
-                            <td><span class="severity-badge minor">Property Damage</span></td>
-                            <td>No</td>
-                            <td><span class="fault-badge unknown">Redacted</span></td>
-                        </tr>
-                        <tr>
-                            <td>8</td>
-                            <td>2025-10-25</td>
-                            <td class="speed-low">0</td>
-                            <td>Stopped</td>
-                            <td>Passenger Car</td>
-                            <td><span class="severity-badge minor">Property Damage</span></td>
-                            <td>No</td>
-                            <td><span class="fault-badge unknown">Redacted</span></td>
-                        </tr>
-                        <tr>
-                            <td>9</td>
-                            <td>2025-11-12</td>
-                            <td class="speed-low">0</td>
-                            <td>Stopped</td>
-                            <td>Passenger Car</td>
-                            <td><span class="severity-badge minor">Property Damage</span></td>
-                            <td>No</td>
-                            <td><span class="fault-badge unknown">Redacted</span></td>
-                        </tr>
-                        <tr>
-                            <td>10</td>
-                            <td>2025-12-10</td>
-                            <td class="speed-low">0</td>
-                            <td>Stopped</td>
-                            <td>SUV</td>
-                            <td><span class="severity-badge minor">Property Damage</span></td>
-                            <td>No</td>
-                            <td><span class="fault-badge unknown">Redacted</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="composition-grid">
+                <div class="composition-card">
+                    <h3>By Tesla Movement</h3>
+                    <table class="data-table composition-table">
+                        <thead>
+                            <tr>
+                                <th>Movement Type</th>
+                                <th>Count</th>
+                                <th>%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Stopped (0 mph)</td>
+                                <td>4</td>
+                                <td>24%</td>
+                            </tr>
+                            <tr>
+                                <td>Proceeding Straight</td>
+                                <td>9</td>
+                                <td>53%</td>
+                            </tr>
+                            <tr>
+                                <td>Backing (1-2 mph)</td>
+                                <td>2</td>
+                                <td>12%</td>
+                            </tr>
+                            <tr>
+                                <td>Other/Unknown</td>
+                                <td>2</td>
+                                <td>12%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="composition-card">
+                    <h3>By Collision Partner</h3>
+                    <table class="data-table composition-table">
+                        <thead>
+                            <tr>
+                                <th>Partner Type</th>
+                                <th>Count</th>
+                                <th>%</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Passenger Car</td>
+                                <td>7</td>
+                                <td>41%</td>
+                            </tr>
+                            <tr>
+                                <td>SUV</td>
+                                <td>3</td>
+                                <td>18%</td>
+                            </tr>
+                            <tr>
+                                <td>Fixed Object</td>
+                                <td>3</td>
+                                <td>18%</td>
+                            </tr>
+                            <tr>
+                                <td>Cyclist/Pedestrian</td>
+                                <td>2</td>
+                                <td>12%</td>
+                            </tr>
+                            <tr>
+                                <td>Bus/Other</td>
+                                <td>2</td>
+                                <td>12%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="composition-card">
+                    <h3>By Month</h3>
+                    <table class="data-table composition-table">
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Incidents</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Jul 2025</td>
+                                <td>5</td>
+                            </tr>
+                            <tr>
+                                <td>Sep 2025</td>
+                                <td>4</td>
+                            </tr>
+                            <tr>
+                                <td>Oct 2025</td>
+                                <td>2</td>
+                            </tr>
+                            <tr>
+                                <td>Nov 2025</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>Dec 2025</td>
+                                <td>1</td>
+                            </tr>
+                            <tr>
+                                <td>Jan 2026</td>
+                                <td>4</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="composition-summary">
                 <div class="composition-stat">
-                    <span class="composition-stat-value">100%</span>
-                    <span class="composition-stat-label">Property damage only (no injuries)</span>
+                    <span class="composition-stat-value">17</span>
+                    <span class="composition-stat-label">Total incidents (Jul 2025 - Jan 2026)</span>
                 </div>
                 <div class="composition-stat">
-                    <span class="composition-stat-value">90%</span>
-                    <span class="composition-stat-label">Tesla vehicle stationary or near-zero speed</span>
+                    <span class="composition-stat-value">100%</span>
+                    <span class="composition-stat-label">Property damage only (no injuries)</span>
                 </div>
                 <div class="composition-stat">
                     <span class="composition-stat-value">0%</span>
@@ -912,7 +907,7 @@
                     <path d="M12 16v-4"/>
                     <path d="M12 8h.01"/>
                 </svg>
-                <span>Tesla redacts the narrative field in all SGO reports, preventing determination of fault. Speed, collision partner, and severity are taken from structured NHTSA SGO fields. All 10 incidents report 0 mph pre-crash speed for the subject vehicle, suggesting the Tesla was stationary or nearly stationary at impact.</span>
+                <span>Tesla redacts the narrative field in all SGO reports, preventing determination of fault. Movement type, speed, and collision partner are from structured NHTSA SGO fields. Backing incidents (2 total) are low-speed parking lot events. Stationary incidents (4 total) occurred when the Tesla was at 0 mph.</span>
             </div>
         </div>
     </section>
@@ -1182,12 +1177,12 @@
                 <div class="method-card">
                     <div class="method-number">03</div>
                     <h3>Incident Data</h3>
-                    <p>Incidents from <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA Standing General Order</a> reports. Tesla has been cited for delayed reporting.</p>
+                    <p>Incidents from <a href="https://www.nhtsa.gov/laws-regulations/standing-general-order-crash-reporting" target="_blank" rel="noopener noreferrer">NHTSA Standing General Order</a> reports. NHTSA data has <strong>monthly resolution only</strong> (e.g., "JAN-2026"), so we aggregate incidents by month and show monthly MPI estimates. Tesla has been cited for delayed reporting.</p>
                 </div>
                 <div class="method-card">
                     <div class="method-number">04</div>
                     <h3>Trend Analysis</h3>
-                    <p>Exponential model fitted (MPI = a·e<sup>bt</sup>) with R² goodness of fit.</p>
+                    <p>Exponential model (MPI = a·e<sup>bt</sup>) fitted via log-linear regression on monthly aggregate data. R² computed in log scale, ensuring 0-1 bounds.</p>
                 </div>
             </div>
         </div>

@@ -230,6 +230,12 @@
                 </div>
 
                 <div class="method-card" style="margin-bottom: 24px;">
+                    <h3>Monthly Aggregation</h3>
+                    <p><strong>Important:</strong> NHTSA SGO data provides incident dates at <strong>monthly resolution only</strong> (e.g., "JAN-2026" rather than "2026-01-15"). Since we cannot determine the exact day of each incident within a month, we <strong>aggregate all incidents by month</strong> and calculate a single monthly MPI estimate. Each data point in the trend chart represents one month's worth of incidents.</p>
+                    <p>This monthly aggregation means that months with multiple incidents show the combined MPI for the entire cluster. The trend analysis and R² fit are computed over these 6 monthly data points, not the raw per-incident intervals.</p>
+                </div>
+
+                <div class="method-card" style="margin-bottom: 24px;">
                     <h3>Fleet Size Data</h3>
                     <p>Daily fleet counts come from <a href="https://robotaxitracker.com" target="_blank" rel="noopener noreferrer">robotaxitracker.com</a>, which independently tracks the number of Tesla robotaxi vehicles operating in each market. Fleet size is not reported continuously; instead, known data points are published at irregular intervals, and we linearly interpolate between them to estimate the fleet size on any given day.</p>
                 </div>
@@ -299,7 +305,13 @@
 
                 <div class="method-card" style="margin-bottom: 24px;">
                     <h3>R-squared</h3>
-                    <p>The R-squared value reported on the tracker is computed on the <strong>original (non-log) scale</strong>: it measures how much of the variance in actual MPI values is explained by the exponential model. This is a stricter test than R-squared on the log-transformed values, because it penalizes the model for percentage errors that look small on a log scale but are large in absolute terms.</p>
+                    <p>The R-squared value reported on the tracker is computed on the <strong>log scale</strong>: it measures how much of the variance in ln(MPI) is explained by the linear regression ln(MPI) = ln(a) + b·t. This is appropriate for exponential regression because:</p>
+                    <ul>
+                        <li>It guarantees R² is always between 0 and 1</li>
+                        <li>It measures relative (percentage) fit rather than absolute fit</li>
+                        <li>The fit is computed on the same scale where the regression is performed</li>
+                    </ul>
+                    <p>A low R² indicates high variance in MPI values across months, which is expected given the small sample size (6 monthly data points) and the stochastic nature of incident occurrence.</p>
                 </div>
 
                 <div class="method-card" style="margin-bottom: 24px;">
