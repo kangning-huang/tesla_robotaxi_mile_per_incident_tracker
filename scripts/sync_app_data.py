@@ -13,6 +13,8 @@ import json
 import re
 import sys
 from pathlib import Path
+from datetime import datetime, timedelta
+from collections import defaultdict
 
 
 def load_json(filepath: Path) -> dict:
@@ -21,16 +23,55 @@ def load_json(filepath: Path) -> dict:
         return json.load(f)
 
 
+def spread_same_day_incidents(incidents: list) -> list:
+    """
+    Spread incidents that share the same date across the month for visualization.
+
+    NHTSA data only has month-level precision (e.g., "JAN-2026" -> 2026-01-01),
+    so multiple incidents on the same date need to be spread out for the chart.
+    """
+    # Group incidents by date
+    by_date = defaultdict(list)
+    for i, inc in enumerate(incidents):
+        by_date[inc['incident_date']].append((i, inc))
+
+    # Create new list with spread dates
+    result = []
+    for date_str, date_incidents in by_date.items():
+        if len(date_incidents) == 1:
+            # Single incident on this date - keep as is
+            result.append((date_incidents[0][0], date_incidents[0][1], date_str))
+        else:
+            # Multiple incidents on same date - spread across month
+            try:
+                base_date = datetime.strptime(date_str, '%Y-%m-%d')
+                # Spread incidents across ~25 days of the month
+                spacing = 25 // len(date_incidents)
+                for j, (idx, inc) in enumerate(date_incidents):
+                    new_date = base_date + timedelta(days=j * spacing)
+                    result.append((idx, inc, new_date.strftime('%Y-%m-%d')))
+            except ValueError:
+                # If date parsing fails, keep original
+                for idx, inc in date_incidents:
+                    result.append((idx, inc, date_str))
+
+    # Sort by original index to maintain order
+    result.sort(key=lambda x: x[0])
+    return [(inc, viz_date) for _, inc, viz_date in result]
+
+
 def generate_incident_data(incidents: list) -> str:
-    """Generate JavaScript incidentData array string."""
+    """Generate JavaScript incidentData array string with spread dates for visualization."""
+    # Spread same-day incidents for better chart display
+    spread_incidents = spread_same_day_incidents(incidents)
+
     lines = []
-    for inc in incidents:
-        date = inc['incident_date']
+    for inc, viz_date in spread_incidents:
         days = inc['days_since_previous']
         fleet_size = int(inc['avg_fleet_size'])
         miles = int(inc['miles_since_previous'])
         mpi = int(inc['mpi_since_previous'])
-        lines.append(f"    {{ date: '{date}', days: {days}, fleet: {fleet_size}, miles: {miles}, mpi: {mpi} }},")
+        lines.append(f"    {{ date: '{viz_date}', days: {days}, fleet: {fleet_size}, miles: {miles}, mpi: {mpi} }},")
     return "const incidentData = [\n" + "\n".join(lines) + "\n];"
 
 
