@@ -7,7 +7,7 @@ const incidentData = [
     { date: '2025-10-15', days: 30, fleet: 17, miles: 64630, mpi: 32315, count: 2 },
     { date: '2025-11-12', days: 31, fleet: 18, miles: 66585, mpi: 66585, count: 1 },
     { date: '2025-12-10', days: 30, fleet: 24, miles: 87975, mpi: 87975, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 32, miles: 121440, mpi: 30360, count: 4 },
+    { date: '2026-01-10', days: 31, fleet: 31, miles: 113620, mpi: 56810, count: 2 },
 ];
 
 // Active fleet MPI data (using active fleet from fleet_growth_active.json)
@@ -18,7 +18,7 @@ const incidentDataActive = [
     { date: '2025-10-15', days: 30, fleet: 20, miles: 70610, mpi: 35305, count: 2 },
     { date: '2025-11-12', days: 31, fleet: 21, miles: 80845, mpi: 80845, count: 1 },
     { date: '2025-12-10', days: 30, fleet: 26, miles: 95220, mpi: 95220, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 26, miles: 107065, mpi: 26766, count: 4 },
+    { date: '2026-01-10', days: 31, fleet: 26, miles: 100855, mpi: 50427, count: 2 },
 ];
 
 // Latest active fleet size (from fleet_growth_active.json)

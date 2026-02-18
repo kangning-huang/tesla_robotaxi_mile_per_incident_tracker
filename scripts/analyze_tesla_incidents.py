@@ -300,6 +300,16 @@ def filter_tesla_incidents(df: pd.DataFrame, system_type: str, city: str | None 
     else:
         print(f"  Found {len(tesla_df)} Tesla {system_type} incidents")
 
+    # Filter out parking lot / backing incidents (low-speed, not safety-relevant)
+    movement_col = 'SV Pre-Crash Movement'
+    if movement_col in tesla_df.columns:
+        before_count = len(tesla_df)
+        # Exclude 'Backing' incidents - these are typically low-speed parking lot incidents
+        tesla_df = tesla_df[~tesla_df[movement_col].str.contains('Backing', case=False, na=False)]
+        filtered_count = before_count - len(tesla_df)
+        if filtered_count > 0:
+            print(f"  Filtered out {filtered_count} parking lot/backing incidents")
+
     tesla_df['System_Type'] = system_type
     return tesla_df
 
