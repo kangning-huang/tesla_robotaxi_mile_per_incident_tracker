@@ -517,10 +517,13 @@ function initMPIChart() {
                         color: colors.grid,
                         drawBorder: false
                     },
-                    min: 10000,
+                    min: 1000,
                     max: 1000000,
                     afterBuildTicks: function(axis) {
                         axis.ticks = [
+                            { value: 1000 },
+                            { value: 2000 },
+                            { value: 5000 },
                             { value: 10000 },
                             { value: 20000 },
                             { value: 50000 },
@@ -535,6 +538,9 @@ function initMPIChart() {
                         color: colors.muted,
                         font: { family: "'JetBrains Mono', monospace", size: 11 },
                         callback: function(value) {
+                            if (value === 1000) return '1K';
+                            if (value === 2000) return '2K';
+                            if (value === 5000) return '5K';
                             if (value === 10000) return '10K';
                             if (value === 20000) return '20K';
                             if (value === 50000) return '50K';
