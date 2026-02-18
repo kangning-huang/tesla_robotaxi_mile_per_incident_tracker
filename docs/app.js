@@ -29,22 +29,22 @@ const incidentDataActive = [
     { date: '2025-07-18', days: 0, fleet: 11, miles: 1265, mpi: 1265 },
     { date: '2025-07-23', days: 0, fleet: 11, miles: 1265, mpi: 1265 },
     { date: '2025-07-28', days: 0, fleet: 11, miles: 1265, mpi: 1265 },
-    { date: '2025-09-05', days: 62, fleet: 12, miles: 93610, mpi: 93610 },
-    { date: '2025-09-12', days: 0, fleet: 15, miles: 1725, mpi: 1725 },
-    { date: '2025-09-18', days: 0, fleet: 15, miles: 1725, mpi: 1725 },
-    { date: '2025-09-25', days: 0, fleet: 15, miles: 1725, mpi: 1725 },
-    { date: '2025-10-08', days: 30, fleet: 19, miles: 69805, mpi: 69805 },
-    { date: '2025-10-22', days: 0, fleet: 22, miles: 2530, mpi: 2530 },
-    { date: '2025-11-12', days: 31, fleet: 22, miles: 80960, mpi: 80960 },
-    { date: '2025-12-10', days: 30, fleet: 27, miles: 97520, mpi: 97520 },
-    { date: '2026-01-01', days: 31, fleet: 28, miles: 106490, mpi: 106490 },
-    { date: '2026-01-07', days: 0, fleet: 33, miles: 3795, mpi: 3795 },
-    { date: '2026-01-13', days: 0, fleet: 33, miles: 3795, mpi: 3795 },
-    { date: '2026-01-19', days: 0, fleet: 33, miles: 3795, mpi: 3795 },
+    { date: '2025-09-05', days: 62, fleet: 12, miles: 89355, mpi: 89355 },
+    { date: '2025-09-12', days: 0, fleet: 13, miles: 1495, mpi: 1495 },
+    { date: '2025-09-18', days: 0, fleet: 13, miles: 1495, mpi: 1495 },
+    { date: '2025-09-25', days: 0, fleet: 13, miles: 1495, mpi: 1495 },
+    { date: '2025-10-08', days: 30, fleet: 19, miles: 68195, mpi: 68195 },
+    { date: '2025-10-22', days: 0, fleet: 21, miles: 2415, mpi: 2415 },
+    { date: '2025-11-12', days: 31, fleet: 21, miles: 80845, mpi: 80845 },
+    { date: '2025-12-10', days: 30, fleet: 26, miles: 95220, mpi: 95220 },
+    { date: '2026-01-01', days: 31, fleet: 26, miles: 97750, mpi: 97750 },
+    { date: '2026-01-07', days: 0, fleet: 27, miles: 3105, mpi: 3105 },
+    { date: '2026-01-13', days: 0, fleet: 27, miles: 3105, mpi: 3105 },
+    { date: '2026-01-19', days: 0, fleet: 27, miles: 3105, mpi: 3105 },
 ];
 
 // Latest active fleet size (from fleet_growth_active.json)
-const latestActiveFleetSize = 46;
+const latestActiveFleetSize = 21;
 
 // Fleet mode toggle state: 'total' or 'active'
 let fleetMode = 'total';
@@ -156,6 +156,7 @@ const fleetData = [
     { date: '2026-02-15', size: 88 },
     { date: '2026-02-16', size: 89 },
     { date: '2026-02-17', size: 89 },
+    { date: '2026-02-18', size: 89 },
 ];
 
 // Compute exponential trend parameters via log-linear regression on incidentData
