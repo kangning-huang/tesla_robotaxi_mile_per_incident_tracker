@@ -41,17 +41,26 @@ jobs:
       - name: Run analysis
         run: python scripts/analyze_tesla_incidents.py
 
+      - name: Sync app.js chart data
+        run: python scripts/sync_app_data.py
+
       - name: Check for changes
         id: changes
         run: |
-          git diff --quiet data/ || echo "changed=true" >> $GITHUB_OUTPUT
+          # Check both data/ and docs/app.js for changes
+          CHANGED=false
+          git diff --quiet data/ || CHANGED=true
+          git diff --quiet docs/app.js || CHANGED=true
+          if [ "$CHANGED" = true ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Commit and push updates
         if: steps.changes.outputs.changed == 'true'
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add data/
+          git add data/ docs/app.js
           git commit -m "Update Tesla Robotaxi analysis data - $(date +'%Y-%m-%d')"
           git push
 
