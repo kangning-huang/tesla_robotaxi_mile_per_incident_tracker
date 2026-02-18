@@ -775,7 +775,6 @@ function populateIncidentTable() {
         row.innerHTML = `
             <td>${formatMonth(incident.date)}</td>
             <td>${incident.count || 1}</td>
-            <td>${incident.days}</td>
             <td>${incident.fleet}</td>
             <td>${incident.miles.toLocaleString()}</td>
             <td>${incident.mpi.toLocaleString()}</td>
@@ -1544,20 +1543,22 @@ initCalculator();
 // ===== Dataset Download (Task 16) =====
 function generateCSV() {
     const currentData = getIncidentData();
-    const collisionPartners = ['Passenger Car', 'Passenger Car', 'SUV', 'Passenger Car', 'Pickup Truck', 'Passenger Car', 'SUV', 'Passenger Car', 'Passenger Car', 'SUV'];
-    let csv = 'date,incident_number,days_since_previous,avg_fleet_size,miles_between_incidents,mpi,speed_mph,collision_partner,severity\n';
-    currentData.forEach((d, i) => {
-        csv += d.date + ',' + (i + 1) + ',' + d.days + ',' + d.fleet + ',' + d.miles + ',' + d.mpi + ',0,' + collisionPartners[i] + ',Property Damage\n';
+    // Monthly aggregate format (NHTSA data has month-level resolution only)
+    let csv = 'month,incident_count,avg_fleet_size,total_miles,mpi\n';
+    currentData.forEach((d) => {
+        const monthStr = new Date(d.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        csv += monthStr + ',' + (d.count || 1) + ',' + d.fleet + ',' + d.miles + ',' + d.mpi + '\n';
     });
     return csv;
 }
 
 function generateJSON() {
     const currentData = getIncidentData();
-    const collisionPartners = ['Passenger Car', 'Passenger Car', 'SUV', 'Passenger Car', 'Pickup Truck', 'Passenger Car', 'SUV', 'Passenger Car', 'Passenger Car', 'SUV'];
+    // Monthly aggregate format (NHTSA data has month-level resolution only)
     const dataset = {
         metadata: {
-            title: 'Tesla Robotaxi Safety Incident Data',
+            title: 'Tesla Robotaxi Safety Data - Monthly Aggregates',
+            description: 'Monthly MPI estimates. NHTSA SGO data has month-level date resolution only, so incidents are aggregated by month.',
             source: 'NHTSA SGO 2021-01 / robotaxitracker.com',
             license: 'MIT',
             updated: new Date().toISOString().split('T')[0],
@@ -1566,18 +1567,12 @@ function generateJSON() {
             miles_per_day_assumption: 115,
             fleet_source: 'robotaxitracker.com (Austin total fleet)'
         },
-        incidents: currentData.map((d, i) => ({
-            date: d.date,
-            incident_number: i + 1,
-            days_since_previous: d.days,
+        monthly_data: currentData.map((d) => ({
+            month: new Date(d.date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+            incident_count: d.count || 1,
             avg_fleet_size: d.fleet,
-            miles_between_incidents: d.miles,
-            mpi: d.mpi,
-            speed_mph: 0,
-            collision_partner: collisionPartners[i],
-            severity: 'Property Damage',
-            airbags_deployed: false,
-            narrative_available: false
+            total_miles: d.miles,
+            mpi: d.mpi
         })),
         trend: {
             model: 'exponential',
@@ -1585,6 +1580,10 @@ function generateJSON() {
             doubling_time_days: trendParams.doublingTime,
             daily_growth_rate: trendParams.dailyGrowth,
             forecast_30day_mpi: trendParams.forecast30Day
+        },
+        totals: {
+            total_incidents: currentData.reduce((sum, d) => sum + (d.count || 1), 0),
+            total_miles: currentData.reduce((sum, d) => sum + d.miles, 0)
         }
     };
     return JSON.stringify(dataset, null, 2);
