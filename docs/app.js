@@ -2,45 +2,23 @@
 // Updated with 115 mi/day/vehicle (validated from Tesla's 250K miles Q3 2025 report)
 // Fleet sizes use total Austin fleet from fleet_data.json
 const incidentData = [
-    { date: '2025-07-05', days: 6, fleet: 10, miles: 8625, mpi: 8625 },
-    { date: '2025-07-12', days: 0, fleet: 12, miles: 1380, mpi: 1380 },
-    { date: '2025-07-18', days: 0, fleet: 12, miles: 1380, mpi: 1380 },
-    { date: '2025-07-23', days: 0, fleet: 12, miles: 1380, mpi: 1380 },
-    { date: '2025-07-28', days: 0, fleet: 12, miles: 1380, mpi: 1380 },
-    { date: '2025-09-05', days: 62, fleet: 13, miles: 101200, mpi: 101200 },
-    { date: '2025-09-12', days: 0, fleet: 15, miles: 1725, mpi: 1725 },
-    { date: '2025-09-18', days: 0, fleet: 15, miles: 1725, mpi: 1725 },
-    { date: '2025-09-25', days: 0, fleet: 15, miles: 1725, mpi: 1725 },
-    { date: '2025-10-08', days: 30, fleet: 17, miles: 62560, mpi: 62560 },
-    { date: '2025-10-22', days: 0, fleet: 18, miles: 2070, mpi: 2070 },
-    { date: '2025-11-12', days: 31, fleet: 18, miles: 66585, mpi: 66585 },
-    { date: '2025-12-10', days: 30, fleet: 24, miles: 87975, mpi: 87975 },
-    { date: '2026-01-01', days: 31, fleet: 29, miles: 109710, mpi: 109710 },
-    { date: '2026-01-07', days: 0, fleet: 34, miles: 3910, mpi: 3910 },
-    { date: '2026-01-13', days: 0, fleet: 34, miles: 3910, mpi: 3910 },
-    { date: '2026-01-19', days: 0, fleet: 34, miles: 3910, mpi: 3910 },
+    { date: '2025-07-15', days: 6, fleet: 11, miles: 14145, mpi: 2829, count: 5 },
+    { date: '2025-09-15', days: 62, fleet: 14, miles: 106375, mpi: 26593, count: 4 },
+    { date: '2025-10-15', days: 30, fleet: 17, miles: 64630, mpi: 32315, count: 2 },
+    { date: '2025-11-12', days: 31, fleet: 18, miles: 66585, mpi: 66585, count: 1 },
+    { date: '2025-12-10', days: 30, fleet: 24, miles: 87975, mpi: 87975, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 32, miles: 121440, mpi: 30360, count: 4 },
 ];
 
 // Active fleet MPI data (using active fleet from fleet_growth_active.json)
 // Active fleet = vehicles actually on the road (subset of total fleet)
 const incidentDataActive = [
-    { date: '2025-07-05', days: 6, fleet: 11, miles: 8855, mpi: 8855 },
-    { date: '2025-07-12', days: 0, fleet: 11, miles: 1265, mpi: 1265 },
-    { date: '2025-07-18', days: 0, fleet: 11, miles: 1265, mpi: 1265 },
-    { date: '2025-07-23', days: 0, fleet: 11, miles: 1265, mpi: 1265 },
-    { date: '2025-07-28', days: 0, fleet: 11, miles: 1265, mpi: 1265 },
-    { date: '2025-09-05', days: 62, fleet: 12, miles: 89355, mpi: 89355 },
-    { date: '2025-09-12', days: 0, fleet: 13, miles: 1495, mpi: 1495 },
-    { date: '2025-09-18', days: 0, fleet: 13, miles: 1495, mpi: 1495 },
-    { date: '2025-09-25', days: 0, fleet: 13, miles: 1495, mpi: 1495 },
-    { date: '2025-10-08', days: 30, fleet: 19, miles: 68195, mpi: 68195 },
-    { date: '2025-10-22', days: 0, fleet: 21, miles: 2415, mpi: 2415 },
-    { date: '2025-11-12', days: 31, fleet: 21, miles: 80845, mpi: 80845 },
-    { date: '2025-12-10', days: 30, fleet: 26, miles: 95220, mpi: 95220 },
-    { date: '2026-01-01', days: 31, fleet: 26, miles: 97750, mpi: 97750 },
-    { date: '2026-01-07', days: 0, fleet: 27, miles: 3105, mpi: 3105 },
-    { date: '2026-01-13', days: 0, fleet: 27, miles: 3105, mpi: 3105 },
-    { date: '2026-01-19', days: 0, fleet: 27, miles: 3105, mpi: 3105 },
+    { date: '2025-07-15', days: 6, fleet: 11, miles: 13915, mpi: 2783, count: 5 },
+    { date: '2025-09-15', days: 62, fleet: 12, miles: 93840, mpi: 23460, count: 4 },
+    { date: '2025-10-15', days: 30, fleet: 20, miles: 70610, mpi: 35305, count: 2 },
+    { date: '2025-11-12', days: 31, fleet: 21, miles: 80845, mpi: 80845, count: 1 },
+    { date: '2025-12-10', days: 30, fleet: 26, miles: 95220, mpi: 95220, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 26, miles: 107065, mpi: 26766, count: 4 },
 ];
 
 // Latest active fleet size (from fleet_growth_active.json)

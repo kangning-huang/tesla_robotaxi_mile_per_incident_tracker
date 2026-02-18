@@ -89,18 +89,65 @@ def spread_same_day_incidents(incidents: list) -> list:
     return [(inc, viz_date) for _, inc, viz_date in result]
 
 
-def generate_incident_data(incidents: list) -> str:
-    """Generate JavaScript incidentData array string with spread dates for visualization."""
-    # Spread same-day incidents for better chart display
-    spread_incidents = spread_same_day_incidents(incidents)
+def generate_incident_data(incidents: list, aggregate_same_day: bool = True) -> str:
+    """Generate JavaScript incidentData array string for chart visualization.
 
+    When aggregate_same_day=True (default), same-day incidents are aggregated to show
+    one data point per incident cluster. This prevents tiny MPI values from making
+    the chart unreadable. The MPI shown is the interval MPI (miles since previous
+    cluster / incidents in current cluster).
+
+    When aggregate_same_day=False, all incidents are shown with spread dates.
+    """
+    if not aggregate_same_day:
+        # Original behavior - spread all incidents
+        spread_incidents = spread_same_day_incidents(incidents)
+        lines = []
+        for inc, viz_date in spread_incidents:
+            days = inc['days_since_previous']
+            fleet_size = int(inc['avg_fleet_size'])
+            miles = int(inc['miles_since_previous'])
+            mpi = int(inc['mpi_since_previous'])
+            lines.append(f"    {{ date: '{viz_date}', days: {days}, fleet: {fleet_size}, miles: {miles}, mpi: {mpi} }},")
+        return "const incidentData = [\n" + "\n".join(lines) + "\n];"
+
+    # Aggregate same-day incidents for cleaner chart visualization
+    # Group by NHTSA date (original date before spreading)
+    by_date = defaultdict(list)
+    for inc in incidents:
+        by_date[inc['incident_date']].append(inc)
+
+    # For each unique date, create one data point
     lines = []
-    for inc, viz_date in spread_incidents:
-        days = inc['days_since_previous']
-        fleet_size = int(inc['avg_fleet_size'])
-        miles = int(inc['miles_since_previous'])
-        mpi = int(inc['mpi_since_previous'])
-        lines.append(f"    {{ date: '{viz_date}', days: {days}, fleet: {fleet_size}, miles: {miles}, mpi: {mpi} }},")
+    for date_str in sorted(by_date.keys()):
+        date_incidents = by_date[date_str]
+        incident_count = len(date_incidents)
+
+        # First incident has the interval miles (from previous cluster to this one)
+        first_inc = date_incidents[0]
+
+        # Sum all miles for this cluster and calculate cluster MPI
+        total_miles = sum(int(inc['miles_since_previous']) for inc in date_incidents)
+        cluster_mpi = total_miles // incident_count
+
+        # Use known date if available, otherwise use mid-month for visibility
+        month_key = date_str[:7]
+        known_dates = {
+            '2025-07': '2025-07-15',
+            '2025-09': '2025-09-15',
+            '2025-10': '2025-10-15',
+            '2025-11': '2025-11-12',
+            '2025-12': '2025-12-10',
+            '2026-01': '2026-01-10',
+        }
+        viz_date = known_dates.get(month_key, date_str)
+
+        avg_fleet = sum(inc['avg_fleet_size'] for inc in date_incidents) / incident_count
+        days = first_inc['days_since_previous']
+
+        # Include incident count for tooltip
+        lines.append(f"    {{ date: '{viz_date}', days: {days}, fleet: {int(avg_fleet)}, miles: {total_miles}, mpi: {cluster_mpi}, count: {incident_count} }},")
+
     return "const incidentData = [\n" + "\n".join(lines) + "\n];"
 
 
