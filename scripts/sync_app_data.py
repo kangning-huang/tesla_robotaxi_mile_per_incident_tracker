@@ -15,6 +15,7 @@ import sys
 from pathlib import Path
 from datetime import datetime, timedelta
 from collections import defaultdict
+import pandas as pd
 
 
 def load_json(filepath: Path) -> dict:
@@ -23,95 +24,14 @@ def load_json(filepath: Path) -> dict:
         return json.load(f)
 
 
-def spread_same_day_incidents(incidents: list) -> list:
+def generate_incident_array(incidents: list, var_name: str = "incidentData") -> str:
+    """Generate JavaScript incident data array string for chart visualization.
+
+    Aggregates same-day incidents into monthly clusters.
     """
-    Spread incidents that share the same date across the month for visualization.
+    if not incidents:
+        return f"const {var_name} = [];"
 
-    NHTSA data only has month-level precision (e.g., "JAN-2026" -> 2026-01-01),
-    so multiple incidents on the same date need to be spread out for the chart.
-
-    Uses known exact dates from news reports where available, falls back to
-    spreading unknown dates across the month.
-    """
-    # Known exact dates from news reports and other sources
-    # Format: (month, incident_index_within_month) -> exact_date
-    # These override the NHTSA month-level dates for better accuracy
-    KNOWN_DATES = {
-        # July 2025 - 5 incidents
-        ('2025-07', 0): '2025-07-05',   # First reported incident
-        ('2025-07', 1): '2025-07-12',   # Second incident
-        ('2025-07', 2): '2025-07-18',   # Third incident
-        ('2025-07', 3): '2025-07-23',   # Fourth incident
-        ('2025-07', 4): '2025-07-28',   # Fifth incident
-        # September 2025 - 4 incidents
-        ('2025-09', 0): '2025-09-05',   # First September incident
-        ('2025-09', 1): '2025-09-12',   # Second incident
-        ('2025-09', 2): '2025-09-18',   # Third incident
-        ('2025-09', 3): '2025-09-25',   # Fourth incident
-        # October 2025 - 2 incidents
-        ('2025-10', 0): '2025-10-08',   # First October incident
-        ('2025-10', 1): '2025-10-22',   # Second incident
-        # November 2025 - 1 incident
-        ('2025-11', 0): '2025-11-12',   # November incident
-        # December 2025 - 1 incident
-        ('2025-12', 0): '2025-12-10',   # December incident
-        # January 2026 - 4 incidents (new, dates TBD from news research)
-        # Will be spread automatically until exact dates found
-    }
-
-    # Group incidents by month
-    by_month = defaultdict(list)
-    for i, inc in enumerate(incidents):
-        date_str = inc['incident_date']
-        month_key = date_str[:7]  # e.g., "2025-07"
-        by_month[month_key].append((i, inc))
-
-    # Create new list with known or spread dates
-    result = []
-    for month_key, month_incidents in by_month.items():
-        for j, (idx, inc) in enumerate(month_incidents):
-            # Check if we have a known exact date
-            known_date = KNOWN_DATES.get((month_key, j))
-            if known_date:
-                result.append((idx, inc, known_date))
-            else:
-                # Spread unknown dates across the month
-                try:
-                    base_date = datetime.strptime(inc['incident_date'], '%Y-%m-%d')
-                    spacing = 25 // len(month_incidents) if len(month_incidents) > 1 else 0
-                    new_date = base_date + timedelta(days=j * spacing)
-                    result.append((idx, inc, new_date.strftime('%Y-%m-%d')))
-                except ValueError:
-                    result.append((idx, inc, inc['incident_date']))
-
-    # Sort by original index to maintain order
-    result.sort(key=lambda x: x[0])
-    return [(inc, viz_date) for _, inc, viz_date in result]
-
-
-def generate_incident_data(incidents: list, aggregate_same_day: bool = True) -> str:
-    """Generate JavaScript incidentData array string for chart visualization.
-
-    When aggregate_same_day=True (default), same-day incidents are aggregated to show
-    one data point per incident cluster. This prevents tiny MPI values from making
-    the chart unreadable. The MPI shown is the interval MPI (miles since previous
-    cluster / incidents in current cluster).
-
-    When aggregate_same_day=False, all incidents are shown with spread dates.
-    """
-    if not aggregate_same_day:
-        # Original behavior - spread all incidents
-        spread_incidents = spread_same_day_incidents(incidents)
-        lines = []
-        for inc, viz_date in spread_incidents:
-            days = inc['days_since_previous']
-            fleet_size = int(inc['avg_fleet_size'])
-            miles = int(inc['miles_since_previous'])
-            mpi = int(inc['mpi_since_previous'])
-            lines.append(f"    {{ date: '{viz_date}', days: {days}, fleet: {fleet_size}, miles: {miles}, mpi: {mpi} }},")
-        return "const incidentData = [\n" + "\n".join(lines) + "\n];"
-
-    # Aggregate same-day incidents for cleaner chart visualization
     # Group by NHTSA date (original date before spreading)
     by_date = defaultdict(list)
     for inc in incidents:
@@ -123,12 +43,9 @@ def generate_incident_data(incidents: list, aggregate_same_day: bool = True) -> 
         date_incidents = by_date[date_str]
         incident_count = len(date_incidents)
 
-        # First incident has the interval miles (from previous cluster to this one)
-        first_inc = date_incidents[0]
-
         # Sum all miles for this cluster and calculate cluster MPI
         total_miles = sum(int(inc['miles_since_previous']) for inc in date_incidents)
-        cluster_mpi = total_miles // incident_count
+        cluster_mpi = total_miles // incident_count if incident_count > 0 else 0
 
         # Use known date if available, otherwise use mid-month for visibility
         month_key = date_str[:7]
@@ -139,16 +56,110 @@ def generate_incident_data(incidents: list, aggregate_same_day: bool = True) -> 
             '2025-11': '2025-11-12',
             '2025-12': '2025-12-10',
             '2026-01': '2026-01-10',
+            '2026-02': '2026-02-10',
         }
         viz_date = known_dates.get(month_key, date_str)
 
         avg_fleet = sum(inc['avg_fleet_size'] for inc in date_incidents) / incident_count
-        days = first_inc['days_since_previous']
+        days = date_incidents[0]['days_since_previous']
 
         # Include incident count for tooltip
         lines.append(f"    {{ date: '{viz_date}', days: {days}, fleet: {int(avg_fleet)}, miles: {total_miles}, mpi: {cluster_mpi}, count: {incident_count} }},")
 
-    return "const incidentData = [\n" + "\n".join(lines) + "\n];"
+    return f"const {var_name} = [\n" + "\n".join(lines) + "\n];"
+
+
+def filter_incidents(incidents: list, exclude_backing: bool = True, exclude_stationary: bool = True) -> list:
+    """Filter incidents based on type.
+
+    Note: This is a placeholder. Ideally, incident types should be in the analysis results.
+    For now, we identify incidents by their characteristics.
+
+    Backing incidents: Low-speed (1-2 mph) reversing events
+    Stationary incidents: 0 mph incidents where the robotaxi was stopped
+    """
+    # Known incident types from NHTSA data analysis
+    # These are hardcoded based on manual review of the incident data
+    BACKING_INCIDENTS = {
+        # January 2026 backing incidents (1-2 mph, reversing)
+        ('2026-01-01', 3),  # 3rd incident on Jan 1 (index 0-based within month)
+        ('2026-01-01', 4),  # 4th incident on Jan 1
+    }
+
+    STATIONARY_INCIDENTS = {
+        # Incidents where robotaxi was at 0 mph (stopped)
+        ('2025-07-01', 4),  # July - SUV collision while stopped
+        ('2025-09-01', 3),  # September - cyclist collision while stopped
+        ('2025-11-01', 0),  # November - only incident, stationary
+        ('2026-01-01', 2),  # January - bus collision while stopped
+    }
+
+    # Group incidents by date to identify them
+    by_date = defaultdict(list)
+    for inc in incidents:
+        by_date[inc['incident_date']].append(inc)
+
+    filtered = []
+    for inc in incidents:
+        date = inc['incident_date']
+        # Find the index of this incident within its date
+        date_incidents = by_date[date]
+        idx = date_incidents.index(inc)
+
+        is_backing = (date, idx) in BACKING_INCIDENTS
+        is_stationary = (date, idx) in STATIONARY_INCIDENTS
+
+        # Skip if excluded
+        if exclude_backing and is_backing:
+            continue
+        if exclude_stationary and is_stationary:
+            continue
+
+        filtered.append(inc)
+
+    return filtered
+
+
+def recalculate_mpi(incidents: list, daily_miles: int = 115) -> list:
+    """Recalculate MPI values after filtering.
+
+    When incidents are removed, the miles between remaining incidents change.
+    """
+    if not incidents:
+        return []
+
+    result = []
+    prev_date = None
+    cumulative_miles = 0
+
+    for i, inc in enumerate(incidents):
+        new_inc = inc.copy()
+
+        if i == 0:
+            # First incident - use original values
+            result.append(new_inc)
+            prev_date = datetime.strptime(inc['incident_date'], '%Y-%m-%d')
+            cumulative_miles = inc['cumulative_miles']
+        else:
+            current_date = datetime.strptime(inc['incident_date'], '%Y-%m-%d')
+            days = (current_date - prev_date).days
+
+            # Recalculate miles based on fleet size and days
+            # This is a simplified calculation - ideally we'd use actual fleet data
+            miles = int(inc['avg_fleet_size']) * daily_miles * max(days, 1)
+
+            new_inc['days_since_previous'] = days
+            new_inc['miles_since_previous'] = miles
+            new_inc['mpi_since_previous'] = miles  # Single incident interval
+            cumulative_miles += miles
+            new_inc['cumulative_miles'] = cumulative_miles
+            new_inc['cumulative_incidents'] = i + 1
+            new_inc['cumulative_mpi'] = cumulative_miles / (i + 1)
+
+            result.append(new_inc)
+            prev_date = current_date
+
+    return result
 
 
 def generate_fleet_data(snapshots: list) -> str:
@@ -168,9 +179,56 @@ def get_latest_active_fleet(snapshots: list) -> int:
     return active_sizes[-1] if active_sizes else 46
 
 
+def generate_all_filter_combinations(analysis: dict) -> dict:
+    """Generate incident data for all filter combinations.
+
+    Returns a dict with keys for each combination:
+    - base: no backing, no stationary (most filtered, DEFAULT)
+    - stationary: no backing, WITH stationary
+    - backing: WITH backing, no stationary
+    - all: WITH backing, WITH stationary (least filtered)
+    """
+    total_incidents = analysis['incidents']
+    active_incidents = analysis['active_fleet']['incidents']
+
+    combinations = {}
+
+    # Generate combinations for total fleet
+    combinations['total_base'] = recalculate_mpi(
+        filter_incidents(total_incidents, exclude_backing=True, exclude_stationary=True)
+    )
+    combinations['total_stationary'] = recalculate_mpi(
+        filter_incidents(total_incidents, exclude_backing=True, exclude_stationary=False)
+    )
+    combinations['total_backing'] = recalculate_mpi(
+        filter_incidents(total_incidents, exclude_backing=False, exclude_stationary=True)
+    )
+    combinations['total_all'] = recalculate_mpi(
+        filter_incidents(total_incidents, exclude_backing=False, exclude_stationary=False)
+    )
+
+    # Generate combinations for active fleet
+    combinations['active_base'] = recalculate_mpi(
+        filter_incidents(active_incidents, exclude_backing=True, exclude_stationary=True)
+    )
+    combinations['active_stationary'] = recalculate_mpi(
+        filter_incidents(active_incidents, exclude_backing=True, exclude_stationary=False)
+    )
+    combinations['active_backing'] = recalculate_mpi(
+        filter_incidents(active_incidents, exclude_backing=False, exclude_stationary=True)
+    )
+    combinations['active_all'] = recalculate_mpi(
+        filter_incidents(active_incidents, exclude_backing=False, exclude_stationary=False)
+    )
+
+    return combinations
+
+
 def update_app_js(app_js_path: Path, analysis: dict, fleet: dict) -> bool:
     """
     Update app.js with new data from analysis results and fleet data.
+
+    Generates all filter combinations for incident data.
 
     Returns True if changes were made, False otherwise.
     """
@@ -179,29 +237,41 @@ def update_app_js(app_js_path: Path, analysis: dict, fleet: dict) -> bool:
 
     content = original_content
 
-    # Generate new data strings
-    incident_data_str = generate_incident_data(analysis['incidents'])
-    incident_data_active_str = generate_incident_data(analysis['active_fleet']['incidents']).replace(
-        'const incidentData', 'const incidentDataActive'
-    )
+    # Generate all filter combinations
+    combinations = generate_all_filter_combinations(analysis)
+
+    # Generate JavaScript arrays for each combination
+    # Total fleet
+    base_str = generate_incident_array(combinations['total_base'], 'incidentDataBase')
+    stationary_str = generate_incident_array(combinations['total_stationary'], 'incidentDataStationary')
+    backing_str = generate_incident_array(combinations['total_backing'], 'incidentDataBacking')
+    all_str = generate_incident_array(combinations['total_all'], 'incidentDataAll')
+
+    # Active fleet
+    active_base_str = generate_incident_array(combinations['active_base'], 'incidentDataActiveBase')
+    active_stationary_str = generate_incident_array(combinations['active_stationary'], 'incidentDataActiveStationary')
+    active_backing_str = generate_incident_array(combinations['active_backing'], 'incidentDataActiveBacking')
+    active_all_str = generate_incident_array(combinations['active_all'], 'incidentDataActiveAll')
+
     fleet_data_str = generate_fleet_data(fleet['snapshots'])
     latest_active = get_latest_active_fleet(fleet['snapshots'])
 
-    # Replace incidentData
-    pattern = r'const incidentData = \[[\s\S]*?\];'
-    content = re.sub(pattern, incident_data_str, content, count=1)
+    # Replace each data array
+    replacements = [
+        (r'const incidentDataBase = \[[\s\S]*?\];', base_str),
+        (r'const incidentDataStationary = \[[\s\S]*?\];', stationary_str),
+        (r'const incidentDataBacking = \[[\s\S]*?\];', backing_str),
+        (r'const incidentDataAll = \[[\s\S]*?\];', all_str),
+        (r'const incidentDataActiveBase = \[[\s\S]*?\];', active_base_str),
+        (r'const incidentDataActiveStationary = \[[\s\S]*?\];', active_stationary_str),
+        (r'const incidentDataActiveBacking = \[[\s\S]*?\];', active_backing_str),
+        (r'const incidentDataActiveAll = \[[\s\S]*?\];', active_all_str),
+        (r'const latestActiveFleetSize = \d+;', f'const latestActiveFleetSize = {latest_active};'),
+        (r'const fleetData = \[[\s\S]*?\];', fleet_data_str),
+    ]
 
-    # Replace incidentDataActive
-    pattern = r'const incidentDataActive = \[[\s\S]*?\];'
-    content = re.sub(pattern, incident_data_active_str, content, count=1)
-
-    # Replace latestActiveFleetSize
-    pattern = r'const latestActiveFleetSize = \d+;'
-    content = re.sub(pattern, f'const latestActiveFleetSize = {latest_active};', content)
-
-    # Replace fleetData
-    pattern = r'const fleetData = \[[\s\S]*?\];'
-    content = re.sub(pattern, fleet_data_str, content, count=1)
+    for pattern, replacement in replacements:
+        content = re.sub(pattern, replacement, content, count=1)
 
     # Check if anything changed
     if content == original_content:
@@ -251,6 +321,15 @@ def main():
     latest_fleet = fleet['snapshots'][-1]
     latest_active = get_latest_active_fleet(fleet['snapshots'])
 
+    # Generate combinations for reporting
+    combinations = generate_all_filter_combinations(analysis)
+
+    print(f"\nFilter combinations generated:")
+    print(f"  Base (no backing, no stationary): {len(combinations['total_base'])} incidents")
+    print(f"  Stationary (no backing, with stationary): {len(combinations['total_stationary'])} incidents")
+    print(f"  Backing (with backing, no stationary): {len(combinations['total_backing'])} incidents")
+    print(f"  All (with backing, with stationary): {len(combinations['total_all'])} incidents")
+
     print(f"\nLatest data:")
     print(f"  Fleet size: {latest_fleet.get('austin_vehicles', 'N/A')} vehicles")
     print(f"  Active fleet: {latest_active} vehicles")
@@ -263,8 +342,7 @@ def main():
     if changed:
         print("  ✓ app.js updated successfully")
         print(f"\nSync complete:")
-        print(f"  - {len(analysis['incidents'])} incidents (total fleet)")
-        print(f"  - {len(analysis['active_fleet']['incidents'])} incidents (active fleet)")
+        print(f"  - 8 incident data arrays generated (4 total fleet, 4 active fleet)")
         print(f"  - {len([s for s in fleet['snapshots'] if s.get('austin_vehicles')])} fleet data points")
         return 0
     else:

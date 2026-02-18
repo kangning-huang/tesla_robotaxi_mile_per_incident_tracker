@@ -1,25 +1,94 @@
 // ===== Data =====
 // Updated with 115 mi/day/vehicle (validated from Tesla's 250K miles Q3 2025 report)
 // Fleet sizes use total Austin fleet from fleet_data.json
-const incidentData = [
-    { date: '2025-07-15', days: 6, fleet: 11, miles: 14145, mpi: 2829, count: 5 },
-    { date: '2025-09-15', days: 62, fleet: 14, miles: 106375, mpi: 26593, count: 4 },
-    { date: '2025-10-15', days: 30, fleet: 17, miles: 64630, mpi: 32315, count: 2 },
-    { date: '2025-11-12', days: 31, fleet: 18, miles: 66585, mpi: 66585, count: 1 },
-    { date: '2025-12-10', days: 30, fleet: 24, miles: 87975, mpi: 87975, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 31, miles: 113620, mpi: 56810, count: 2 },
+//
+// Data arrays are organized by filter combination:
+// - Base: no backing incidents, no stationary incidents (most filtered, DEFAULT)
+// - Stationary: no backing, WITH stationary incidents
+// - Backing: WITH backing, no stationary incidents
+// - All: WITH backing, WITH stationary incidents (least filtered)
+
+// ===== Total Fleet Data (all filter combinations) =====
+// Base: no backing, no stationary (11 incidents)
+const incidentDataBase = [
+    { date: '2025-07-15', days: 6, fleet: 11, miles: 12765, mpi: 3191, count: 4 },
+    { date: '2025-09-15', days: 62, fleet: 14, miles: 96140, mpi: 32046, count: 3 },
+    { date: '2025-10-15', days: 30, fleet: 17, miles: 60720, mpi: 30360, count: 2 },
+    { date: '2025-12-10', days: 61, fleet: 24, miles: 168360, mpi: 168360, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 31, miles: 107295, mpi: 53647, count: 2 },
 ];
 
-// Active fleet MPI data (using active fleet from fleet_growth_active.json)
-// Active fleet = vehicles actually on the road (subset of total fleet)
-const incidentDataActive = [
-    { date: '2025-07-15', days: 6, fleet: 11, miles: 13915, mpi: 2783, count: 5 },
-    { date: '2025-09-15', days: 62, fleet: 12, miles: 93840, mpi: 23460, count: 4 },
-    { date: '2025-10-15', days: 30, fleet: 20, miles: 70610, mpi: 35305, count: 2 },
-    { date: '2025-11-12', days: 31, fleet: 21, miles: 80845, mpi: 80845, count: 1 },
-    { date: '2025-12-10', days: 30, fleet: 26, miles: 95220, mpi: 95220, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 26, miles: 100855, mpi: 50427, count: 2 },
+// Stationary: no backing, WITH stationary (15 incidents) - previous default
+const incidentDataStationary = [
+    { date: '2025-07-15', days: 6, fleet: 11, miles: 14145, mpi: 2829, count: 5 },
+    { date: '2025-09-15', days: 62, fleet: 14, miles: 97865, mpi: 24466, count: 4 },
+    { date: '2025-10-15', days: 30, fleet: 17, miles: 60720, mpi: 30360, count: 2 },
+    { date: '2025-11-12', days: 31, fleet: 18, miles: 64170, mpi: 64170, count: 1 },
+    { date: '2025-12-10', days: 30, fleet: 24, miles: 82800, mpi: 82800, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 32, miles: 111205, mpi: 37068, count: 3 },
 ];
+
+// Backing: WITH backing, no stationary (13 incidents)
+const incidentDataBacking = [
+    { date: '2025-07-15', days: 6, fleet: 11, miles: 12765, mpi: 3191, count: 4 },
+    { date: '2025-09-15', days: 62, fleet: 14, miles: 96140, mpi: 32046, count: 3 },
+    { date: '2025-10-15', days: 30, fleet: 17, miles: 60720, mpi: 30360, count: 2 },
+    { date: '2025-12-10', days: 61, fleet: 24, miles: 168360, mpi: 168360, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 32, miles: 111205, mpi: 37068, count: 3 },
+];
+
+// All: WITH backing, WITH stationary (17 incidents)
+const incidentDataAll = [
+    { date: '2025-07-15', days: 6, fleet: 11, miles: 14145, mpi: 2829, count: 5 },
+    { date: '2025-09-15', days: 62, fleet: 14, miles: 97865, mpi: 24466, count: 4 },
+    { date: '2025-10-15', days: 30, fleet: 17, miles: 60720, mpi: 30360, count: 2 },
+    { date: '2025-11-12', days: 31, fleet: 18, miles: 64170, mpi: 64170, count: 1 },
+    { date: '2025-12-10', days: 30, fleet: 24, miles: 82800, mpi: 82800, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 32, miles: 115115, mpi: 28778, count: 4 },
+];
+
+// ===== Active Fleet Data (all filter combinations) =====
+// Base: no backing, no stationary
+const incidentDataActiveBase = [
+    { date: '2025-07-15', days: 6, fleet: 11, miles: 12650, mpi: 3162, count: 4 },
+    { date: '2025-09-15', days: 62, fleet: 12, miles: 88550, mpi: 29516, count: 3 },
+    { date: '2025-10-15', days: 30, fleet: 20, miles: 67965, mpi: 33982, count: 2 },
+    { date: '2025-12-10', days: 61, fleet: 26, miles: 182390, mpi: 182390, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 26, miles: 95795, mpi: 47897, count: 2 },
+];
+
+// Stationary: no backing, WITH stationary
+const incidentDataActiveStationary = [
+    { date: '2025-07-15', days: 6, fleet: 11, miles: 13915, mpi: 2783, count: 5 },
+    { date: '2025-09-15', days: 62, fleet: 12, miles: 90045, mpi: 22511, count: 4 },
+    { date: '2025-10-15', days: 30, fleet: 20, miles: 67965, mpi: 33982, count: 2 },
+    { date: '2025-11-12', days: 31, fleet: 21, miles: 74865, mpi: 74865, count: 1 },
+    { date: '2025-12-10', days: 30, fleet: 26, miles: 89700, mpi: 89700, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 26, miles: 98900, mpi: 32966, count: 3 },
+];
+
+// Backing: WITH backing, no stationary
+const incidentDataActiveBacking = [
+    { date: '2025-07-15', days: 6, fleet: 11, miles: 12650, mpi: 3162, count: 4 },
+    { date: '2025-09-15', days: 62, fleet: 12, miles: 88550, mpi: 29516, count: 3 },
+    { date: '2025-10-15', days: 30, fleet: 20, miles: 67965, mpi: 33982, count: 2 },
+    { date: '2025-12-10', days: 61, fleet: 26, miles: 182390, mpi: 182390, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 26, miles: 98900, mpi: 32966, count: 3 },
+];
+
+// All: WITH backing, WITH stationary
+const incidentDataActiveAll = [
+    { date: '2025-07-15', days: 6, fleet: 11, miles: 13915, mpi: 2783, count: 5 },
+    { date: '2025-09-15', days: 62, fleet: 12, miles: 90045, mpi: 22511, count: 4 },
+    { date: '2025-10-15', days: 30, fleet: 20, miles: 67965, mpi: 33982, count: 2 },
+    { date: '2025-11-12', days: 31, fleet: 21, miles: 74865, mpi: 74865, count: 1 },
+    { date: '2025-12-10', days: 30, fleet: 26, miles: 89700, mpi: 89700, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 26, miles: 102005, mpi: 25501, count: 4 },
+];
+
+// Legacy aliases for backward compatibility
+const incidentData = incidentDataStationary;
+const incidentDataActive = incidentDataActiveStationary;
 
 // Latest active fleet size (from fleet_growth_active.json)
 const latestActiveFleetSize = 21;
@@ -27,9 +96,25 @@ const latestActiveFleetSize = 21;
 // Fleet mode toggle state: 'total' or 'active'
 let fleetMode = 'total';
 
-// Get current incident data based on fleet mode
+// Incident filter state: by default both are OFF (excluded)
+let includeBackingIncidents = false;
+let includeStationaryIncidents = false;
+
+// Get current incident data based on fleet mode and filter settings
 function getIncidentData() {
-    return fleetMode === 'active' ? incidentDataActive : incidentData;
+    const isActive = fleetMode === 'active';
+
+    // Select the appropriate dataset based on filter combination
+    if (includeBackingIncidents && includeStationaryIncidents) {
+        return isActive ? incidentDataActiveAll : incidentDataAll;
+    } else if (includeBackingIncidents) {
+        return isActive ? incidentDataActiveBacking : incidentDataBacking;
+    } else if (includeStationaryIncidents) {
+        return isActive ? incidentDataActiveStationary : incidentDataStationary;
+    } else {
+        // Default: both filters OFF (most filtered data)
+        return isActive ? incidentDataActiveBase : incidentDataBase;
+    }
 }
 
 // Get current fleet size based on fleet mode
@@ -1244,6 +1329,48 @@ function setFleetMode(mode) {
     }
 }
 
+// ===== Incident Filter Toggle =====
+function updateIncidentFilters() {
+    // Get current checkbox states
+    const backingCheckbox = document.getElementById('filter-backing');
+    const stationaryCheckbox = document.getElementById('filter-stationary');
+
+    if (backingCheckbox) includeBackingIncidents = backingCheckbox.checked;
+    if (stationaryCheckbox) includeStationaryIncidents = stationaryCheckbox.checked;
+
+    // Recompute trend params for new data
+    recomputeTrendParams();
+
+    // Reinitialize chart and metrics with new data
+    initMPIChart();
+    populateIncidentTable();
+    updateMetrics();
+    updateHeroStreak();
+    updateCurrentStreakComparison();
+    updateFaqValues();
+
+    // Update stat cards
+    const statDoublingEl = document.getElementById('stat-doubling-time');
+    if (statDoublingEl) statDoublingEl.textContent = trendParams.doublingTime + ' days';
+    const statDoublingDetailEl = document.getElementById('stat-doubling-detail');
+    if (statDoublingDetailEl) {
+        const months = (trendParams.doublingTime / 30).toFixed(1);
+        statDoublingDetailEl.textContent = 'Safety doubles every ~' + months + ' months';
+    }
+    const statRSquaredEl = document.getElementById('stat-r-squared');
+    if (statRSquaredEl) statRSquaredEl.textContent = 'R\u00B2 = ' + trendParams.rSquared.toFixed(3);
+    const statGrowthEl = document.getElementById('stat-daily-growth');
+    if (statGrowthEl) statGrowthEl.textContent = '+' + (trendParams.dailyGrowth * 100).toFixed(1) + '%';
+    const statForecastEl = document.getElementById('stat-forecast');
+    if (statForecastEl) statForecastEl.textContent = trendParams.forecast30Day.toLocaleString();
+    const statEquationEl = document.getElementById('stat-equation');
+    if (statEquationEl) {
+        const aVal = Math.round(trendParams.exponential.a).toLocaleString();
+        const bVal = trendParams.exponential.b.toFixed(4);
+        statEquationEl.innerHTML = 'MPI = ' + aVal + '·e<sup>' + bVal + 't</sup>';
+    }
+}
+
 // ===== Initialize =====
 document.addEventListener('DOMContentLoaded', () => {
     initMPIChart();
@@ -1259,6 +1386,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.fleet-toggle-btn').forEach(btn => {
         btn.addEventListener('click', () => setFleetMode(btn.dataset.mode));
     });
+
+    // Set up incident filter checkboxes
+    const backingCheckbox = document.getElementById('filter-backing');
+    const stationaryCheckbox = document.getElementById('filter-stationary');
+    if (backingCheckbox) {
+        backingCheckbox.addEventListener('change', updateIncidentFilters);
+    }
+    if (stationaryCheckbox) {
+        stationaryCheckbox.addEventListener('change', updateIncidentFilters);
+    }
 
     // Set up scale toggle buttons
     document.querySelectorAll('.scale-toggle-btn').forEach(btn => {

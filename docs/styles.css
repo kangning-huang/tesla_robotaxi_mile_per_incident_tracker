@@ -480,6 +480,44 @@ a:hover {
     color: #fff;
 }
 
+/* ===== Incident Type Filters ===== */
+.incident-filters {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.filter-checkbox input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--accent-primary);
+}
+
+.filter-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.filter-checkbox:hover .filter-label {
+    color: var(--text-primary);
+}
+
+.filter-checkbox input[type="checkbox"]:checked + .filter-label {
+    color: var(--text-primary);
+}
+
 /* ===== Metrics Cards ===== */
 .metrics {
     padding: 40px 0;
@@ -1453,6 +1491,14 @@ a:hover {
 
     .fleet-toggle-btn {
         padding: 5px 10px;
+        font-size: 0.75rem;
+    }
+
+    .incident-filters {
+        gap: 8px;
+    }
+
+    .filter-label {
         font-size: 0.75rem;
     }
 
