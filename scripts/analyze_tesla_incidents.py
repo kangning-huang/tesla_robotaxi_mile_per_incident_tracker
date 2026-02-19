@@ -501,6 +501,17 @@ def calculate_mpi_between_incidents(
             "cumulative_mpi": cumulative_miles / cumulative_incidents
         }
 
+        # Include NHTSA fields for downstream filtering
+        if 'Roadway Type' in row.index:
+            result["roadway_type"] = str(row['Roadway Type']) if pd.notna(row['Roadway Type']) else ""
+        if 'SV Precrash Speed (MPH)' in row.index:
+            try:
+                result["precrash_speed_mph"] = int(row['SV Precrash Speed (MPH)'])
+            except (ValueError, TypeError):
+                result["precrash_speed_mph"] = None
+        if 'SV Pre-Crash Movement' in row.index:
+            result["precrash_movement"] = str(row['SV Pre-Crash Movement']) if pd.notna(row['SV Pre-Crash Movement']) else ""
+
         if excluded_days_in_period > 0:
             result["excluded_days"] = excluded_days_in_period
             result["active_days"] = active_days
