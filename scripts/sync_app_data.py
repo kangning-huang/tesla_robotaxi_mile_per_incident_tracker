@@ -70,46 +70,22 @@ def generate_incident_array(incidents: list, var_name: str = "incidentData") -> 
 
 
 def filter_incidents(incidents: list, exclude_backing: bool = True, exclude_stationary: bool = True) -> list:
-    """Filter incidents based on type.
+    """Filter incidents based on type using NHTSA data fields.
 
-    Note: This is a placeholder. Ideally, incident types should be in the analysis results.
-    For now, we identify incidents by their characteristics.
-
-    Backing incidents: Low-speed (1-2 mph) reversing events
+    Backing incidents: Low-speed reversing events in parking lots
+      (Roadway Type == "Parking Lot" and SV Pre-Crash Movement == "Backing")
     Stationary incidents: 0 mph incidents where the robotaxi was stopped
+      (SV Precrash Speed == 0 and SV Pre-Crash Movement == "Stopped")
     """
-    # Known incident types from NHTSA data analysis
-    # These are hardcoded based on manual review of the incident data
-    BACKING_INCIDENTS = {
-        # January 2026 backing incidents (1-2 mph, reversing)
-        ('2026-01-01', 3),  # 3rd incident on Jan 1 (index 0-based within month)
-        ('2026-01-01', 4),  # 4th incident on Jan 1
-    }
-
-    STATIONARY_INCIDENTS = {
-        # Incidents where robotaxi was at 0 mph (stopped)
-        ('2025-07-01', 4),  # July - SUV collision while stopped
-        ('2025-09-01', 3),  # September - cyclist collision while stopped
-        ('2025-11-01', 0),  # November - only incident, stationary
-        ('2026-01-01', 2),  # January - bus collision while stopped
-    }
-
-    # Group incidents by date to identify them
-    by_date = defaultdict(list)
-    for inc in incidents:
-        by_date[inc['incident_date']].append(inc)
-
     filtered = []
     for inc in incidents:
-        date = inc['incident_date']
-        # Find the index of this incident within its date
-        date_incidents = by_date[date]
-        idx = date_incidents.index(inc)
+        precrash_speed = inc.get('precrash_speed_mph')
+        precrash_movement = inc.get('precrash_movement', '')
+        roadway_type = inc.get('roadway_type', '')
 
-        is_backing = (date, idx) in BACKING_INCIDENTS
-        is_stationary = (date, idx) in STATIONARY_INCIDENTS
+        is_backing = (roadway_type == 'Parking Lot' and precrash_movement == 'Backing')
+        is_stationary = (precrash_speed == 0 and precrash_movement == 'Stopped')
 
-        # Skip if excluded
         if exclude_backing and is_backing:
             continue
         if exclude_stationary and is_stationary:

@@ -15,7 +15,7 @@ const incidentDataBase = [
     { date: '2025-09-15', days: 62, fleet: 14, miles: 96140, mpi: 32046, count: 3 },
     { date: '2025-10-15', days: 30, fleet: 17, miles: 60720, mpi: 30360, count: 2 },
     { date: '2025-12-10', days: 61, fleet: 24, miles: 168360, mpi: 168360, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 31, miles: 107295, mpi: 53647, count: 2 },
+    { date: '2026-01-10', days: 31, fleet: 29, miles: 103385, mpi: 103385, count: 1 },
 ];
 
 // Stationary: no backing, WITH stationary (15 incidents) - previous default
@@ -25,7 +25,7 @@ const incidentDataStationary = [
     { date: '2025-10-15', days: 30, fleet: 17, miles: 60720, mpi: 30360, count: 2 },
     { date: '2025-11-12', days: 31, fleet: 18, miles: 64170, mpi: 64170, count: 1 },
     { date: '2025-12-10', days: 30, fleet: 24, miles: 82800, mpi: 82800, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 32, miles: 111205, mpi: 37068, count: 3 },
+    { date: '2026-01-10', days: 31, fleet: 31, miles: 107295, mpi: 53647, count: 2 },
 ];
 
 // Backing: WITH backing, no stationary (13 incidents)
@@ -54,7 +54,7 @@ const incidentDataActiveBase = [
     { date: '2025-09-15', days: 62, fleet: 12, miles: 88550, mpi: 29516, count: 3 },
     { date: '2025-10-15', days: 30, fleet: 20, miles: 67965, mpi: 33982, count: 2 },
     { date: '2025-12-10', days: 61, fleet: 26, miles: 182390, mpi: 182390, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 26, miles: 95795, mpi: 47897, count: 2 },
+    { date: '2026-01-10', days: 31, fleet: 26, miles: 92690, mpi: 92690, count: 1 },
 ];
 
 // Stationary: no backing, WITH stationary
@@ -64,7 +64,7 @@ const incidentDataActiveStationary = [
     { date: '2025-10-15', days: 30, fleet: 20, miles: 67965, mpi: 33982, count: 2 },
     { date: '2025-11-12', days: 31, fleet: 21, miles: 74865, mpi: 74865, count: 1 },
     { date: '2025-12-10', days: 30, fleet: 26, miles: 89700, mpi: 89700, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 26, miles: 98900, mpi: 32966, count: 3 },
+    { date: '2026-01-10', days: 31, fleet: 26, miles: 95795, mpi: 47897, count: 2 },
 ];
 
 // Backing: WITH backing, no stationary
