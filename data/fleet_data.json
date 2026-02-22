@@ -790,7 +790,7 @@
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 89 Austin + 288 Bay Area = 377 total (active: 19 Austin, 19 total)",
       "austin_active_vehicles": 19
-    },
+    }
   ],
   "assumptions": {
     "daily_miles_per_vehicle": {
