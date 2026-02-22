@@ -19,9 +19,15 @@ import pandas as pd
 
 
 def load_json(filepath: Path) -> dict:
-    """Load JSON file."""
+    """Load JSON file, fixing trailing commas if needed."""
     with open(filepath, 'r') as f:
-        return json.load(f)
+        content = f.read()
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError:
+        # Try fixing trailing commas (e.g. },] or },})
+        fixed = re.sub(r',(\s*[}\]])', r'\1', content)
+        return json.loads(fixed)
 
 
 def generate_incident_array(incidents: list, var_name: str = "incidentData") -> str:
