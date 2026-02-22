@@ -124,12 +124,18 @@ def _extract_date(item):
 
 
 def _extract_counts(item):
-    """Extract austin, bayarea, total counts from a dict."""
+    """Extract austin, bayarea, total counts from a dict.
+
+    Skips 'unsupervised' keys to avoid confusing 'Unsupervised Austin'
+    (a different chart line) with the total Austin fleet.
+    """
     austin = bayarea = total = None
     for key, val in item.items():
         if val is None or not isinstance(val, (int, float)):
             continue
         kl = key.lower().replace("_", "").replace("-", "")
+        if "unsupervised" in kl:
+            continue  # Skip unsupervised Austin (different chart line)
         if "austin" in kl:
             austin = int(val)
         elif "bay" in kl or "sf" in kl or "sanfran" in kl:
@@ -386,7 +392,8 @@ def parse_tooltip_text(text: str) -> dict:
         return None
 
     # Extract counts: "Austin  39" or "Austin39" (tooltip text may lack spaces)
-    austin_m = re.search(r"Austin\s*(\d+)", text, re.IGNORECASE)
+    # Must NOT match "Unsupervised Austin" (a different chart line for unsupervised ADS vehicles)
+    austin_m = re.search(r"(?<!Unsupervised\s)(?<!unsupervised\s)(?<!\w)Austin\s*(\d+)", text, re.IGNORECASE)
     bay_m = re.search(r"Bay\s*Area\s*(\d+)", text, re.IGNORECASE)
     total_m = re.search(r"Total\s*(?:Fleet\s*)?(\d+)", text, re.IGNORECASE)
 
@@ -403,6 +410,8 @@ def parse_tooltip_text(text: str) -> dict:
         pairs = re.findall(r"([A-Za-z\s]+?)\s*(\d+)", text)
         for label, val in pairs:
             label = label.strip().lower()
+            if "unsupervised" in label:
+                continue  # Skip unsupervised Austin (different chart line)
             if "austin" in label:
                 result["austin"] = int(val)
             elif "bay" in label or "sf" in label:

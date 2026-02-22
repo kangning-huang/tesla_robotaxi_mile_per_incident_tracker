@@ -132,14 +132,15 @@ async def extract_fleet_numbers(page) -> dict:
     # Pattern 1: Look for specific text patterns (based on robotaxitracker.com layout)
     patterns = [
         # Fleet Growth section patterns: "TOTAL FLEET" "BAY AREA" "AUSTIN" followed by numbers
+        # IMPORTANT: Patterns must NOT match "UNSUPERVISED AUSTIN" (a different metric)
         (r"TOTAL\s*FLEET\s*(\d+)", "total_vehicles"),
         (r"BAY\s*AREA\s*(\d+)", "bayarea_vehicles"),
-        (r"AUSTIN\s*(\d+)", "austin_vehicles"),
+        (r"(?<!UNSUPERVISED\s)(?<!\w)AUSTIN\s*(\d+)", "austin_vehicles"),
         # Alternative patterns
-        (r"Austin[:\s]*(\d+)\s*(?:vehicles?|cars?)?", "austin_vehicles"),
+        (r"(?<!Unsupervised\s)(?<!\w)Austin[:\s]*(\d+)\s*(?:vehicles?|cars?)?", "austin_vehicles"),
         (r"Bay\s*Area[:\s]*(\d+)\s*(?:vehicles?|cars?)?", "bayarea_vehicles"),
         (r"Total[:\s]*(\d+)\s*(?:vehicles?|cars?|robotaxis?)?", "total_vehicles"),
-        (r"(\d+)\s*(?:vehicles?|cars?)\s*(?:in\s*)?Austin", "austin_vehicles"),
+        (r"(\d+)\s*(?:vehicles?|cars?)\s*(?:in\s*)?(?<!Unsupervised\s)Austin", "austin_vehicles"),
         (r"(\d+)\s*(?:vehicles?|cars?)\s*(?:in\s*)?(?:Bay\s*Area|SF|San\s*Francisco)", "bayarea_vehicles"),
     ]
 
@@ -164,7 +165,10 @@ async def extract_fleet_numbers(page) -> dict:
             const bayMatch = allText.match(/BAY\\s*AREA[\\s\\n]*(\\d+)/i);
             if (bayMatch) result.bayarea = parseInt(bayMatch[1]);
 
-            const austinMatch = allText.match(/AUSTIN[\\s\\n]*(\\d+)/i);
+            // Match "AUSTIN" followed by a number, but NOT "UNSUPERVISED AUSTIN"
+            // First remove any "Unsupervised Austin: <number>" occurrences, then match Austin
+            const cleanedText = allText.replace(/unsupervised\\s+austin[\\s\\n:]*\\d+/gi, '');
+            const austinMatch = cleanedText.match(/AUSTIN[\\s\\n]*(\\d+)/i);
             if (austinMatch) result.austin = parseInt(austinMatch[1]);
 
             return result;
@@ -355,6 +359,7 @@ def extract_fleet_data_from_api_responses(captured_responses: list) -> list:
                 continue
 
             # Look for fleet count fields
+            # Skip "unsupervised" keys - those track a different metric
             austin = None
             bayarea = None
             total = None
@@ -362,6 +367,8 @@ def extract_fleet_data_from_api_responses(captured_responses: list) -> list:
                 key_lower = key.lower().replace("_", "").replace("-", "")
                 if val is not None and isinstance(val, (int, float)):
                     val = int(val)
+                    if "unsupervised" in key_lower:
+                        continue  # Skip unsupervised Austin (different chart line)
                     if "austin" in key_lower:
                         austin = val
                     elif "bay" in key_lower or "sf" in key_lower or "sanfran" in key_lower:
@@ -941,6 +948,7 @@ async def extract_chart_data_from_scripts(page) -> list:
                         continue
 
                     # Extract counts with flexible field names
+                    # Skip "unsupervised" keys - those track a different metric
                     austin = None
                     bayarea = None
                     total = None
@@ -948,6 +956,8 @@ async def extract_chart_data_from_scripts(page) -> list:
                         if val is None or not isinstance(val, (int, float)):
                             continue
                         key_lower = key.lower().replace("_", "").replace("-", "")
+                        if "unsupervised" in key_lower:
+                            continue  # Skip unsupervised Austin (different chart line)
                         if "austin" in key_lower:
                             austin = int(val)
                         elif "bay" in key_lower or "sf" in key_lower:
@@ -1075,8 +1085,9 @@ def parse_tooltip_text(text: str) -> dict:
     if bay_match:
         result["bayarea"] = int(bay_match.group(1))
 
-    # Extract Austin number
-    austin_match = re.search(r'Austin[:\s]*(\d+)', text, re.IGNORECASE)
+    # Extract Austin number - must NOT match "Unsupervised Austin" (a different chart line)
+    # Use negative lookbehind to skip "Unsupervised Austin" and only match the total Austin fleet
+    austin_match = re.search(r'(?<!Unsupervised\s)(?<!unsupervised\s)(?<!\w)Austin[:\s]*(\d+)', text, re.IGNORECASE)
     if austin_match:
         result["austin"] = int(austin_match.group(1))
 
@@ -1198,8 +1209,9 @@ async def extract_active_fleet_numbers(page) -> dict:
                 const totalMatch = allText.match(/(?:TOTAL\\s*FLEET|总车队)[\\s\\n]*(\\d+)/i);
                 if (totalMatch) result.total = parseInt(totalMatch[1]);
 
-                // Look for region-specific numbers
-                const austinMatch = allText.match(/AUSTIN[\\s\\n]*(\\d+)/i);
+                // Match "AUSTIN" followed by a number, but NOT "UNSUPERVISED AUSTIN"
+                const cleanedText = allText.replace(/unsupervised\\s+austin[\\s\\n:]*\\d+/gi, '');
+                const austinMatch = cleanedText.match(/AUSTIN[\\s\\n]*(\\d+)/i);
                 if (austinMatch) result.austin = parseInt(austinMatch[1]);
 
                 const bayMatch = allText.match(/BAY\\s*AREA[\\s\\n]*(\\d+)/i);
@@ -1219,10 +1231,11 @@ async def extract_active_fleet_numbers(page) -> dict:
         print(f"  JS active fleet extraction failed: {e}")
 
     # Also try regex on HTML content
+    # IMPORTANT: Austin pattern must NOT match "UNSUPERVISED AUSTIN"
     patterns = [
         (r"TOTAL\s*FLEET\s*(\d+)", "total_active"),
         (r"总车队\s*(\d+)", "total_active"),
-        (r"AUSTIN\s*(\d+)", "austin_active"),
+        (r"(?<!UNSUPERVISED\s)(?<!\w)AUSTIN\s*(\d+)", "austin_active"),
         (r"BAY\s*AREA\s*(\d+)", "bayarea_active"),
     ]
     for pattern, key in patterns:

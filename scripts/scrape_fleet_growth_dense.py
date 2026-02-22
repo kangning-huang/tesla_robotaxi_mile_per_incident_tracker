@@ -78,7 +78,8 @@ def parse_tooltip_text(text: str) -> dict | None:
         result = {"date": date_str}
 
         # Extract counts (same logic as original)
-        austin_m = re.search(r"Austin\s*(\d+)", text, re.IGNORECASE)
+        # Must NOT match "Unsupervised Austin" (a different chart line)
+        austin_m = re.search(r"(?<!Unsupervised\s)(?<!unsupervised\s)(?<!\w)Austin\s*(\d+)", text, re.IGNORECASE)
         bay_m = re.search(r"Bay\s*Area\s*(\d+)", text, re.IGNORECASE)
 
         if austin_m:
