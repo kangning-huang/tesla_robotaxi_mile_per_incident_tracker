@@ -1,24 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <defs>
-    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#d4a843"/>
-      <stop offset="100%" style="stop-color:#c49b38"/>
-    </linearGradient>
-  </defs>
-  <!-- Dark background like Robotaxi branding -->
-  <rect width="32" height="32" rx="4" fill="#1a1a1a"/>
-  <!-- Stylized angular car silhouette in gold -->
-  <path d="M3 21l2-3 4-6h14l4 6 2 3z" fill="url(#gold)" opacity="0.9"/>
-  <!-- Windshield cut -->
-  <path d="M10.5 12.5l1.5-2h8l1.5 2z" fill="#1a1a1a" opacity="0.6"/>
+  <!-- Clean dark background -->
+  <rect width="32" height="32" rx="4" fill="#0f172a"/>
+  <!-- Minimalist car body outline -->
+  <path d="M6 20l2.5-3.5 3-4.5h9l3 4.5 2.5 3.5" fill="none" stroke="#3b82f6" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Roof line -->
+  <line x1="11.5" y1="12" x2="20.5" y2="12" stroke="#3b82f6" stroke-width="1.2" stroke-linecap="round"/>
   <!-- Wheels -->
-  <circle cx="9" cy="21.5" r="2" fill="#1a1a1a" stroke="url(#gold)" stroke-width="0.8"/>
-  <circle cx="23" cy="21.5" r="2" fill="#1a1a1a" stroke="url(#gold)" stroke-width="0.8"/>
-  <!-- Sensor/lidar pulse lines above car -->
-  <path d="M14 8.5l2-2 2 2" fill="none" stroke="url(#gold)" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M12 6.5l4-3 4 3" fill="none" stroke="url(#gold)" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
-  <!-- Road line -->
-  <line x1="2" y1="25" x2="8" y2="25" stroke="url(#gold)" stroke-width="0.6" opacity="0.4"/>
-  <line x1="12" y1="25" x2="20" y2="25" stroke="url(#gold)" stroke-width="0.6" opacity="0.4"/>
-  <line x1="24" y1="25" x2="30" y2="25" stroke="url(#gold)" stroke-width="0.6" opacity="0.4"/>
+  <circle cx="10" cy="20.5" r="1.8" fill="none" stroke="#3b82f6" stroke-width="0.9"/>
+  <circle cx="22" cy="20.5" r="1.8" fill="none" stroke="#3b82f6" stroke-width="0.9"/>
+  <!-- Ground line -->
+  <line x1="4" y1="23" x2="28" y2="23" stroke="#3b82f6" stroke-width="0.5" opacity="0.3"/>
+  <!-- Sensor pulse arcs -->
+  <path d="M14 9l2-1.8 2 1.8" fill="none" stroke="#3b82f6" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+  <path d="M12.5 7.5l3.5-2.5 3.5 2.5" fill="none" stroke="#3b82f6" stroke-width="0.7" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"/>
 </svg>
