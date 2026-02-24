@@ -1,5 +1,5 @@
 {
-  "scraped_at": "2026-02-23T06:43:51.719360+00:00",
+  "scraped_at": "2026-02-24T06:40:34.508529+00:00",
   "source": "robotaxitracker.com",
   "description": "Active fleet growth time series",
   "data_points": 101,
@@ -25,7 +25,7 @@
       "total": 11
     },
     {
-      "date": "2025-07-09",
+      "date": "2025-07-10",
       "total": 11
     },
     {
@@ -85,8 +85,8 @@
       "total": 14
     },
     {
-      "date": "2025-08-14",
-      "total": 14
+      "date": "2025-08-15",
+      "total": 13
     },
     {
       "date": "2025-08-17",
@@ -107,7 +107,7 @@
       "total": 14
     },
     {
-      "date": "2025-08-26",
+      "date": "2025-08-27",
       "bayarea": 1,
       "total": 14
     },
@@ -132,7 +132,7 @@
       "total": 25
     },
     {
-      "date": "2025-09-07",
+      "date": "2025-09-08",
       "bayarea": 17,
       "total": 37
     },
@@ -147,9 +147,9 @@
       "total": 43
     },
     {
-      "date": "2025-09-14",
-      "bayarea": 26,
-      "total": 46
+      "date": "2025-09-15",
+      "bayarea": 29,
+      "total": 49
     },
     {
       "date": "2025-09-17",
@@ -157,9 +157,9 @@
       "total": 52
     },
     {
-      "date": "2025-09-19",
-      "bayarea": 41,
-      "total": 61
+      "date": "2025-09-20",
+      "bayarea": 46,
+      "total": 66
     },
     {
       "date": "2025-09-22",
@@ -168,323 +168,323 @@
     },
     {
       "date": "2025-09-24",
-      "bayarea": 47,
-      "total": 68
+      "bayarea": 48,
+      "total": 69
     },
     {
-      "date": "2025-09-26",
-      "bayarea": 49,
-      "total": 70
+      "date": "2025-09-27",
+      "bayarea": 50,
+      "total": 71
     },
     {
       "date": "2025-09-29",
-      "bayarea": 49,
-      "total": 70
+      "bayarea": 50,
+      "total": 71
     },
     {
-      "date": "2025-10-01",
-      "bayarea": 50,
-      "total": 72
+      "date": "2025-10-02",
+      "bayarea": 53,
+      "total": 75
     },
     {
       "date": "2025-10-04",
-      "bayarea": 55,
-      "total": 77
+      "bayarea": 56,
+      "total": 78
     },
     {
       "date": "2025-10-06",
-      "bayarea": 58,
-      "total": 80
+      "bayarea": 59,
+      "total": 81
     },
     {
-      "date": "2025-10-08",
-      "bayarea": 60,
-      "total": 82
+      "date": "2025-10-09",
+      "bayarea": 62,
+      "total": 84
     },
     {
       "date": "2025-10-11",
-      "bayarea": 67,
-      "total": 89
+      "bayarea": 68,
+      "total": 90
     },
     {
-      "date": "2025-10-13",
-      "bayarea": 75,
-      "total": 97
-    },
-    {
-      "date": "2025-10-16",
+      "date": "2025-10-14",
       "bayarea": 76,
       "total": 98
     },
     {
-      "date": "2025-10-18",
+      "date": "2025-10-16",
       "bayarea": 77,
       "total": 99
     },
     {
-      "date": "2025-10-20",
-      "bayarea": 77,
-      "total": 99
+      "date": "2025-10-18",
+      "bayarea": 78,
+      "total": 100
+    },
+    {
+      "date": "2025-10-21",
+      "bayarea": 76,
+      "total": 98
     },
     {
       "date": "2025-10-23",
-      "bayarea": 81,
-      "total": 103
-    },
-    {
-      "date": "2025-10-25",
       "bayarea": 83,
       "total": 105
     },
     {
-      "date": "2025-10-28",
-      "bayarea": 86,
-      "total": 108
-    },
-    {
-      "date": "2025-10-30",
+      "date": "2025-10-26",
       "bayarea": 87,
       "total": 109
     },
     {
-      "date": "2025-11-01",
+      "date": "2025-10-28",
+      "bayarea": 88,
+      "total": 110
+    },
+    {
+      "date": "2025-10-31",
+      "bayarea": 88,
+      "total": 110
+    },
+    {
+      "date": "2025-11-02",
+      "bayarea": 87,
+      "total": 109
+    },
+    {
+      "date": "2025-11-04",
       "bayarea": 86,
       "total": 108
     },
     {
-      "date": "2025-11-04",
-      "bayarea": 84,
-      "total": 106
-    },
-    {
-      "date": "2025-11-06",
-      "bayarea": 84,
-      "total": 107
+      "date": "2025-11-07",
+      "bayarea": 86,
+      "total": 110
     },
     {
       "date": "2025-11-09",
-      "bayarea": 87,
-      "total": 114
+      "bayarea": 89,
+      "total": 116
     },
     {
       "date": "2025-11-11",
-      "bayarea": 88,
-      "total": 117
+      "bayarea": 90,
+      "total": 119
     },
     {
-      "date": "2025-11-13",
-      "bayarea": 88,
-      "total": 117
+      "date": "2025-11-14",
+      "bayarea": 92,
+      "total": 121
     },
     {
       "date": "2025-11-16",
-      "bayarea": 93,
-      "total": 121
-    },
-    {
-      "date": "2025-11-18",
-      "bayarea": 92,
-      "total": 120
-    },
-    {
-      "date": "2025-11-20",
-      "bayarea": 92,
-      "total": 120
-    },
-    {
-      "date": "2025-11-23",
-      "bayarea": 93,
-      "total": 121
-    },
-    {
-      "date": "2025-11-25",
-      "bayarea": 126,
-      "total": 154
-    },
-    {
-      "date": "2025-11-28",
-      "bayarea": 126,
-      "total": 154
-    },
-    {
-      "date": "2025-11-30",
-      "bayarea": 127,
-      "total": 155
-    },
-    {
-      "date": "2025-12-02",
       "bayarea": 95,
+      "total": 123
+    },
+    {
+      "date": "2025-11-19",
+      "bayarea": 94,
       "total": 122
     },
     {
-      "date": "2025-12-05",
-      "bayarea": 66,
-      "total": 93
+      "date": "2025-11-21",
+      "bayarea": 94,
+      "total": 122
     },
     {
-      "date": "2025-12-07",
-      "bayarea": 60,
-      "total": 87
+      "date": "2025-11-23",
+      "bayarea": 95,
+      "total": 123
+    },
+    {
+      "date": "2025-11-26",
+      "bayarea": 128,
+      "total": 156
+    },
+    {
+      "date": "2025-11-28",
+      "bayarea": 128,
+      "total": 156
+    },
+    {
+      "date": "2025-12-01",
+      "bayarea": 126,
+      "total": 153
+    },
+    {
+      "date": "2025-12-03",
+      "bayarea": 74,
+      "total": 101
+    },
+    {
+      "date": "2025-12-06",
+      "bayarea": 69,
+      "total": 96
+    },
+    {
+      "date": "2025-12-08",
+      "bayarea": 62,
+      "total": 89
     },
     {
       "date": "2025-12-10",
-      "bayarea": 50,
-      "total": 77
-    },
-    {
-      "date": "2025-12-12",
-      "bayarea": 41,
-      "total": 68
-    },
-    {
-      "date": "2025-12-14",
-      "bayarea": 43,
-      "total": 70
-    },
-    {
-      "date": "2025-12-17",
-      "bayarea": 37,
-      "total": 63
-    },
-    {
-      "date": "2025-12-19",
-      "bayarea": 33,
-      "total": 59
-    },
-    {
-      "date": "2025-12-21",
-      "bayarea": 30,
-      "total": 56
-    },
-    {
-      "date": "2025-12-24",
-      "bayarea": 28,
-      "total": 56
-    },
-    {
-      "date": "2025-12-26",
-      "bayarea": 28,
-      "total": 55
-    },
-    {
-      "date": "2025-12-29",
-      "bayarea": 25,
-      "total": 52
-    },
-    {
-      "date": "2025-12-31",
-      "bayarea": 26,
-      "total": 54
-    },
-    {
-      "date": "2026-01-02",
-      "bayarea": 30,
-      "total": 58
-    },
-    {
-      "date": "2026-01-05",
-      "bayarea": 42,
-      "total": 71
-    },
-    {
-      "date": "2026-01-07",
-      "bayarea": 45,
-      "total": 74
-    },
-    {
-      "date": "2026-01-10",
-      "bayarea": 51,
-      "total": 77
-    },
-    {
-      "date": "2026-01-12",
-      "bayarea": 60,
-      "total": 88
-    },
-    {
-      "date": "2026-01-15",
-      "bayarea": 56,
-      "total": 89
-    },
-    {
-      "date": "2026-01-17",
-      "bayarea": 62,
-      "total": 93
-    },
-    {
-      "date": "2026-01-19",
-      "bayarea": 47,
-      "total": 77
-    },
-    {
-      "date": "2026-01-22",
-      "bayarea": 49,
-      "total": 81
-    },
-    {
-      "date": "2026-01-24",
-      "bayarea": 50,
-      "total": 90
-    },
-    {
-      "date": "2026-01-27",
-      "bayarea": 46,
-      "total": 84
-    },
-    {
-      "date": "2026-01-29",
-      "bayarea": 47,
-      "total": 87
-    },
-    {
-      "date": "2026-01-31",
-      "bayarea": 48,
-      "total": 89
-    },
-    {
-      "date": "2026-02-03",
-      "bayarea": 46,
-      "total": 87
-    },
-    {
-      "date": "2026-02-05",
-      "bayarea": 47,
-      "total": 88
-    },
-    {
-      "date": "2026-02-07",
-      "bayarea": 48,
-      "total": 88
-    },
-    {
-      "date": "2026-02-10",
-      "bayarea": 52,
-      "total": 94
-    },
-    {
-      "date": "2026-02-12",
-      "bayarea": 52,
-      "total": 94
-    },
-    {
-      "date": "2026-02-15",
-      "bayarea": 58,
-      "total": 98
-    },
-    {
-      "date": "2026-02-17",
-      "bayarea": 53,
-      "total": 82
-    },
-    {
-      "date": "2026-02-19",
       "bayarea": 54,
       "total": 81
     },
     {
-      "date": "2026-02-22",
-      "bayarea": 24,
-      "total": 49
+      "date": "2025-12-13",
+      "bayarea": 47,
+      "total": 74
+    },
+    {
+      "date": "2025-12-15",
+      "bayarea": 45,
+      "total": 72
+    },
+    {
+      "date": "2025-12-17",
+      "bayarea": 41,
+      "total": 67
+    },
+    {
+      "date": "2025-12-20",
+      "bayarea": 37,
+      "total": 63
+    },
+    {
+      "date": "2025-12-22",
+      "bayarea": 34,
+      "total": 61
+    },
+    {
+      "date": "2025-12-25",
+      "bayarea": 32,
+      "total": 60
+    },
+    {
+      "date": "2025-12-27",
+      "bayarea": 32,
+      "total": 57
+    },
+    {
+      "date": "2025-12-29",
+      "bayarea": 29,
+      "total": 56
+    },
+    {
+      "date": "2026-01-01",
+      "bayarea": 31,
+      "total": 58
+    },
+    {
+      "date": "2026-01-03",
+      "bayarea": 37,
+      "total": 64
+    },
+    {
+      "date": "2026-01-06",
+      "bayarea": 48,
+      "total": 77
+    },
+    {
+      "date": "2026-01-08",
+      "bayarea": 53,
+      "total": 81
+    },
+    {
+      "date": "2026-01-11",
+      "bayarea": 61,
+      "total": 87
+    },
+    {
+      "date": "2026-01-13",
+      "bayarea": 63,
+      "total": 92
+    },
+    {
+      "date": "2026-01-15",
+      "bayarea": 60,
+      "total": 93
+    },
+    {
+      "date": "2026-01-18",
+      "bayarea": 60,
+      "total": 91
+    },
+    {
+      "date": "2026-01-20",
+      "bayarea": 51,
+      "total": 77
+    },
+    {
+      "date": "2026-01-22",
+      "bayarea": 53,
+      "total": 85
+    },
+    {
+      "date": "2026-01-25",
+      "bayarea": 52,
+      "total": 92
+    },
+    {
+      "date": "2026-01-27",
+      "bayarea": 50,
+      "total": 88
+    },
+    {
+      "date": "2026-01-30",
+      "bayarea": 47,
+      "total": 87
+    },
+    {
+      "date": "2026-02-01",
+      "bayarea": 52,
+      "total": 93
+    },
+    {
+      "date": "2026-02-03",
+      "bayarea": 50,
+      "total": 91
+    },
+    {
+      "date": "2026-02-06",
+      "bayarea": 51,
+      "total": 92
+    },
+    {
+      "date": "2026-02-08",
+      "bayarea": 57,
+      "total": 98
+    },
+    {
+      "date": "2026-02-11",
+      "bayarea": 57,
+      "total": 99
+    },
+    {
+      "date": "2026-02-13",
+      "bayarea": 59,
+      "total": 100
+    },
+    {
+      "date": "2026-02-16",
+      "bayarea": 55,
+      "total": 89
+    },
+    {
+      "date": "2026-02-18",
+      "bayarea": 58,
+      "total": 88
+    },
+    {
+      "date": "2026-02-20",
+      "bayarea": 59,
+      "total": 89
+    },
+    {
+      "date": "2026-02-23",
+      "bayarea": 29,
+      "total": 58
     }
   ]
 }
