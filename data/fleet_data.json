@@ -793,33 +793,31 @@
     },
     {
       "date": "2026-02-22",
-      "austin_vehicles": 30,
-      "bayarea_vehicles": 18,
-      "total_robotaxi": 30,
+      "austin_vehicles": 89,
+      "bayarea_vehicles": 304,
+      "total_robotaxi": 89,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 30 Austin + 18 Bay Area = 48 total (active: 30 Austin, 42 total)",
-      "austin_active_vehicles": 30,
-      "bayarea_active_vehicles": 87100
+      "notes": "Corrected from corrupted scrape (scraper was extracting wrong chart line). Austin=89 from fleet_growth_total.json (total-bayarea), bayarea interpolated from Feb 20 (300) and Feb 23 (308).",
+      "austin_active_vehicles": 30
     },
     {
       "date": "2026-02-23",
-      "austin_vehicles": 17,
-      "bayarea_vehicles": 13,
-      "total_robotaxi": 17,
+      "austin_vehicles": 89,
+      "bayarea_vehicles": 308,
+      "total_robotaxi": 89,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 17 Austin + 13 Bay Area = 30 total (active: 17 Austin, 48 total)",
-      "austin_active_vehicles": 17,
-      "bayarea_active_vehicles": 13
+      "notes": "Corrected from corrupted scrape. Austin=89, bayarea=308 from fleet_growth_total.json.",
+      "austin_active_vehicles": 29,
+      "bayarea_active_vehicles": 29
     },
     {
       "date": "2026-02-24",
-      "austin_vehicles": 14,
-      "bayarea_vehicles": 16,
-      "total_robotaxi": 14,
+      "austin_vehicles": 89,
+      "bayarea_vehicles": 310,
+      "total_robotaxi": 89,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 14 Austin + 16 Bay Area = 30 total (active: 95173 Austin, 57 total)",
-      "austin_active_vehicles": 95173,
-      "bayarea_active_vehicles": 16
+      "notes": "Corrected from corrupted scrape. Austin=89 (extrapolated from fleet_growth_total.json trend), bayarea=310 (extrapolated).",
+      "austin_active_vehicles": 29
     }
   ],
   "assumptions": {
