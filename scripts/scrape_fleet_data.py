@@ -209,8 +209,14 @@ async def extract_fleet_numbers(page) -> dict:
         except Exception:
             pass
 
-    # Calculate total if we have components
-    if fleet_data["austin_vehicles"] and fleet_data["bayarea_vehicles"]:
+    # If austin is missing but total and bayarea are present, compute it.
+    # The page may only label the unsupervised Austin line as "Austin" with
+    # a different number, so deriving from total - bayarea is more reliable.
+    if not fleet_data["austin_vehicles"] and fleet_data["total_vehicles"] and fleet_data["bayarea_vehicles"]:
+        fleet_data["austin_vehicles"] = fleet_data["total_vehicles"] - fleet_data["bayarea_vehicles"]
+
+    # Calculate total if we have components but no total
+    if not fleet_data["total_vehicles"] and fleet_data["austin_vehicles"] and fleet_data["bayarea_vehicles"]:
         fleet_data["total_vehicles"] = fleet_data["austin_vehicles"] + fleet_data["bayarea_vehicles"]
 
     return fleet_data
@@ -375,6 +381,12 @@ def extract_fleet_data_from_api_responses(captured_responses: list) -> list:
                         bayarea = val
                     elif "total" in key_lower or "fleet" in key_lower:
                         total = val
+
+            # If austin is missing but total and bayarea are present, compute it.
+            # The chart data often only has "unsupervisedAustin" (which we skip)
+            # plus "bayArea" and "total". The Austin fleet = total - bayArea.
+            if austin is None and total is not None and bayarea is not None:
+                austin = total - bayarea
 
             if austin is not None or bayarea is not None or total is not None:
                 fleet_points.append({
@@ -965,6 +977,11 @@ async def extract_chart_data_from_scripts(page) -> list:
                         elif "total" in key_lower or "fleet" in key_lower:
                             total = int(val)
 
+                    # If austin is missing but total and bayarea are present,
+                    # compute it: Austin fleet = total - bayArea.
+                    if austin is None and total is not None and bayarea is not None:
+                        austin = total - bayarea
+
                     if austin is not None or bayarea is not None or total is not None:
                         historical.append({
                             "date": date_str,
@@ -1095,6 +1112,12 @@ def parse_tooltip_text(text: str) -> dict:
     total_match = re.search(r'(?:总车队|Total)[:\s]*(\d+)', text, re.IGNORECASE)
     if total_match:
         result["total"] = int(total_match.group(1))
+
+    # If austin is missing but total and bayarea are present, compute it.
+    # The tooltip may only show "Unsupervised Austin" (filtered out above),
+    # "Bay Area", and "Total". The Austin fleet = Total - Bay Area.
+    if "austin" not in result and "total" in result and "bayarea" in result:
+        result["austin"] = result["total"] - result["bayarea"]
 
     return result
 
@@ -1242,6 +1265,10 @@ async def extract_active_fleet_numbers(page) -> dict:
         match = re.search(pattern, content, re.IGNORECASE)
         if match and active_data[key] is None:
             active_data[key] = int(match.group(1))
+
+    # If austin_active is missing but total and bayarea are present, compute it.
+    if not active_data["austin_active"] and active_data["total_active"] and active_data["bayarea_active"]:
+        active_data["austin_active"] = active_data["total_active"] - active_data["bayarea_active"]
 
     return active_data
 

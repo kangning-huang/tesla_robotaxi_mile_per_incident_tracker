@@ -105,6 +105,11 @@ def _parse_fleet_array(arr):
         if not date_str:
             continue
         austin, bayarea, total = _extract_counts(item)
+        # If austin is missing but total and bayarea are present, compute it.
+        # The chart data often only has "unsupervisedAustin" (which we skip)
+        # plus "bayArea" and "total". The Austin fleet = total - bayArea.
+        if austin is None and total is not None and bayarea is not None:
+            austin = total - bayarea
         if austin is not None or bayarea is not None or total is not None:
             points.append({
                 "date": date_str,
@@ -418,6 +423,12 @@ def parse_tooltip_text(text: str) -> dict:
                 result["bayarea"] = int(val)
             elif "total" in label or "fleet" in label:
                 result["total"] = int(val)
+
+    # If austin is missing but total and bayarea are present, compute it.
+    # The tooltip may only show "Unsupervised Austin" (filtered out above),
+    # "Bay Area", and "Total". The Austin fleet = Total - Bay Area.
+    if "austin" not in result and "total" in result and "bayarea" in result:
+        result["austin"] = result["total"] - result["bayarea"]
 
     return result if ("austin" in result or "bayarea" in result or "total" in result) else None
 
