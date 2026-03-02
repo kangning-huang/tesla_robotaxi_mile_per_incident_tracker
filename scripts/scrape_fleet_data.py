@@ -130,24 +130,33 @@ async def extract_fleet_numbers(page) -> dict:
 
     # Try to find fleet numbers using various patterns
     # Pattern 1: Look for specific text patterns (based on robotaxitracker.com layout)
+    # NOTE: The site uses abbreviated labels at some viewport widths:
+    #   "AUST" instead of "AUSTIN", "BAY AF" instead of "BAY AREA"
     patterns = [
-        # Fleet Growth section patterns: "TOTAL FLEET" "BAY AREA" "AUSTIN" followed by numbers
+        # Fleet Growth section patterns - full and abbreviated labels
         # IMPORTANT: Patterns must NOT match "UNSUPERVISED AUSTIN" (a different metric)
         (r"TOTAL\s*FLEET\s*(\d+)", "total_vehicles"),
-        (r"BAY\s*AREA\s*(\d+)", "bayarea_vehicles"),
-        (r"(?<!UNSUPERVISED\s)(?<!\w)AUSTIN\s*(\d+)", "austin_vehicles"),
-        # Alternative patterns
-        (r"(?<!Unsupervised\s)(?<!\w)Austin[:\s]*(\d+)\s*(?:vehicles?|cars?)?", "austin_vehicles"),
-        (r"Bay\s*Area[:\s]*(\d+)\s*(?:vehicles?|cars?)?", "bayarea_vehicles"),
+        # Bay Area: match "BAY AREA", "BAY AF", or "BAYAF"
+        (r"BAY\s*(?:AREA|AF)\s*(\d+)", "bayarea_vehicles"),
+        # Austin: match "AUSTIN" or "AUST" but NOT "UNSUPERVISED AUSTIN"
+        (r"(?<!UNSUPERVISED\s)(?<!\w)AUST(?:IN)?\s*(\d+)", "austin_vehicles"),
+        # Alternative patterns (also handle abbreviations)
+        (r"(?<!Unsupervised\s)(?<!\w)Aust(?:in)?[:\s]*(\d+)\s*(?:vehicles?|cars?)?", "austin_vehicles"),
+        (r"Bay\s*(?:Area|AF)[:\s]*(\d+)\s*(?:vehicles?|cars?)?", "bayarea_vehicles"),
         (r"Total[:\s]*(\d+)\s*(?:vehicles?|cars?|robotaxis?)?", "total_vehicles"),
         (r"(\d+)\s*(?:vehicles?|cars?)\s*(?:in\s*)?(?<!Unsupervised\s)Austin", "austin_vehicles"),
-        (r"(\d+)\s*(?:vehicles?|cars?)\s*(?:in\s*)?(?:Bay\s*Area|SF|San\s*Francisco)", "bayarea_vehicles"),
+        (r"(\d+)\s*(?:vehicles?|cars?)\s*(?:in\s*)?(?:Bay\s*(?:Area|AF)|SF|San\s*Francisco)", "bayarea_vehicles"),
     ]
+
+    # Maximum plausible fleet size - reject obviously wrong values
+    MAX_FLEET_SIZE = 2000
 
     for pattern, key in patterns:
         match = re.search(pattern, content, re.IGNORECASE)
         if match and fleet_data[key] is None:
-            fleet_data[key] = int(match.group(1))
+            value = int(match.group(1))
+            if value <= MAX_FLEET_SIZE:
+                fleet_data[key] = value
 
     # Try to extract from specific elements using JavaScript evaluation
     # This handles dynamic React/Vue components better
@@ -162,14 +171,19 @@ async def extract_fleet_numbers(page) -> dict:
             const totalMatch = allText.match(/TOTAL\\s*FLEET[\\s\\n]*(\\d+)/i);
             if (totalMatch) result.total = parseInt(totalMatch[1]);
 
-            const bayMatch = allText.match(/BAY\\s*AREA[\\s\\n]*(\\d+)/i);
+            // Bay Area: match "BAY AREA" or abbreviated "BAY AF"
+            const bayMatch = allText.match(/BAY\\s*(?:AREA|AF)[\\s\\n]*(\\d+)/i);
             if (bayMatch) result.bayarea = parseInt(bayMatch[1]);
 
-            // Match "AUSTIN" followed by a number, but NOT "UNSUPERVISED AUSTIN"
-            // First remove any "Unsupervised Austin: <number>" occurrences, then match Austin
-            const cleanedText = allText.replace(/unsupervised\\s+austin[\\s\\n:]*\\d+/gi, '');
-            const austinMatch = cleanedText.match(/AUSTIN[\\s\\n]*(\\d+)/i);
-            if (austinMatch) result.austin = parseInt(austinMatch[1]);
+            // Match "AUSTIN" or "AUST" followed by a number, but NOT "UNSUPERVISED AUSTIN"
+            // First remove any "Unsupervised Austin: <number>" occurrences, then match
+            const cleanedText = allText.replace(/unsupervised\\s+aust(?:in)?[\\s\\n:]*\\d+/gi, '');
+            const austinMatch = cleanedText.match(/\\bAUST(?:IN)?[\\s\\n]*(\\d+)/i);
+            if (austinMatch) {
+                const val = parseInt(austinMatch[1]);
+                // Sanity check: fleet size should be < 2000
+                if (val < 2000) result.austin = val;
+            }
 
             return result;
         }
@@ -1097,21 +1111,29 @@ def parse_tooltip_text(text: str) -> dict:
     if not result.get("date"):
         return None
 
-    # Extract Bay Area number
-    bay_match = re.search(r'Bay\s*Area[:\s]*(\d+)', text, re.IGNORECASE)
+    MAX_FLEET_SIZE = 2000
+
+    # Extract Bay Area number (match "Bay Area" or abbreviated "Bay AF")
+    bay_match = re.search(r'Bay\s*(?:Area|AF)[:\s]*(\d+)', text, re.IGNORECASE)
     if bay_match:
-        result["bayarea"] = int(bay_match.group(1))
+        val = int(bay_match.group(1))
+        if val <= MAX_FLEET_SIZE:
+            result["bayarea"] = val
 
     # Extract Austin number - must NOT match "Unsupervised Austin" (a different chart line)
-    # Use negative lookbehind to skip "Unsupervised Austin" and only match the total Austin fleet
-    austin_match = re.search(r'(?<!Unsupervised\s)(?<!unsupervised\s)(?<!\w)Austin[:\s]*(\d+)', text, re.IGNORECASE)
+    # Also match abbreviated "Aust"
+    austin_match = re.search(r'(?<!Unsupervised\s)(?<!unsupervised\s)(?<!\w)Aust(?:in)?[:\s]*(\d+)', text, re.IGNORECASE)
     if austin_match:
-        result["austin"] = int(austin_match.group(1))
+        val = int(austin_match.group(1))
+        if val <= MAX_FLEET_SIZE:
+            result["austin"] = val
 
-    # Extract total (总车队 in Chinese or "Total")
-    total_match = re.search(r'(?:总车队|Total)[:\s]*(\d+)', text, re.IGNORECASE)
+    # Extract total
+    total_match = re.search(r'Total[:\s]*(\d+)', text, re.IGNORECASE)
     if total_match:
-        result["total"] = int(total_match.group(1))
+        val = int(total_match.group(1))
+        if val <= MAX_FLEET_SIZE:
+            result["total"] = val
 
     # If austin is missing but total and bayarea are present, compute it.
     # The tooltip may only show "Unsupervised Austin" (filtered out above),
@@ -1221,6 +1243,8 @@ async def extract_active_fleet_numbers(page) -> dict:
 
     # The Active view shows a "Total Fleet" or "总车队" number
     # Look for patterns in the visible text
+    MAX_FLEET_SIZE = 2000
+
     try:
         js_result = await page.evaluate("""
             () => {
@@ -1228,16 +1252,20 @@ async def extract_active_fleet_numbers(page) -> dict:
                 const allText = document.body.innerText;
 
                 // After clicking Active tab, the total fleet number updates
-                // Look for "TOTAL FLEET" or "总车队" followed by a number
-                const totalMatch = allText.match(/(?:TOTAL\\s*FLEET|总车队)[\\s\\n]*(\\d+)/i);
+                // Look for "TOTAL FLEET" followed by a number
+                const totalMatch = allText.match(/(?:TOTAL\\s*FLEET)[\\s\\n]*(\\d+)/i);
                 if (totalMatch) result.total = parseInt(totalMatch[1]);
 
-                // Match "AUSTIN" followed by a number, but NOT "UNSUPERVISED AUSTIN"
-                const cleanedText = allText.replace(/unsupervised\\s+austin[\\s\\n:]*\\d+/gi, '');
-                const austinMatch = cleanedText.match(/AUSTIN[\\s\\n]*(\\d+)/i);
-                if (austinMatch) result.austin = parseInt(austinMatch[1]);
+                // Match "AUSTIN" or "AUST" followed by a number, but NOT "UNSUPERVISED AUSTIN"
+                const cleanedText = allText.replace(/unsupervised\\s+aust(?:in)?[\\s\\n:]*\\d+/gi, '');
+                const austinMatch = cleanedText.match(/\\bAUST(?:IN)?[\\s\\n]*(\\d+)/i);
+                if (austinMatch) {
+                    const val = parseInt(austinMatch[1]);
+                    if (val < 2000) result.austin = val;
+                }
 
-                const bayMatch = allText.match(/BAY\\s*AREA[\\s\\n]*(\\d+)/i);
+                // Bay Area: match "BAY AREA" or abbreviated "BAY AF"
+                const bayMatch = allText.match(/BAY\\s*(?:AREA|AF)[\\s\\n]*(\\d+)/i);
                 if (bayMatch) result.bayarea = parseInt(bayMatch[1]);
 
                 return result;
@@ -1257,14 +1285,15 @@ async def extract_active_fleet_numbers(page) -> dict:
     # IMPORTANT: Austin pattern must NOT match "UNSUPERVISED AUSTIN"
     patterns = [
         (r"TOTAL\s*FLEET\s*(\d+)", "total_active"),
-        (r"总车队\s*(\d+)", "total_active"),
-        (r"(?<!UNSUPERVISED\s)(?<!\w)AUSTIN\s*(\d+)", "austin_active"),
-        (r"BAY\s*AREA\s*(\d+)", "bayarea_active"),
+        (r"(?<!UNSUPERVISED\s)(?<!\w)AUST(?:IN)?\s*(\d+)", "austin_active"),
+        (r"BAY\s*(?:AREA|AF)\s*(\d+)", "bayarea_active"),
     ]
     for pattern, key in patterns:
         match = re.search(pattern, content, re.IGNORECASE)
         if match and active_data[key] is None:
-            active_data[key] = int(match.group(1))
+            value = int(match.group(1))
+            if value <= MAX_FLEET_SIZE:
+                active_data[key] = value
 
     # If austin_active is missing but total and bayarea are present, compute it.
     if not active_data["austin_active"] and active_data["total_active"] and active_data["bayarea_active"]:
@@ -1601,10 +1630,26 @@ def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
 
     Returns True if merge was successful and changes were made, False otherwise.
     """
+    # Maximum plausible fleet size per region - reject obviously wrong values
+    MAX_FLEET_SIZE = 2000
+
     has_total_data = scraped_data and scraped_data.get("historical_data")
     has_active_data = scraped_data and scraped_data.get("active_historical_data")
     has_current_fleet = (scraped_data and scraped_data.get("current_fleet")
                          and scraped_data["current_fleet"].get("austin_vehicles"))
+
+    # Validate current fleet data before proceeding
+    if has_current_fleet:
+        current = scraped_data["current_fleet"]
+        austin = current.get("austin_vehicles")
+        bayarea = current.get("bayarea_vehicles")
+        if austin and austin > MAX_FLEET_SIZE:
+            print(f"  WARNING: Rejecting implausible austin_vehicles={austin} (max={MAX_FLEET_SIZE})")
+            current["austin_vehicles"] = None
+            has_current_fleet = False
+        if bayarea and bayarea > MAX_FLEET_SIZE:
+            print(f"  WARNING: Rejecting implausible bayarea_vehicles={bayarea} (max={MAX_FLEET_SIZE})")
+            current["bayarea_vehicles"] = None
 
     if not has_total_data and not has_active_data and not has_current_fleet:
         print("No historical data or current fleet data to merge")
@@ -1639,6 +1684,14 @@ def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
             bayarea = item.get("bayarea")
 
             if austin is None and bayarea is None:
+                continue
+
+            # Validate values are plausible
+            if austin is not None and austin > MAX_FLEET_SIZE:
+                print(f"  WARNING: Rejecting implausible austin={austin} for {date}")
+                continue
+            if bayarea is not None and bayarea > MAX_FLEET_SIZE:
+                print(f"  WARNING: Rejecting implausible bayarea={bayarea} for {date}")
                 continue
 
             snapshot = {

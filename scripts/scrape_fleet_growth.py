@@ -398,16 +398,24 @@ def parse_tooltip_text(text: str) -> dict:
 
     # Extract counts: "Austin  39" or "Austin39" (tooltip text may lack spaces)
     # Must NOT match "Unsupervised Austin" (a different chart line for unsupervised ADS vehicles)
-    austin_m = re.search(r"(?<!Unsupervised\s)(?<!unsupervised\s)(?<!\w)Austin\s*(\d+)", text, re.IGNORECASE)
-    bay_m = re.search(r"Bay\s*Area\s*(\d+)", text, re.IGNORECASE)
+    # Also match abbreviated labels: "Aust" for Austin, "Bay AF" for Bay Area
+    austin_m = re.search(r"(?<!Unsupervised\s)(?<!unsupervised\s)(?<!\w)Aust(?:in)?\s*(\d+)", text, re.IGNORECASE)
+    bay_m = re.search(r"Bay\s*(?:Area|AF)\s*(\d+)", text, re.IGNORECASE)
     total_m = re.search(r"Total\s*(?:Fleet\s*)?(\d+)", text, re.IGNORECASE)
 
+    MAX_FLEET_SIZE = 2000
     if austin_m:
-        result["austin"] = int(austin_m.group(1))
+        val = int(austin_m.group(1))
+        if val <= MAX_FLEET_SIZE:
+            result["austin"] = val
     if bay_m:
-        result["bayarea"] = int(bay_m.group(1))
+        val = int(bay_m.group(1))
+        if val <= MAX_FLEET_SIZE:
+            result["bayarea"] = val
     if total_m:
-        result["total"] = int(total_m.group(1))
+        val = int(total_m.group(1))
+        if val <= MAX_FLEET_SIZE:
+            result["total"] = val
 
     # If we only found a date but no counts, try generic number extraction
     if "austin" not in result and "bayarea" not in result and "total" not in result:

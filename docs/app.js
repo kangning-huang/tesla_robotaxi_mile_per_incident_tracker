@@ -91,7 +91,7 @@ const incidentData = incidentDataStationary;
 const incidentDataActive = incidentDataActiveStationary;
 
 // Latest active fleet size (from fleet_growth_active.json)
-const latestActiveFleetSize = 87856;
+const latestActiveFleetSize = 29;
 
 // Fleet mode toggle state: 'total' or 'active'
 let fleetMode = 'total';
@@ -224,10 +224,11 @@ const fleetData = [
     { date: '2026-02-22', size: 89 },
     { date: '2026-02-23', size: 89 },
     { date: '2026-02-24', size: 89 },
-    { date: '2026-02-25', size: 26 },
-    { date: '2026-02-26', size: 87344 },
-    { date: '2026-02-27', size: 89536 },
-    { date: '2026-02-28', size: 21 },
+    { date: '2026-02-25', size: 89 },
+    { date: '2026-02-26', size: 89 },
+    { date: '2026-02-27', size: 89 },
+    { date: '2026-02-28', size: 89 },
+    { date: '2026-03-01', size: 89 },
 ];
 
 // Compute exponential trend parameters via log-linear regression on incidentData
