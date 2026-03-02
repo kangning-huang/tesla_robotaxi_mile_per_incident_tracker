@@ -64,7 +64,7 @@ const incidentDataActiveStationary = [
     { date: '2025-10-15', days: 30, fleet: 20, miles: 68080, mpi: 34040, count: 2 },
     { date: '2025-11-12', days: 31, fleet: 22, miles: 78430, mpi: 78430, count: 1 },
     { date: '2025-12-10', days: 30, fleet: 26, miles: 89700, mpi: 89700, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 26, miles: 95795, mpi: 47897, count: 2 },
+    { date: '2026-01-10', days: 31, fleet: 27, miles: 95910, mpi: 47955, count: 2 },
 ];
 
 // Backing: WITH backing, no stationary
@@ -73,7 +73,7 @@ const incidentDataActiveBacking = [
     { date: '2025-09-15', days: 62, fleet: 13, miles: 95680, mpi: 31893, count: 3 },
     { date: '2025-10-15', days: 30, fleet: 20, miles: 68080, mpi: 34040, count: 2 },
     { date: '2025-12-10', days: 61, fleet: 26, miles: 182390, mpi: 182390, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 26, miles: 98900, mpi: 32966, count: 3 },
+    { date: '2026-01-10', days: 31, fleet: 27, miles: 99130, mpi: 33043, count: 3 },
 ];
 
 // All: WITH backing, WITH stationary
@@ -83,7 +83,7 @@ const incidentDataActiveAll = [
     { date: '2025-10-15', days: 30, fleet: 20, miles: 68080, mpi: 34040, count: 2 },
     { date: '2025-11-12', days: 31, fleet: 22, miles: 78430, mpi: 78430, count: 1 },
     { date: '2025-12-10', days: 30, fleet: 26, miles: 89700, mpi: 89700, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 26, miles: 102005, mpi: 25501, count: 4 },
+    { date: '2026-01-10', days: 31, fleet: 27, miles: 102350, mpi: 25587, count: 4 },
 ];
 
 // Legacy aliases for backward compatibility
