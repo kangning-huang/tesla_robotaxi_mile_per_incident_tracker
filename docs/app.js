@@ -232,6 +232,7 @@ const fleetData = [
     { date: '2026-03-02', size: 19 },
     { date: '2026-03-03', size: 14 },
     { date: '2026-03-04', size: 21 },
+    { date: '2026-03-05', size: 22 },
 ];
 
 // Compute exponential trend parameters via log-linear regression on incidentData
