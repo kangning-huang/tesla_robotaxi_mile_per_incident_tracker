@@ -3,20 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-FC4RG249V0"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-FC4RG249V0');
-    </script>
-
-    <!-- Google AdSense -->
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1635655844040461"
-         crossorigin="anonymous"></script>
-
+    <meta name="no-adsense" content="true">
     <title>Privacy Policy | Robotaxi Safety Tracker</title>
     <meta name="description" content="Privacy policy for the Robotaxi Safety Tracker. Learn how we handle your data.">
     <meta name="author" content="Kangning Huang">
@@ -72,7 +59,7 @@
         <div class="container">
             <div class="section-header">
                 <h1>Privacy Policy</h1>
-                <p>Last updated: February 4, 2026</p>
+                <p>Last updated: March 9, 2026</p>
             </div>
 
             <div style="max-width: 800px; margin: 0 auto;">
@@ -95,6 +82,7 @@
                     <h3>Third-Party Services</h3>
                     <p>This site uses the following third-party services:</p>
                     <ul>
+                        <li><strong>Google AdSense:</strong> For displaying advertisements. Google AdSense uses cookies and web beacons to serve ads based on your prior visits to this site and other websites. Google's use of advertising cookies enables it and its partners to serve ads based on your browsing activity. You may opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>. (<a href="https://policies.google.com/technologies/ads" target="_blank" rel="noopener noreferrer">How Google uses cookies in advertising</a>)</li>
                         <li><strong>Google Analytics:</strong> For website analytics (<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a>)</li>
                         <li><strong>Google Fonts:</strong> For typography</li>
                         <li><strong>FormSubmit.co:</strong> For email subscription handling</li>
@@ -104,7 +92,12 @@
 
                 <div class="method-card" style="margin-bottom: 2rem;">
                     <h3>Cookies</h3>
-                    <p>This site uses cookies for Google Analytics. You can disable cookies in your browser settings or use a browser extension like uBlock Origin to block analytics tracking.</p>
+                    <p>This site uses cookies for the following purposes:</p>
+                    <ul>
+                        <li><strong>Analytics cookies:</strong> Google Analytics uses cookies to collect anonymized usage data.</li>
+                        <li><strong>Advertising cookies:</strong> Google AdSense uses cookies to serve relevant ads and measure ad performance. These cookies may track your browsing activity across websites.</li>
+                    </ul>
+                    <p>When you first visit this site, you will be shown a cookie consent banner. You can accept or decline non-essential cookies. You can also disable cookies in your browser settings or use a browser extension like uBlock Origin to block tracking.</p>
                 </div>
 
                 <div class="method-card" style="margin-bottom: 2rem;">
@@ -152,5 +145,18 @@
             </div>
         </div>
     </footer>
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-consent-banner" class="cookie-consent">
+        <div class="cookie-consent-inner">
+            <div class="cookie-consent-text">
+                This site uses cookies for analytics and advertising. By clicking "Accept," you consent to the use of cookies by Google Analytics and Google AdSense. See our <a href="/privacy.html">Privacy Policy</a> for details.
+            </div>
+            <div class="cookie-consent-buttons">
+                <button class="cookie-btn cookie-btn-reject" onclick="cookieConsentReject()">Decline</button>
+                <button class="cookie-btn cookie-btn-accept" onclick="cookieConsentAccept()">Accept</button>
+            </div>
+        </div>
+    </div>
+    <script src="/cookie-consent.js"></script>
 </body>
 </html>
