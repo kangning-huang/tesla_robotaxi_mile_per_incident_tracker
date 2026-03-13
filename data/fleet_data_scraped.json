@@ -5,8 +5,8 @@
     "scraper_version": "2.0.0"
   },
   "current_fleet": {
-    "austin_vehicles": 437,
-    "bayarea_vehicles": 8,
+    "austin_vehicles": null,
+    "bayarea_vehicles": null,
     "total_vehicles": 445,
     "austin_available": null,
     "bayarea_available": null

@@ -1615,6 +1615,37 @@ async def scrape_robotaxi_tracker():
             print("\nBrowser closed.")
 
 
+def _get_last_known_value(snapshots: list, field: str):
+    """Get the most recent non-null value for a field from sorted snapshots."""
+    for snapshot in reversed(snapshots):
+        val = snapshot.get(field)
+        if val is not None and isinstance(val, (int, float)) and val > 0:
+            return int(val)
+    return None
+
+
+def _passes_continuity_check(new_value, last_good_value, field_name, date,
+                              max_decrease_ratio=0.5, max_increase_ratio=2.0):
+    """Check if new_value is within acceptable range of last_good_value.
+
+    Cumulative fleet numbers should be relatively stable day-to-day.
+    Allow larger increases (fleet expansion) than decreases (fleet shouldn't shrink much).
+    """
+    if last_good_value is None or last_good_value == 0 or new_value is None:
+        return True
+    # Reject if decrease is more than max_decrease_ratio (e.g., 50% drop)
+    if new_value < last_good_value * (1 - max_decrease_ratio):
+        print(f"  WARNING: Rejecting {field_name}={new_value} for {date} "
+              f"(dropped >{max_decrease_ratio*100:.0f}% from last good value {last_good_value})")
+        return False
+    # Reject if increase is more than max_increase_ratio (e.g., 200% jump)
+    if new_value > last_good_value * (1 + max_increase_ratio):
+        print(f"  WARNING: Rejecting {field_name}={new_value} for {date} "
+              f"(jumped >{max_increase_ratio*100:.0f}% from last good value {last_good_value})")
+        return False
+    return True
+
+
 def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
     """
     Merge scraped historical data into fleet_data.json.
@@ -1626,7 +1657,8 @@ def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
     4. Merges active fleet data into existing snapshots by date
     5. Falls back to current_fleet data for today's snapshot if no historical data
     6. Sorts by date
-    7. Saves updated fleet_data.json
+    7. Runs monotonicity validation on cumulative fleet values
+    8. Saves updated fleet_data.json
 
     Returns True if merge was successful and changes were made, False otherwise.
     """
@@ -1669,6 +1701,23 @@ def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
 
     changes_made = False
 
+    # Get last known good values for continuity checks
+    existing_snapshots = fleet_data.get("snapshots", [])
+    last_austin = _get_last_known_value(existing_snapshots, "austin_vehicles")
+    last_bayarea = _get_last_known_value(existing_snapshots, "bayarea_vehicles")
+
+    # Continuity check on current_fleet values
+    if has_current_fleet:
+        current = scraped_data["current_fleet"]
+        today = datetime.now().strftime("%Y-%m-%d")
+        austin = current.get("austin_vehicles")
+        if austin and not _passes_continuity_check(austin, last_austin, "austin_vehicles", today):
+            current["austin_vehicles"] = None
+            has_current_fleet = current.get("austin_vehicles") is not None
+        bayarea = current.get("bayarea_vehicles")
+        if bayarea and not _passes_continuity_check(bayarea, last_bayarea, "bayarea_vehicles", today):
+            current["bayarea_vehicles"] = None
+
     # --- Merge total fleet historical data (existing behavior) ---
     existing_dates = {s["date"] for s in fleet_data.get("snapshots", [])}
     initial_count = len(existing_dates)
@@ -1686,12 +1735,23 @@ def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
             if austin is None and bayarea is None:
                 continue
 
-            # Validate values are plausible
+            # Validate values are plausible (absolute bounds)
             if austin is not None and austin > MAX_FLEET_SIZE:
                 print(f"  WARNING: Rejecting implausible austin={austin} for {date}")
                 continue
             if bayarea is not None and bayarea > MAX_FLEET_SIZE:
                 print(f"  WARNING: Rejecting implausible bayarea={bayarea} for {date}")
+                continue
+
+            # Continuity check against last known good values
+            if austin is not None and not _passes_continuity_check(
+                    austin, last_austin, "austin_vehicles", date):
+                austin = None
+            if bayarea is not None and not _passes_continuity_check(
+                    bayarea, last_bayarea, "bayarea_vehicles", date):
+                bayarea = None
+
+            if austin is None and bayarea is None:
                 continue
 
             snapshot = {
@@ -1705,6 +1765,11 @@ def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
 
             new_snapshots.append(snapshot)
             existing_dates.add(date)
+            # Update last known values for next iteration
+            if austin is not None:
+                last_austin = austin
+            if bayarea is not None:
+                last_bayarea = bayarea
 
         if new_snapshots:
             fleet_data["snapshots"].extend(new_snapshots)
@@ -1798,6 +1863,25 @@ def merge_scraped_to_fleet_data(scraped_data: dict) -> bool:
 
     # Sort all snapshots by date
     fleet_data["snapshots"].sort(key=lambda x: x["date"])
+
+    # Monotonicity check: cumulative fleet should not decrease significantly
+    # (Active fleet can decrease, but total/cumulative fleet should only grow)
+    for field in ["austin_vehicles", "bayarea_vehicles"]:
+        last_good = None
+        nulled_count = 0
+        for snapshot in fleet_data["snapshots"]:
+            val = snapshot.get(field)
+            if val is None:
+                continue
+            if last_good is not None and val < last_good * 0.7:
+                print(f"  WARNING: Monotonicity violation on {snapshot['date']}: "
+                      f"{field} dropped from {last_good} to {val}, nulling out")
+                snapshot[field] = None
+                nulled_count += 1
+            else:
+                last_good = val
+        if nulled_count > 0:
+            print(f"  Nulled {nulled_count} {field} values that violated monotonicity")
 
     # Update metadata
     fleet_data["metadata"]["last_updated"] = datetime.now().strftime("%Y-%m-%d")

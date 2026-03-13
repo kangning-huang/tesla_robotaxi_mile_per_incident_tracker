@@ -585,6 +585,38 @@ def validate_data(data: list) -> bool:
     return has_region
 
 
+def validate_cumulative_data(data: list) -> bool:
+    """Validate that cumulative/total fleet data is monotonically non-decreasing.
+
+    Cumulative fleet numbers should only grow over time. If we see significant
+    decreases, the data is likely from the 'Active' view (vehicles currently
+    on the road) rather than the 'Cumulative' view (total fleet ever deployed).
+    Returns True if data passes the monotonicity check.
+    """
+    if not data or len(data) < 5:
+        return True  # Not enough data to validate
+
+    # Check if total values decrease significantly
+    decrease_count = 0
+    total_checks = 0
+    prev_total = None
+    for d in data:
+        total = d.get("total")
+        if total is None:
+            continue
+        if prev_total is not None:
+            total_checks += 1
+            if total < prev_total * 0.85:  # >15% decrease
+                decrease_count += 1
+        prev_total = total
+
+    if total_checks > 0 and decrease_count / total_checks > 0.1:
+        print(f"  WARNING: Data has {decrease_count}/{total_checks} significant decreases "
+              f"({decrease_count/total_checks*100:.0f}%) - likely Active view, not Cumulative")
+        return False
+    return True
+
+
 def deduplicate_by_date(data: list) -> list:
     """Remove duplicate entries, keeping the most complete per date."""
     by_date = {}
@@ -648,26 +680,39 @@ async def scroll_and_wait_for_charts(page):
 
 
 async def click_fleet_tab(page, tab_name: str):
-    """Click a tab ('Active' or 'Total') on the Fleet Growth chart."""
+    """Click a tab on the Fleet Growth chart.
+
+    Tries multiple label variations since the site may use different names
+    (e.g., 'Total' vs 'Cumulative', 'Active' vs 'Active · All').
+    """
+    alternatives = {
+        "Total": ["Total", "Cumulative", "Cumulative · All"],
+        "Cumulative": ["Cumulative", "Cumulative · All", "Total"],
+        "Active": ["Active", "Active · All"],
+    }
+    names_to_try = alternatives.get(tab_name, [tab_name])
+
     clicked = await page.evaluate("""
-        (tabName) => {
+        (namesToTry) => {
             const buttons = document.querySelectorAll('button');
-            for (const btn of buttons) {
-                const text = btn.textContent.trim();
-                if (text === tabName) {
-                    btn.click();
-                    return true;
+            for (const name of namesToTry) {
+                for (const btn of buttons) {
+                    const text = btn.textContent.trim();
+                    if (text === name || text.startsWith(name)) {
+                        btn.click();
+                        return text;
+                    }
                 }
             }
-            return false;
+            return null;
         }
-    """, tab_name)
+    """, names_to_try)
     if clicked:
-        print(f"  Clicked '{tab_name}' tab")
+        print(f"  Clicked '{clicked}' tab (requested: '{tab_name}')")
         await asyncio.sleep(3)
     else:
-        print(f"  '{tab_name}' button not found (may already be selected)")
-    return clicked
+        print(f"  WARNING: No button found for '{tab_name}' (tried: {names_to_try})")
+    return clicked is not None
 
 
 # ---------------------------------------------------------------------------
@@ -778,14 +823,21 @@ async def scrape_fleet_growth():
         await click_fleet_tab(page, "Active")
         active_data = await _extract_with_strategies(page, captured_api_responses, "Active")
 
-        # ---- Scrape TOTAL view ----
+        # ---- Scrape TOTAL/CUMULATIVE view ----
         print("\n" + "=" * 50)
-        print("Scraping TOTAL fleet growth...")
+        print("Scraping TOTAL (cumulative) fleet growth...")
         print("=" * 50)
-        await click_fleet_tab(page, "Total")
+        await click_fleet_tab(page, "Cumulative")
         # Wait for chart to re-render with new data
         await asyncio.sleep(3)
         total_data = await _extract_with_strategies(page, captured_api_responses, "Total")
+
+        # Validate that total data is actually cumulative (monotonically non-decreasing)
+        if total_data and not validate_cumulative_data(total_data):
+            print("  WARNING: Total data failed cumulative monotonicity check!")
+            print("  This likely means we scraped the Active view instead of Cumulative.")
+            print("  Discarding this data to prevent corruption.")
+            total_data = []
 
         await browser.close()
 
