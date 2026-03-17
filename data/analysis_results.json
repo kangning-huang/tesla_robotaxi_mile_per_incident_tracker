@@ -1,9 +1,9 @@
 {
-  "analysis_date": "2026-03-16T06:48:15.352245",
+  "analysis_date": "2026-03-17T06:39:09.638555",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "fleet_data_source": "total",
-  "incident_count": 17,
+  "incident_count": 18,
   "daily_miles_assumption": 115,
   "excluded_dates": [
     "2026-01-25",
@@ -211,9 +211,9 @@
       "cumulative_miles": 449420,
       "cumulative_incidents": 14,
       "cumulative_mpi": 32101.428571428572,
-      "roadway_type": "Street",
-      "precrash_speed_mph": 4,
-      "precrash_movement": "Proceeding Straight"
+      "roadway_type": "Parking Lot",
+      "precrash_speed_mph": 1,
+      "precrash_movement": "Backing"
     },
     {
       "incident_number": 15,
@@ -226,7 +226,7 @@
       "cumulative_incidents": 15,
       "cumulative_mpi": 30222.0,
       "roadway_type": "Parking Lot",
-      "precrash_speed_mph": 1,
+      "precrash_speed_mph": 2,
       "precrash_movement": "Backing"
     },
     {
@@ -239,9 +239,9 @@
       "cumulative_miles": 457240,
       "cumulative_incidents": 16,
       "cumulative_mpi": 28577.5,
-      "roadway_type": "Parking Lot",
-      "precrash_speed_mph": 2,
-      "precrash_movement": "Backing"
+      "roadway_type": "Street",
+      "precrash_speed_mph": 0,
+      "precrash_movement": "Stopped"
     },
     {
       "incident_number": 17,
@@ -254,40 +254,54 @@
       "cumulative_incidents": 17,
       "cumulative_mpi": 27126.470588235294,
       "roadway_type": "Street",
-      "precrash_speed_mph": 0,
-      "precrash_movement": "Stopped"
+      "precrash_speed_mph": 4,
+      "precrash_movement": "Proceeding Straight"
+    },
+    {
+      "incident_number": 18,
+      "incident_date": "2026-01-01",
+      "days_since_previous": 0,
+      "miles_since_previous": 3910,
+      "mpi_since_previous": 3910,
+      "avg_fleet_size": 34.0,
+      "cumulative_miles": 465060,
+      "cumulative_incidents": 18,
+      "cumulative_mpi": 25836.666666666668,
+      "roadway_type": "Street",
+      "precrash_speed_mph": 9,
+      "precrash_movement": "Lane / Road Departure"
     }
   ],
   "trend_analysis": {
     "best_model": "exponential",
     "best_fit": {
       "type": "exponential",
-      "a": 2548.183211417494,
-      "b": 0.011164797340097189,
-      "r_squared": 0.2088689662937151,
+      "a": 2699.827825394305,
+      "b": 0.009526776137291493,
+      "r_squared": 0.16807275068968575,
       "interpretation": "improving",
-      "growth_rate_per_day": 0.011164797340097189,
-      "doubling_time_days": 62.083274729097006,
+      "growth_rate_per_day": 0.009526776137291493,
+      "doubling_time_days": 72.75779031341973,
       "halving_time_days": null
     },
     "all_models": {
       "exponential": {
         "type": "exponential",
-        "a": 2548.183211417494,
-        "b": 0.011164797340097189,
-        "r_squared": 0.2088689662937151,
+        "a": 2699.827825394305,
+        "b": 0.009526776137291493,
+        "r_squared": 0.16807275068968575,
         "interpretation": "improving",
-        "growth_rate_per_day": 0.011164797340097189,
-        "doubling_time_days": 62.083274729097006,
+        "growth_rate_per_day": 0.009526776137291493,
+        "doubling_time_days": 72.75779031341973,
         "halving_time_days": null
       }
     }
   },
   "summary": {
-    "average_mpi": 27126.470588235294,
+    "average_mpi": 25836.666666666668,
     "latest_mpi": 3910,
-    "cumulative_mpi": 27126.470588235294,
-    "total_miles": 461150,
+    "cumulative_mpi": 25836.666666666668,
+    "total_miles": 465060,
     "total_excluded_days": 2
   },
   "active_fleet": {
@@ -484,9 +498,9 @@
         "cumulative_miles": 507035,
         "cumulative_incidents": 14,
         "cumulative_mpi": 36216.78571428572,
-        "roadway_type": "Street",
-        "precrash_speed_mph": 4,
-        "precrash_movement": "Proceeding Straight"
+        "roadway_type": "Parking Lot",
+        "precrash_speed_mph": 1,
+        "precrash_movement": "Backing"
       },
       {
         "incident_number": 15,
@@ -499,7 +513,7 @@
         "cumulative_incidents": 15,
         "cumulative_mpi": 34086.0,
         "roadway_type": "Parking Lot",
-        "precrash_speed_mph": 1,
+        "precrash_speed_mph": 2,
         "precrash_movement": "Backing"
       },
       {
@@ -512,9 +526,9 @@
         "cumulative_miles": 515545,
         "cumulative_incidents": 16,
         "cumulative_mpi": 32221.5625,
-        "roadway_type": "Parking Lot",
-        "precrash_speed_mph": 2,
-        "precrash_movement": "Backing"
+        "roadway_type": "Street",
+        "precrash_speed_mph": 0,
+        "precrash_movement": "Stopped"
       },
       {
         "incident_number": 17,
@@ -527,40 +541,54 @@
         "cumulative_incidents": 17,
         "cumulative_mpi": 30576.470588235294,
         "roadway_type": "Street",
-        "precrash_speed_mph": 0,
-        "precrash_movement": "Stopped"
+        "precrash_speed_mph": 4,
+        "precrash_movement": "Proceeding Straight"
+      },
+      {
+        "incident_number": 18,
+        "incident_date": "2026-01-01",
+        "days_since_previous": 0,
+        "miles_since_previous": 4255,
+        "mpi_since_previous": 4255,
+        "avg_fleet_size": 37.0,
+        "cumulative_miles": 524055,
+        "cumulative_incidents": 18,
+        "cumulative_mpi": 29114.166666666668,
+        "roadway_type": "Street",
+        "precrash_speed_mph": 9,
+        "precrash_movement": "Lane / Road Departure"
       }
     ],
     "trend_analysis": {
       "best_model": "exponential",
       "best_fit": {
         "type": "exponential",
-        "a": 2572.413367887436,
-        "b": 0.012060266661367697,
-        "r_squared": 0.23315703746074357,
+        "a": 2734.2019136542385,
+        "b": 0.010331918877373203,
+        "r_squared": 0.18915500881689495,
         "interpretation": "improving",
-        "growth_rate_per_day": 0.012060266661367697,
-        "doubling_time_days": 57.47361978158274,
+        "growth_rate_per_day": 0.010331918877373203,
+        "doubling_time_days": 67.08794259679395,
         "halving_time_days": null
       },
       "all_models": {
         "exponential": {
           "type": "exponential",
-          "a": 2572.413367887436,
-          "b": 0.012060266661367697,
-          "r_squared": 0.23315703746074357,
+          "a": 2734.2019136542385,
+          "b": 0.010331918877373203,
+          "r_squared": 0.18915500881689495,
           "interpretation": "improving",
-          "growth_rate_per_day": 0.012060266661367697,
-          "doubling_time_days": 57.47361978158274,
+          "growth_rate_per_day": 0.010331918877373203,
+          "doubling_time_days": 67.08794259679395,
           "halving_time_days": null
         }
       }
     },
     "summary": {
-      "average_mpi": 30576.470588235294,
+      "average_mpi": 29114.166666666668,
       "latest_mpi": 4255,
-      "cumulative_mpi": 30576.470588235294,
-      "total_miles": 519800,
+      "cumulative_mpi": 29114.166666666668,
+      "total_miles": 524055,
       "total_excluded_days": 2
     }
   }
