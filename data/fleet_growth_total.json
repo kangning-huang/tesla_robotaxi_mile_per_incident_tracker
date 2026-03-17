@@ -1,8 +1,8 @@
 {
-  "scraped_at": "2026-03-16T06:50:28.604818+00:00",
+  "scraped_at": "2026-03-17T06:41:43.089631+00:00",
   "source": "robotaxitracker.com",
   "description": "Total fleet growth time series",
-  "data_points": 268,
+  "data_points": 269,
   "data": [
     {
       "date": "2025-06-22",
@@ -1242,375 +1242,381 @@
     },
     {
       "date": "2026-01-14",
-      "austin": 52,
+      "austin": 53,
       "bayarea": 204,
-      "total": 256
+      "total": 257
     },
     {
       "date": "2026-01-15",
-      "austin": 55,
+      "austin": 56,
       "bayarea": 205,
-      "total": 260
+      "total": 261
     },
     {
       "date": "2026-01-16",
-      "austin": 56,
+      "austin": 57,
       "bayarea": 206,
-      "total": 262
+      "total": 263
     },
     {
       "date": "2026-01-17",
-      "austin": 59,
-      "bayarea": 216,
-      "total": 275
-    },
-    {
-      "date": "2026-01-18",
       "austin": 60,
       "bayarea": 216,
       "total": 276
     },
     {
+      "date": "2026-01-18",
+      "austin": 61,
+      "bayarea": 216,
+      "total": 277
+    },
+    {
       "date": "2026-01-19",
-      "austin": 63,
+      "austin": 64,
       "bayarea": 219,
-      "total": 282
+      "total": 283
     },
     {
       "date": "2026-01-20",
-      "austin": 64,
+      "austin": 65,
       "bayarea": 221,
-      "total": 285
+      "total": 286
     },
     {
       "date": "2026-01-21",
-      "austin": 69,
+      "austin": 70,
       "bayarea": 224,
-      "total": 293
+      "total": 294
     },
     {
       "date": "2026-01-22",
-      "austin": 75,
+      "austin": 76,
       "bayarea": 229,
-      "total": 304
+      "total": 305
     },
     {
       "date": "2026-01-23",
-      "austin": 82,
+      "austin": 83,
       "bayarea": 230,
-      "total": 312
+      "total": 313
     },
     {
       "date": "2026-01-24",
-      "austin": 83,
+      "austin": 85,
       "bayarea": 233,
-      "total": 316
+      "total": 318
     },
     {
       "date": "2026-01-25",
-      "austin": 83,
+      "austin": 85,
       "bayarea": 240,
-      "total": 323
-    },
-    {
-      "date": "2026-01-26",
-      "austin": 83,
-      "bayarea": 241,
-      "total": 324
-    },
-    {
-      "date": "2026-01-27",
-      "austin": 83,
-      "bayarea": 241,
-      "total": 324
-    },
-    {
-      "date": "2026-01-28",
-      "austin": 83,
-      "bayarea": 242,
       "total": 325
     },
     {
-      "date": "2026-01-29",
+      "date": "2026-01-26",
       "austin": 85,
+      "bayarea": 241,
+      "total": 326
+    },
+    {
+      "date": "2026-01-27",
+      "austin": 85,
+      "bayarea": 241,
+      "total": 326
+    },
+    {
+      "date": "2026-01-28",
+      "austin": 85,
+      "bayarea": 242,
+      "total": 327
+    },
+    {
+      "date": "2026-01-29",
+      "austin": 87,
       "bayarea": 243,
-      "total": 328
+      "total": 330
     },
     {
       "date": "2026-01-30",
-      "austin": 85,
+      "austin": 87,
       "bayarea": 246,
-      "total": 331
+      "total": 333
     },
     {
       "date": "2026-01-31",
-      "austin": 86,
+      "austin": 87,
       "bayarea": 252,
-      "total": 338
+      "total": 339
     },
     {
       "date": "2026-02-01",
-      "austin": 86,
+      "austin": 87,
       "bayarea": 255,
-      "total": 341
+      "total": 342
     },
     {
       "date": "2026-02-02",
-      "austin": 86,
+      "austin": 87,
       "bayarea": 258,
-      "total": 344
+      "total": 345
     },
     {
       "date": "2026-02-03",
-      "austin": 86,
+      "austin": 87,
       "bayarea": 258,
-      "total": 344
+      "total": 345
     },
     {
       "date": "2026-02-04",
-      "austin": 86,
+      "austin": 87,
       "bayarea": 259,
-      "total": 345
-    },
-    {
-      "date": "2026-02-05",
-      "austin": 86,
-      "bayarea": 259,
-      "total": 345
-    },
-    {
-      "date": "2026-02-06",
-      "austin": 86,
-      "bayarea": 260,
       "total": 346
     },
     {
+      "date": "2026-02-05",
+      "austin": 87,
+      "bayarea": 259,
+      "total": 346
+    },
+    {
+      "date": "2026-02-06",
+      "austin": 87,
+      "bayarea": 260,
+      "total": 347
+    },
+    {
       "date": "2026-02-07",
-      "austin": 86,
+      "austin": 87,
       "bayarea": 263,
-      "total": 349
+      "total": 350
     },
     {
       "date": "2026-02-08",
-      "austin": 88,
+      "austin": 89,
       "bayarea": 272,
-      "total": 360
+      "total": 361
     },
     {
       "date": "2026-02-09",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 274,
-      "total": 363
+      "total": 364
     },
     {
       "date": "2026-02-10",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 277,
-      "total": 366
+      "total": 367
     },
     {
       "date": "2026-02-11",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 280,
-      "total": 369
-    },
-    {
-      "date": "2026-02-12",
-      "austin": 89,
-      "bayarea": 281,
       "total": 370
     },
     {
+      "date": "2026-02-12",
+      "austin": 90,
+      "bayarea": 281,
+      "total": 371
+    },
+    {
       "date": "2026-02-13",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 285,
-      "total": 374
+      "total": 375
     },
     {
       "date": "2026-02-14",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 294,
-      "total": 383
+      "total": 384
     },
     {
       "date": "2026-02-15",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 296,
-      "total": 385
-    },
-    {
-      "date": "2026-02-16",
-      "austin": 89,
-      "bayarea": 297,
       "total": 386
     },
     {
+      "date": "2026-02-16",
+      "austin": 90,
+      "bayarea": 297,
+      "total": 387
+    },
+    {
       "date": "2026-02-17",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 300,
-      "total": 389
+      "total": 390
     },
     {
       "date": "2026-02-18",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 303,
-      "total": 392
+      "total": 393
     },
     {
       "date": "2026-02-19",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 307,
-      "total": 396
+      "total": 397
     },
     {
       "date": "2026-02-20",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 309,
-      "total": 398
+      "total": 399
     },
     {
       "date": "2026-02-21",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 314,
-      "total": 403
+      "total": 404
     },
     {
       "date": "2026-02-22",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 316,
-      "total": 405
-    },
-    {
-      "date": "2026-02-23",
-      "austin": 89,
-      "bayarea": 317,
       "total": 406
     },
     {
-      "date": "2026-02-24",
-      "austin": 89,
-      "bayarea": 318,
+      "date": "2026-02-23",
+      "austin": 90,
+      "bayarea": 317,
       "total": 407
     },
     {
-      "date": "2026-02-25",
-      "austin": 89,
-      "bayarea": 326,
-      "total": 415
+      "date": "2026-02-24",
+      "austin": 90,
+      "bayarea": 318,
+      "total": 408
     },
     {
-      "date": "2026-02-26",
-      "austin": 89,
-      "bayarea": 327,
+      "date": "2026-02-25",
+      "austin": 90,
+      "bayarea": 326,
       "total": 416
     },
     {
+      "date": "2026-02-26",
+      "austin": 90,
+      "bayarea": 327,
+      "total": 417
+    },
+    {
       "date": "2026-02-27",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 333,
-      "total": 422
+      "total": 423
     },
     {
       "date": "2026-02-28",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 337,
-      "total": 426
+      "total": 427
     },
     {
       "date": "2026-03-01",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 341,
-      "total": 430
+      "total": 431
     },
     {
       "date": "2026-03-02",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 341,
-      "total": 430
+      "total": 431
     },
     {
       "date": "2026-03-03",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 344,
-      "total": 433
+      "total": 434
     },
     {
       "date": "2026-03-04",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 346,
-      "total": 435
-    },
-    {
-      "date": "2026-03-05",
-      "austin": 89,
-      "bayarea": 347,
       "total": 436
     },
     {
-      "date": "2026-03-06",
-      "austin": 89,
-      "bayarea": 348,
+      "date": "2026-03-05",
+      "austin": 90,
+      "bayarea": 347,
       "total": 437
     },
     {
+      "date": "2026-03-06",
+      "austin": 90,
+      "bayarea": 348,
+      "total": 438
+    },
+    {
       "date": "2026-03-07",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 350,
-      "total": 439
+      "total": 440
     },
     {
       "date": "2026-03-08",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 353,
-      "total": 442
+      "total": 443
     },
     {
       "date": "2026-03-09",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 356,
-      "total": 445
-    },
-    {
-      "date": "2026-03-10",
-      "austin": 89,
-      "bayarea": 357,
       "total": 446
     },
     {
-      "date": "2026-03-11",
-      "austin": 89,
-      "bayarea": 358,
+      "date": "2026-03-10",
+      "austin": 90,
+      "bayarea": 357,
       "total": 447
+    },
+    {
+      "date": "2026-03-11",
+      "austin": 90,
+      "bayarea": 358,
+      "total": 448
     },
     {
       "date": "2026-03-12",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 358,
-      "total": 447
+      "total": 448
     },
     {
       "date": "2026-03-13",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 360,
-      "total": 449
+      "total": 450
     },
     {
       "date": "2026-03-14",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 361,
-      "total": 450
+      "total": 451
     },
     {
       "date": "2026-03-15",
-      "austin": 89,
+      "austin": 90,
       "bayarea": 361,
-      "total": 450
+      "total": 451
     },
     {
       "date": "2026-03-16",
-      "austin": 89,
-      "bayarea": 361,
-      "total": 450
+      "austin": 90,
+      "bayarea": 363,
+      "total": 453
+    },
+    {
+      "date": "2026-03-17",
+      "austin": 90,
+      "bayarea": 365,
+      "total": 455
     }
   ]
 }
