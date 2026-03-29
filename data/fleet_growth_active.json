@@ -1,8 +1,8 @@
 {
-  "scraped_at": "2026-03-28T06:37:44.966650+00:00",
+  "scraped_at": "2026-03-29T06:42:20.168033+00:00",
   "source": "robotaxitracker.com",
   "description": "Active fleet growth time series",
-  "data_points": 280,
+  "data_points": 281,
   "data": [
     {
       "date": "2025-06-22",
@@ -1621,68 +1621,74 @@
     {
       "date": "2026-03-18",
       "austin": 91,
-      "bayarea": 412,
-      "total": 503
+      "bayarea": 413,
+      "total": 504
     },
     {
       "date": "2026-03-19",
       "austin": 93,
-      "bayarea": 415,
-      "total": 508
+      "bayarea": 416,
+      "total": 509
     },
     {
       "date": "2026-03-20",
       "austin": 93,
-      "bayarea": 418,
-      "total": 511
+      "bayarea": 419,
+      "total": 512
     },
     {
       "date": "2026-03-21",
       "austin": 94,
-      "bayarea": 426,
-      "total": 520
+      "bayarea": 427,
+      "total": 521
     },
     {
       "date": "2026-03-22",
       "austin": 94,
-      "bayarea": 429,
-      "total": 523
+      "bayarea": 431,
+      "total": 525
     },
     {
       "date": "2026-03-23",
       "austin": 94,
-      "bayarea": 434,
-      "total": 528
+      "bayarea": 436,
+      "total": 530
     },
     {
       "date": "2026-03-24",
       "austin": 94,
-      "bayarea": 435,
-      "total": 529
+      "bayarea": 437,
+      "total": 531
     },
     {
       "date": "2026-03-25",
       "austin": 94,
-      "bayarea": 436,
-      "total": 530
+      "bayarea": 438,
+      "total": 532
     },
     {
       "date": "2026-03-26",
       "austin": 94,
-      "bayarea": 436,
-      "total": 530
+      "bayarea": 438,
+      "total": 532
     },
     {
       "date": "2026-03-27",
       "austin": 94,
-      "bayarea": 436,
-      "total": 530
+      "bayarea": 438,
+      "total": 532
     },
     {
       "date": "2026-03-28",
       "austin": 94,
-      "bayarea": 436,
-      "total": 530
+      "bayarea": 438,
+      "total": 532
+    },
+    {
+      "date": "2026-03-29",
+      "austin": 94,
+      "bayarea": 438,
+      "total": 532
     }
   ]
 }
