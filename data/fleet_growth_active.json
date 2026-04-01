@@ -1,8 +1,8 @@
 {
-  "scraped_at": "2026-03-31T06:46:38.461666+00:00",
+  "scraped_at": "2026-04-01T06:53:16.686446+00:00",
   "source": "robotaxitracker.com",
   "description": "Active fleet growth time series",
-  "data_points": 283,
+  "data_points": 284,
   "data": [
     {
       "date": "2025-06-22",
@@ -1698,6 +1698,12 @@
     },
     {
       "date": "2026-03-31",
+      "austin": 94,
+      "bayarea": 438,
+      "total": 532
+    },
+    {
+      "date": "2026-04-01",
       "austin": 94,
       "bayarea": 438,
       "total": 532
