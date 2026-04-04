@@ -1,7 +1,7 @@
 {
   "metadata": {
     "description": "Tesla Robotaxi fleet size data from robotaxitracker.com (scraped) and news sources",
-    "last_updated": "2026-03-16",
+    "last_updated": "2026-04-04",
     "sources": [
       "robotaxitracker.com (primary - automated scraping)",
       "Tesla official announcements",
@@ -12,12 +12,104 @@
   },
   "snapshots": [
     {
+      "date": "2025-06-21",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-06-22",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-06-23",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-06-24",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
       "date": "2025-06-25",
       "austin_vehicles": 10,
       "bayarea_vehicles": 0,
       "total_robotaxi": 10,
       "source": "Tesla Robotaxi launch announcement",
-      "notes": "Initial Austin launch with ~10 vehicles"
+      "notes": "Initial Austin launch with ~10 vehicles",
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0
+    },
+    {
+      "date": "2025-06-26",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-06-27",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-06-28",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-06-29",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-06-30",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-07-01",
@@ -25,7 +117,139 @@
       "bayarea_vehicles": 0,
       "total_robotaxi": 12,
       "source": "Estimated (interpolation)",
-      "notes": "Early ramp phase"
+      "notes": "Early ramp phase",
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0
+    },
+    {
+      "date": "2025-07-02",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-03",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-04",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-05",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-06",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-07",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-08",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-09",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-10",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-11",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-12",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-13",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-14",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-07-15",
@@ -33,7 +257,299 @@
       "bayarea_vehicles": 0,
       "total_robotaxi": 14,
       "source": "Estimated (interpolation)",
-      "notes": "Fleet expansion in Austin"
+      "notes": "Fleet expansion in Austin",
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0
+    },
+    {
+      "date": "2025-07-16",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-17",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-18",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-19",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-20",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-21",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-22",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-23",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-24",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-25",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-26",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-27",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-28",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 11,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-29",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 14,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-30",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 14,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-07-31",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 14,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-01",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 14,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-02",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 14,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-03",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 14,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-04",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 14,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-05",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 14,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-06",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 14,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-07",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 14,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-08",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-09",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-10",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-11",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-12",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-13",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-08-14",
@@ -41,7 +557,69 @@
       "bayarea_vehicles": 0,
       "total_robotaxi": 15,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 0
+    },
+    {
+      "date": "2025-08-15",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-16",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-17",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-18",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-19",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-20",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 0,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-08-21",
@@ -49,7 +627,99 @@
       "bayarea_vehicles": 1,
       "total_robotaxi": 15,
       "source": "robotaxitracker.com",
-      "notes": "Bay Area tracking begins"
+      "notes": "Bay Area tracking begins",
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 1
+    },
+    {
+      "date": "2025-08-22",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 1,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-23",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 1,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-24",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 1,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-25",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 1,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-26",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 1,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-27",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 1,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-28",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 1,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-29",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 15,
+      "bayarea_active_vehicles": 1,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-08-30",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 19,
+      "bayarea_active_vehicles": 1,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-08-31",
@@ -57,7 +727,29 @@
       "bayarea_vehicles": 3,
       "total_robotaxi": 15,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 19,
+      "bayarea_active_vehicles": 3
+    },
+    {
+      "date": "2025-09-01",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 19,
+      "bayarea_active_vehicles": 3,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-02",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 19,
+      "bayarea_active_vehicles": 3,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-09-03",
@@ -65,7 +757,9 @@
       "bayarea_vehicles": 4,
       "total_robotaxi": 15,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 19,
+      "bayarea_active_vehicles": 4
     },
     {
       "date": "2025-09-04",
@@ -73,7 +767,9 @@
       "bayarea_vehicles": 5,
       "total_robotaxi": 15,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 21,
+      "bayarea_active_vehicles": 11
     },
     {
       "date": "2025-09-05",
@@ -81,7 +777,9 @@
       "bayarea_vehicles": 7,
       "total_robotaxi": 16,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 21,
+      "bayarea_active_vehicles": 17
     },
     {
       "date": "2025-09-06",
@@ -89,7 +787,69 @@
       "bayarea_vehicles": 7,
       "total_robotaxi": 18,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 21,
+      "bayarea_active_vehicles": 21
+    },
+    {
+      "date": "2025-09-07",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 23,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-08",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 24,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-09",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 27,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-10",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 28,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-11",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 31,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-12",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 34,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-09-13",
@@ -97,7 +857,39 @@
       "bayarea_vehicles": 8,
       "total_robotaxi": 18,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 37
+    },
+    {
+      "date": "2025-09-14",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 37,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-15",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 45,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-16",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 50,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-09-17",
@@ -105,7 +897,19 @@
       "bayarea_vehicles": 9,
       "total_robotaxi": 18,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 55
+    },
+    {
+      "date": "2025-09-18",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 62,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-09-19",
@@ -113,7 +917,119 @@
       "bayarea_vehicles": 10,
       "total_robotaxi": 18,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 66
+    },
+    {
+      "date": "2025-09-20",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 66,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-21",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 22,
+      "bayarea_active_vehicles": 68,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-22",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 23,
+      "bayarea_active_vehicles": 68,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-23",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 23,
+      "bayarea_active_vehicles": 69,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-24",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 23,
+      "bayarea_active_vehicles": 70,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-25",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 23,
+      "bayarea_active_vehicles": 71,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-26",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 23,
+      "bayarea_active_vehicles": 72,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-27",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 23,
+      "bayarea_active_vehicles": 73,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-28",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 23,
+      "bayarea_active_vehicles": 75,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-29",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 23,
+      "bayarea_active_vehicles": 75,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-09-30",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 75,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-10-01",
@@ -121,7 +1037,9 @@
       "bayarea_vehicles": 12,
       "total_robotaxi": 18,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 78
     },
     {
       "date": "2025-10-02",
@@ -129,7 +1047,29 @@
       "bayarea_vehicles": 13,
       "total_robotaxi": 18,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 78
+    },
+    {
+      "date": "2025-10-03",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 80,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-04",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 82,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-10-05",
@@ -137,7 +1077,19 @@
       "bayarea_vehicles": 18,
       "total_robotaxi": 18,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 86
+    },
+    {
+      "date": "2025-10-06",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 86,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-10-07",
@@ -145,7 +1097,19 @@
       "bayarea_vehicles": 22,
       "total_robotaxi": 18,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 89
+    },
+    {
+      "date": "2025-10-08",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 89,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-10-09",
@@ -153,7 +1117,89 @@
       "bayarea_vehicles": 24,
       "total_robotaxi": 18,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 91
+    },
+    {
+      "date": "2025-10-10",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 91,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-11",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 97,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-12",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 100,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-13",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 102,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-14",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 104,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-15",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 104,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-16",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 104,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-17",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 105,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-10-18",
@@ -161,7 +1207,39 @@
       "bayarea_vehicles": 26,
       "total_robotaxi": 18,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 106
+    },
+    {
+      "date": "2025-10-19",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 106,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-20",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 107,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-21",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 107,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-10-22",
@@ -169,7 +1247,39 @@
       "bayarea_vehicles": 28,
       "total_robotaxi": 18,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 110
+    },
+    {
+      "date": "2025-10-23",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 111,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-24",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 111,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-25",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 115,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-10-26",
@@ -177,7 +1287,39 @@
       "bayarea_vehicles": 29,
       "total_robotaxi": 18,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 116
+    },
+    {
+      "date": "2025-10-27",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 116,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-28",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 118,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-10-29",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 118,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-10-30",
@@ -185,7 +1327,49 @@
       "bayarea_vehicles": 29,
       "total_robotaxi": 19,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 118
+    },
+    {
+      "date": "2025-10-31",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 118,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-11-01",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 121,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-11-02",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 123,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-11-03",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 24,
+      "bayarea_active_vehicles": 123,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-11-04",
@@ -193,7 +1377,39 @@
       "bayarea_vehicles": 29,
       "total_robotaxi": 20,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 25,
+      "bayarea_active_vehicles": 123
+    },
+    {
+      "date": "2025-11-05",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 25,
+      "bayarea_active_vehicles": 123,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-11-06",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 26,
+      "bayarea_active_vehicles": 124,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-11-07",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 29,
+      "bayarea_active_vehicles": 124,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-11-08",
@@ -201,7 +1417,9 @@
       "bayarea_vehicles": 29,
       "total_robotaxi": 21,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 30,
+      "bayarea_active_vehicles": 124
     },
     {
       "date": "2025-11-09",
@@ -209,7 +1427,19 @@
       "bayarea_vehicles": 30,
       "total_robotaxi": 21,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 30,
+      "bayarea_active_vehicles": 125
+    },
+    {
+      "date": "2025-11-10",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 125,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-11-11",
@@ -217,7 +1447,59 @@
       "bayarea_vehicles": 30,
       "total_robotaxi": 22,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 127
+    },
+    {
+      "date": "2025-11-12",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 127,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-11-13",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 127,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-11-14",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 129,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-11-15",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 129,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-11-16",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 132,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-11-17",
@@ -225,7 +1507,9 @@
       "bayarea_vehicles": 30,
       "total_robotaxi": 25,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 132
     },
     {
       "date": "2025-11-18",
@@ -233,7 +1517,19 @@
       "bayarea_vehicles": 30,
       "total_robotaxi": 28,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 132
+    },
+    {
+      "date": "2025-11-19",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 132,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-11-20",
@@ -241,7 +1537,19 @@
       "bayarea_vehicles": 31,
       "total_robotaxi": 28,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 132
+    },
+    {
+      "date": "2025-11-21",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 132,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-11-22",
@@ -249,7 +1557,9 @@
       "bayarea_vehicles": 33,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Pre Bay Area expansion"
+      "notes": "Pre Bay Area expansion",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 134
     },
     {
       "date": "2025-11-23",
@@ -257,7 +1567,9 @@
       "bayarea_vehicles": 77,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Bay Area massive expansion +44 vehicles"
+      "notes": "Bay Area massive expansion +44 vehicles",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 143
     },
     {
       "date": "2025-11-24",
@@ -265,7 +1577,9 @@
       "bayarea_vehicles": 106,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Bay Area expansion continues +29 vehicles"
+      "notes": "Bay Area expansion continues +29 vehicles",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 144
     },
     {
       "date": "2025-11-25",
@@ -273,7 +1587,9 @@
       "bayarea_vehicles": 113,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 146
     },
     {
       "date": "2025-11-26",
@@ -281,7 +1597,9 @@
       "bayarea_vehicles": 114,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 146
     },
     {
       "date": "2025-11-27",
@@ -289,7 +1607,19 @@
       "bayarea_vehicles": 116,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 146
+    },
+    {
+      "date": "2025-11-28",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 146,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-11-29",
@@ -297,7 +1627,9 @@
       "bayarea_vehicles": 119,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 147
     },
     {
       "date": "2025-11-30",
@@ -305,7 +1637,9 @@
       "bayarea_vehicles": 121,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 148
     },
     {
       "date": "2025-12-01",
@@ -313,7 +1647,9 @@
       "bayarea_vehicles": 124,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 149
     },
     {
       "date": "2025-12-02",
@@ -321,7 +1657,59 @@
       "bayarea_vehicles": 127,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 150
+    },
+    {
+      "date": "2025-12-03",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 150,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-12-04",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 151,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-12-05",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 151,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-12-06",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 151,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-12-07",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 151,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-12-08",
@@ -329,7 +1717,19 @@
       "bayarea_vehicles": 128,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 152
+    },
+    {
+      "date": "2025-12-09",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 153,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-12-10",
@@ -337,7 +1737,19 @@
       "bayarea_vehicles": 129,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 153
+    },
+    {
+      "date": "2025-12-11",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 154,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-12-12",
@@ -345,7 +1757,29 @@
       "bayarea_vehicles": 130,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 156
+    },
+    {
+      "date": "2025-12-13",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 156,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-12-14",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 156,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-12-15",
@@ -353,7 +1787,9 @@
       "bayarea_vehicles": 131,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 157
     },
     {
       "date": "2025-12-16",
@@ -361,7 +1797,29 @@
       "bayarea_vehicles": 132,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 157
+    },
+    {
+      "date": "2025-12-17",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 157,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-12-18",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 157,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-12-19",
@@ -369,7 +1827,59 @@
       "bayarea_vehicles": 133,
       "total_robotaxi": 29,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 158
+    },
+    {
+      "date": "2025-12-20",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 31,
+      "bayarea_active_vehicles": 159,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-12-21",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 32,
+      "bayarea_active_vehicles": 160,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-12-22",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 32,
+      "bayarea_active_vehicles": 160,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-12-23",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 33,
+      "bayarea_active_vehicles": 161,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-12-24",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 33,
+      "bayarea_active_vehicles": 162,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-12-25",
@@ -377,7 +1887,29 @@
       "bayarea_vehicles": 133,
       "total_robotaxi": 31,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 33,
+      "bayarea_active_vehicles": 162
+    },
+    {
+      "date": "2025-12-26",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 33,
+      "bayarea_active_vehicles": 163,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
+    },
+    {
+      "date": "2025-12-27",
+      "austin_vehicles": null,
+      "bayarea_vehicles": null,
+      "total_robotaxi": null,
+      "austin_active_vehicles": 33,
+      "bayarea_active_vehicles": 165,
+      "source": "robotaxitracker.com",
+      "notes": "Active fleet scraped from chart"
     },
     {
       "date": "2025-12-28",
@@ -385,7 +1917,9 @@
       "bayarea_vehicles": 134,
       "total_robotaxi": 31,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 33,
+      "bayarea_active_vehicles": 167
     },
     {
       "date": "2025-12-29",
@@ -393,7 +1927,9 @@
       "bayarea_vehicles": 134,
       "total_robotaxi": 32,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 35,
+      "bayarea_active_vehicles": 167
     },
     {
       "date": "2025-12-30",
@@ -401,7 +1937,9 @@
       "bayarea_vehicles": 135,
       "total_robotaxi": 32,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 35,
+      "bayarea_active_vehicles": 168
     },
     {
       "date": "2025-12-31",
@@ -409,7 +1947,9 @@
       "bayarea_vehicles": 135,
       "total_robotaxi": 33,
       "source": "robotaxitracker.com",
-      "notes": "Year end"
+      "notes": "Year end",
+      "austin_active_vehicles": 37,
+      "bayarea_active_vehicles": 170
     },
     {
       "date": "2026-01-01",
@@ -417,7 +1957,9 @@
       "bayarea_vehicles": 136,
       "total_robotaxi": 34,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 39,
+      "bayarea_active_vehicles": 171
     },
     {
       "date": "2026-01-02",
@@ -425,7 +1967,9 @@
       "bayarea_vehicles": 138,
       "total_robotaxi": 34,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 40,
+      "bayarea_active_vehicles": 175
     },
     {
       "date": "2026-01-03",
@@ -433,7 +1977,9 @@
       "bayarea_vehicles": 141,
       "total_robotaxi": 34,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 40,
+      "bayarea_active_vehicles": 177
     },
     {
       "date": "2026-01-04",
@@ -441,7 +1987,9 @@
       "bayarea_vehicles": 141,
       "total_robotaxi": 35,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 41,
+      "bayarea_active_vehicles": 179
     },
     {
       "date": "2026-01-05",
@@ -449,7 +1997,9 @@
       "bayarea_vehicles": 147,
       "total_robotaxi": 35,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 42,
+      "bayarea_active_vehicles": 186
     },
     {
       "date": "2026-01-06",
@@ -457,7 +2007,9 @@
       "bayarea_vehicles": 148,
       "total_robotaxi": 36,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 43,
+      "bayarea_active_vehicles": 190
     },
     {
       "date": "2026-01-07",
@@ -465,7 +2017,9 @@
       "bayarea_vehicles": 150,
       "total_robotaxi": 36,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 43,
+      "bayarea_active_vehicles": 192
     },
     {
       "date": "2026-01-08",
@@ -473,7 +2027,9 @@
       "bayarea_vehicles": 151,
       "total_robotaxi": 37,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 43,
+      "bayarea_active_vehicles": 194
     },
     {
       "date": "2026-01-09",
@@ -481,7 +2037,9 @@
       "bayarea_vehicles": 151,
       "total_robotaxi": 37,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 43,
+      "bayarea_active_vehicles": 196
     },
     {
       "date": "2026-01-10",
@@ -489,7 +2047,9 @@
       "bayarea_vehicles": 153,
       "total_robotaxi": 38,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 44,
+      "bayarea_active_vehicles": 209
     },
     {
       "date": "2026-01-11",
@@ -497,7 +2057,9 @@
       "bayarea_vehicles": 154,
       "total_robotaxi": 38,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 45,
+      "bayarea_active_vehicles": 212
     },
     {
       "date": "2026-01-12",
@@ -505,7 +2067,9 @@
       "bayarea_vehicles": 155,
       "total_robotaxi": 38,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 45,
+      "bayarea_active_vehicles": 216
     },
     {
       "date": "2026-01-13",
@@ -513,7 +2077,19 @@
       "bayarea_vehicles": 156,
       "total_robotaxi": 38,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 49,
+      "bayarea_active_vehicles": 217
+    },
+    {
+      "date": "2026-01-14",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 219,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 54,
+      "bayarea_active_vehicles": 219
     },
     {
       "date": "2026-01-15",
@@ -521,7 +2097,9 @@
       "bayarea_vehicles": 156,
       "total_robotaxi": 39,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 57,
+      "bayarea_active_vehicles": 219
     },
     {
       "date": "2026-01-16",
@@ -529,7 +2107,9 @@
       "bayarea_vehicles": 159,
       "total_robotaxi": 42,
       "source": "robotaxitracker.com",
-      "notes": "Austin expansion begins"
+      "notes": "Austin expansion begins",
+      "austin_active_vehicles": 60,
+      "bayarea_active_vehicles": 227
     },
     {
       "date": "2026-01-17",
@@ -537,7 +2117,9 @@
       "bayarea_vehicles": 159,
       "total_robotaxi": 43,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 61,
+      "bayarea_active_vehicles": 233
     },
     {
       "date": "2026-01-18",
@@ -545,7 +2127,9 @@
       "bayarea_vehicles": 159,
       "total_robotaxi": 46,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 63,
+      "bayarea_active_vehicles": 233
     },
     {
       "date": "2026-01-19",
@@ -553,7 +2137,9 @@
       "bayarea_vehicles": 159,
       "total_robotaxi": 48,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 65,
+      "bayarea_active_vehicles": 238
     },
     {
       "date": "2026-01-20",
@@ -561,7 +2147,9 @@
       "bayarea_vehicles": 159,
       "total_robotaxi": 49,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 66,
+      "bayarea_active_vehicles": 239
     },
     {
       "date": "2026-01-21",
@@ -569,7 +2157,9 @@
       "bayarea_vehicles": 164,
       "total_robotaxi": 50,
       "source": "robotaxitracker.com",
-      "notes": "Scraped from chart"
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 73,
+      "bayarea_active_vehicles": 245
     },
     {
       "date": "2026-01-22",
@@ -577,7 +2167,9 @@
       "bayarea_vehicles": 164,
       "total_robotaxi": 60,
       "source": "robotaxitracker.com",
-      "notes": "Major Austin expansion +11 vehicles"
+      "notes": "Major Austin expansion +11 vehicles",
+      "austin_active_vehicles": 80,
+      "bayarea_active_vehicles": 248
     },
     {
       "date": "2026-01-23",
@@ -585,7 +2177,9 @@
       "bayarea_vehicles": 164,
       "total_robotaxi": 68,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 68 Austin + 164 Bay Area = 232 total"
+      "notes": "Current fleet: 68 Austin + 164 Bay Area = 232 total",
+      "austin_active_vehicles": 86,
+      "bayarea_active_vehicles": 249
     },
     {
       "date": "2026-01-24",
@@ -593,7 +2187,9 @@
       "bayarea_vehicles": 164,
       "total_robotaxi": 72,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 72 Austin + 164 Bay Area = 236 total"
+      "notes": "Current fleet: 72 Austin + 164 Bay Area = 236 total",
+      "austin_active_vehicles": 86,
+      "bayarea_active_vehicles": 256
     },
     {
       "date": "2026-01-25",
@@ -601,60 +2197,109 @@
       "bayarea_vehicles": 175,
       "total_robotaxi": 78,
       "source": "robotaxitracker.com",
-      "notes": "From fleet_growth_total.json (chart scraping)"
+      "notes": "From fleet_growth_total.json (chart scraping)",
+      "austin_active_vehicles": 86,
+      "bayarea_active_vehicles": 258
+    },
+    {
+      "date": "2026-01-26",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 259,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 86,
+      "bayarea_active_vehicles": 259
+    },
+    {
+      "date": "2026-01-27",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 260,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 86,
+      "bayarea_active_vehicles": 260
+    },
+    {
+      "date": "2026-01-28",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 262,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 88,
+      "bayarea_active_vehicles": 262
     },
     {
       "date": "2026-01-29",
       "austin_vehicles": 80,
-      "bayarea_vehicles": 175,
+      "bayarea_vehicles": null,
       "total_robotaxi": 80,
       "source": "robotaxitracker.com",
-      "notes": "From fleet_growth_total.json (chart scraping)"
+      "notes": "From fleet_growth_total.json (chart scraping)",
+      "austin_active_vehicles": 88,
+      "bayarea_active_vehicles": 265
+    },
+    {
+      "date": "2026-01-30",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 269,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 88,
+      "bayarea_active_vehicles": 269
     },
     {
       "date": "2026-01-31",
       "austin_vehicles": 80,
-      "bayarea_vehicles": 175,
+      "bayarea_vehicles": null,
       "total_robotaxi": 80,
-      "austin_active_vehicles": 59,
+      "austin_active_vehicles": 88,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 80 Austin + 175 Bay Area = 255 total (active: 59 Austin)"
+      "notes": "Current fleet: 80 Austin + 175 Bay Area = 255 total (active: 59 Austin)",
+      "bayarea_active_vehicles": 275
     },
     {
       "date": "2026-02-01",
       "austin_vehicles": 81,
-      "bayarea_vehicles": 175,
+      "bayarea_vehicles": null,
       "total_robotaxi": 81,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 81 Austin + 175 Bay Area = 256 total (active: 59 Austin, 59 total)",
-      "austin_active_vehicles": 59
+      "austin_active_vehicles": 88,
+      "bayarea_active_vehicles": 278
     },
     {
       "date": "2026-02-02",
       "austin_vehicles": 81,
-      "bayarea_vehicles": 188,
+      "bayarea_vehicles": null,
       "total_robotaxi": 81,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 81 Austin + 188 Bay Area = 269 total (active: 59 Austin, 59 total)",
-      "austin_active_vehicles": 59
+      "austin_active_vehicles": 88,
+      "bayarea_active_vehicles": 281
     },
     {
       "date": "2026-02-03",
       "austin_vehicles": 81,
-      "bayarea_vehicles": 188,
+      "bayarea_vehicles": null,
       "total_robotaxi": 81,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 81 Austin + 188 Bay Area = 269 total (active: 59 Austin, 59 total)",
-      "austin_active_vehicles": 59
+      "austin_active_vehicles": 88,
+      "bayarea_active_vehicles": 282
     },
     {
       "date": "2026-02-04",
       "austin_vehicles": 81,
-      "bayarea_vehicles": 188,
+      "bayarea_vehicles": null,
       "total_robotaxi": 81,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 81 Austin + 188 Bay Area = 269 total (active: 59 Austin, 59 total)",
-      "austin_active_vehicles": 59
+      "austin_active_vehicles": 88,
+      "bayarea_active_vehicles": 284
     },
     {
       "date": "2026-02-05",
@@ -663,7 +2308,8 @@
       "total_robotaxi": 82,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 82 Austin + 190 Bay Area = 272 total (active: 58 Austin, 58 total)",
-      "austin_active_vehicles": 58
+      "austin_active_vehicles": 88,
+      "bayarea_active_vehicles": 287
     },
     {
       "date": "2026-02-06",
@@ -672,7 +2318,8 @@
       "total_robotaxi": 82,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 82 Austin + 190 Bay Area = 272 total (active: 58 Austin, 58 total)",
-      "austin_active_vehicles": 58
+      "austin_active_vehicles": 88,
+      "bayarea_active_vehicles": 291
     },
     {
       "date": "2026-02-07",
@@ -681,7 +2328,8 @@
       "total_robotaxi": 82,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 82 Austin + 191 Bay Area = 273 total (active: 58 Austin, 58 total)",
-      "austin_active_vehicles": 58
+      "austin_active_vehicles": 88,
+      "bayarea_active_vehicles": 293
     },
     {
       "date": "2026-02-08",
@@ -690,7 +2338,8 @@
       "total_robotaxi": 83,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 83 Austin + 192 Bay Area = 275 total (active: 53 Austin, 53 total)",
-      "austin_active_vehicles": 53
+      "austin_active_vehicles": 90,
+      "bayarea_active_vehicles": 300
     },
     {
       "date": "2026-02-09",
@@ -699,7 +2348,8 @@
       "total_robotaxi": 85,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 85 Austin + 196 Bay Area = 281 total (active: 54 Austin, 54 total)",
-      "austin_active_vehicles": 54
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 307
     },
     {
       "date": "2026-02-10",
@@ -708,7 +2358,8 @@
       "total_robotaxi": 86,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 86 Austin + 197 Bay Area = 283 total (active: 53 Austin, 53 total)",
-      "austin_active_vehicles": 53
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 309
     },
     {
       "date": "2026-02-11",
@@ -717,7 +2368,8 @@
       "total_robotaxi": 86,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 86 Austin + 197 Bay Area = 283 total (active: 53 Austin, 53 total)",
-      "austin_active_vehicles": 53
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 311
     },
     {
       "date": "2026-02-12",
@@ -726,7 +2378,8 @@
       "total_robotaxi": 86,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 86 Austin + 197 Bay Area = 283 total (active: 53 Austin, 53 total)",
-      "austin_active_vehicles": 53
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 313
     },
     {
       "date": "2026-02-13",
@@ -735,7 +2388,8 @@
       "total_robotaxi": 86,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 86 Austin + 198 Bay Area = 284 total (active: 47 Austin, 47 total)",
-      "austin_active_vehicles": 47
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 321
     },
     {
       "date": "2026-02-14",
@@ -744,7 +2398,8 @@
       "total_robotaxi": 88,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 88 Austin + 215 Bay Area = 303 total (active: 47 Austin, 47 total)",
-      "austin_active_vehicles": 47
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 326
     },
     {
       "date": "2026-02-15",
@@ -753,7 +2408,8 @@
       "total_robotaxi": 88,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 88 Austin + 221 Bay Area = 309 total (active: 46 Austin, 46 total)",
-      "austin_active_vehicles": 46
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 327
     },
     {
       "date": "2026-02-16",
@@ -762,7 +2418,8 @@
       "total_robotaxi": 89,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 89 Austin + 241 Bay Area = 330 total (active: 47 Austin, 47 total)",
-      "austin_active_vehicles": 47
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 330
     },
     {
       "date": "2026-02-17",
@@ -771,7 +2428,8 @@
       "total_robotaxi": 89,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 89 Austin + 248 Bay Area = 337 total (active: 46 Austin, 46 total)",
-      "austin_active_vehicles": 46
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 332
     },
     {
       "date": "2026-02-18",
@@ -780,7 +2438,8 @@
       "total_robotaxi": 89,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 89 Austin + 255 Bay Area = 344 total (active: 21 Austin, 21 total)",
-      "austin_active_vehicles": 21
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 337
     },
     {
       "date": "2026-02-19",
@@ -789,7 +2448,28 @@
       "total_robotaxi": 89,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 89 Austin + 288 Bay Area = 377 total (active: 19 Austin, 19 total)",
-      "austin_active_vehicles": 19
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 340
+    },
+    {
+      "date": "2026-02-20",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 342,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 342
+    },
+    {
+      "date": "2026-02-21",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 347,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 347
     },
     {
       "date": "2026-02-22",
@@ -798,7 +2478,8 @@
       "total_robotaxi": 89,
       "source": "robotaxitracker.com",
       "notes": "Corrected from corrupted scrape (scraper was extracting wrong chart line). Austin=89 from fleet_growth_total.json (total-bayarea), bayarea interpolated from Feb 20 (300) and Feb 23 (308).",
-      "austin_active_vehicles": 30
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 348
     },
     {
       "date": "2026-02-23",
@@ -807,8 +2488,8 @@
       "total_robotaxi": 89,
       "source": "robotaxitracker.com",
       "notes": "Corrected from corrupted scrape. Austin=89, bayarea=308 from fleet_growth_total.json.",
-      "austin_active_vehicles": 29,
-      "bayarea_active_vehicles": 29
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 353
     },
     {
       "date": "2026-02-24",
@@ -817,7 +2498,8 @@
       "total_robotaxi": 89,
       "source": "robotaxitracker.com",
       "notes": "Corrected from corrupted scrape. Austin=89 (extrapolated from fleet_growth_total.json trend), bayarea=310 (extrapolated).",
-      "austin_active_vehicles": 29
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 358
     },
     {
       "date": "2026-02-25",
@@ -825,7 +2507,9 @@
       "bayarea_vehicles": 324,
       "total_robotaxi": 89,
       "source": "robotaxitracker.com",
-      "notes": "Corrected from fleet_growth_total.csv"
+      "notes": "Corrected from fleet_growth_total.csv",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 362
     },
     {
       "date": "2026-02-26",
@@ -833,7 +2517,9 @@
       "bayarea_vehicles": null,
       "total_robotaxi": 89,
       "source": "robotaxitracker.com",
-      "notes": "Corrected from fleet_growth_total.csv"
+      "notes": "Corrected from fleet_growth_total.csv",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 366
     },
     {
       "date": "2026-02-27",
@@ -841,7 +2527,9 @@
       "bayarea_vehicles": null,
       "total_robotaxi": 89,
       "source": "robotaxitracker.com",
-      "notes": "Corrected from fleet_growth_total.csv"
+      "notes": "Corrected from fleet_growth_total.csv",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 374
     },
     {
       "date": "2026-02-28",
@@ -849,7 +2537,9 @@
       "bayarea_vehicles": 333,
       "total_robotaxi": 89,
       "source": "robotaxitracker.com",
-      "notes": "Corrected from fleet_growth_total.csv"
+      "notes": "Corrected from fleet_growth_total.csv",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 378
     },
     {
       "date": "2026-03-01",
@@ -857,7 +2547,9 @@
       "bayarea_vehicles": null,
       "total_robotaxi": 89,
       "source": "robotaxitracker.com",
-      "notes": "Corrected from fleet_growth_total.csv"
+      "notes": "Corrected from fleet_growth_total.csv",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 380
     },
     {
       "date": "2026-03-02",
@@ -866,8 +2558,8 @@
       "total_robotaxi": 19,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 19 Austin + 10 Bay Area = 29 total (active: 19 Austin, 69 total)",
-      "austin_active_vehicles": 19,
-      "bayarea_active_vehicles": 10
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 382
     },
     {
       "date": "2026-03-03",
@@ -876,8 +2568,8 @@
       "total_robotaxi": 14,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 14 Austin + 5 Bay Area = 19 total (active: 14 Austin, 67 total)",
-      "austin_active_vehicles": 14,
-      "bayarea_active_vehicles": 5
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 385
     },
     {
       "date": "2026-03-04",
@@ -885,7 +2577,9 @@
       "bayarea_vehicles": null,
       "total_robotaxi": 21,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 21 Austin + 5 Bay Area = 26 total"
+      "notes": "Current fleet: 21 Austin + 5 Bay Area = 26 total",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 387
     },
     {
       "date": "2026-03-05",
@@ -893,7 +2587,9 @@
       "bayarea_vehicles": null,
       "total_robotaxi": 22,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 22 Austin + 6 Bay Area = 28 total"
+      "notes": "Current fleet: 22 Austin + 6 Bay Area = 28 total",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 387
     },
     {
       "date": "2026-03-06",
@@ -902,8 +2598,8 @@
       "total_robotaxi": 416,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 416 Austin + 20 Bay Area = 436 total (active: 416 Austin, 436 total)",
-      "austin_active_vehicles": 416,
-      "bayarea_active_vehicles": 20
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 391
     },
     {
       "date": "2026-03-07",
@@ -912,8 +2608,8 @@
       "total_robotaxi": 428,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 428 Austin + 8 Bay Area = 436 total (active: -94752 Austin, 436 total)",
-      "austin_active_vehicles": -94752,
-      "bayarea_active_vehicles": 95188
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 394
     },
     {
       "date": "2026-03-08",
@@ -922,8 +2618,8 @@
       "total_robotaxi": 19,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 19 Austin + 15 Bay Area = 34 total (active: 19 Austin, 438 total)",
-      "austin_active_vehicles": 19,
-      "bayarea_active_vehicles": 15
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 395
     },
     {
       "date": "2026-03-09",
@@ -931,7 +2627,9 @@
       "bayarea_vehicles": null,
       "total_robotaxi": 17,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 17 Austin + 11 Bay Area = 28 total"
+      "notes": "Current fleet: 17 Austin + 11 Bay Area = 28 total",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 398
     },
     {
       "date": "2026-03-10",
@@ -939,7 +2637,9 @@
       "bayarea_vehicles": null,
       "total_robotaxi": 15,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 15 Austin + 5 Bay Area = 20 total"
+      "notes": "Current fleet: 15 Austin + 5 Bay Area = 20 total",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 399
     },
     {
       "date": "2026-03-11",
@@ -947,7 +2647,9 @@
       "bayarea_vehicles": null,
       "total_robotaxi": 18,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 18 Austin + 9 Bay Area = 27 total"
+      "notes": "Current fleet: 18 Austin + 9 Bay Area = 27 total",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 400
     },
     {
       "date": "2026-03-12",
@@ -955,7 +2657,39 @@
       "bayarea_vehicles": null,
       "total_robotaxi": 437,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 437 Austin + 8 Bay Area = 445 total"
+      "notes": "Current fleet: 437 Austin + 8 Bay Area = 445 total",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 404
+    },
+    {
+      "date": "2026-03-13",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 406,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 406
+    },
+    {
+      "date": "2026-03-14",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 407,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 407
+    },
+    {
+      "date": "2026-03-15",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 408,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 408
     },
     {
       "date": "2026-03-16",
@@ -963,7 +2697,189 @@
       "bayarea_vehicles": null,
       "total_robotaxi": 438,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 438 Austin + 12 Bay Area = 450 total"
+      "notes": "Current fleet: 438 Austin + 12 Bay Area = 450 total",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 412
+    },
+    {
+      "date": "2026-03-17",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 421,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 91,
+      "bayarea_active_vehicles": 421
+    },
+    {
+      "date": "2026-03-18",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 426,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 92,
+      "bayarea_active_vehicles": 426
+    },
+    {
+      "date": "2026-03-19",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 427,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 93,
+      "bayarea_active_vehicles": 427
+    },
+    {
+      "date": "2026-03-20",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 435,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 93,
+      "bayarea_active_vehicles": 435
+    },
+    {
+      "date": "2026-03-21",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 438,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 438
+    },
+    {
+      "date": "2026-03-22",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 444,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 444
+    },
+    {
+      "date": "2026-03-23",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 447,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 447
+    },
+    {
+      "date": "2026-03-24",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 447,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 447
+    },
+    {
+      "date": "2026-03-25",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 448,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 448
+    },
+    {
+      "date": "2026-03-26",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 448,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 448
+    },
+    {
+      "date": "2026-03-27",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 448,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 448
+    },
+    {
+      "date": "2026-03-28",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 448,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 448
+    },
+    {
+      "date": "2026-03-29",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 449,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 449
+    },
+    {
+      "date": "2026-03-30",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 449,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 449
+    },
+    {
+      "date": "2026-03-31",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 449,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 449
+    },
+    {
+      "date": "2026-04-01",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 449,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 449
+    },
+    {
+      "date": "2026-04-02",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 449,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 449
+    },
+    {
+      "date": "2026-04-03",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 449,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart",
+      "austin_active_vehicles": 94,
+      "bayarea_active_vehicles": 449
     }
   ],
   "assumptions": {
