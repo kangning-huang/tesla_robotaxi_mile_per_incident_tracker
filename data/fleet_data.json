@@ -1,7 +1,7 @@
 {
   "metadata": {
     "description": "Tesla Robotaxi fleet size data from robotaxitracker.com (scraped) and news sources",
-    "last_updated": "2026-04-10",
+    "last_updated": "2026-04-14",
     "sources": [
       "robotaxitracker.com (primary - automated scraping)",
       "Tesla official announcements",
@@ -2892,6 +2892,38 @@
       "bayarea_active_vehicles": 453
     },
     {
+      "date": "2026-04-05",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 463,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-04-06",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 467,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-04-07",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 468,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-04-08",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 470,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
       "date": "2026-04-09",
       "austin_vehicles": 559,
       "bayarea_vehicles": null,
@@ -2906,6 +2938,30 @@
       "total_robotaxi": 559,
       "source": "robotaxitracker.com",
       "notes": "Current fleet: 559 Austin + None Bay Area = 559 total"
+    },
+    {
+      "date": "2026-04-11",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 476,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-04-12",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 476,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-04-13",
+      "austin_vehicles": null,
+      "bayarea_vehicles": 479,
+      "total_robotaxi": null,
+      "source": "robotaxitracker.com",
+      "notes": "Scraped from chart"
     }
   ],
   "assumptions": {
