@@ -1,13 +1,13 @@
 {
   "metadata": {
-    "scraped_at": "2026-04-14T06:55:33.930486",
+    "scraped_at": "2026-04-15T07:06:54.355825",
     "source": "https://robotaxitracker.com",
     "scraper_version": "2.0.0"
   },
   "current_fleet": {
     "austin_vehicles": 94,
-    "bayarea_vehicles": 479,
-    "total_vehicles": 573,
+    "bayarea_vehicles": 484,
+    "total_vehicles": 578,
     "austin_available": null,
     "bayarea_available": null
   },
@@ -1753,51 +1753,63 @@
     },
     {
       "date": "2026-04-06",
-      "bayarea": 467,
-      "austin": 94,
-      "total": 561
-    },
-    {
-      "date": "2026-04-07",
       "bayarea": 468,
       "austin": 94,
       "total": 562
     },
     {
+      "date": "2026-04-07",
+      "bayarea": 469,
+      "austin": 94,
+      "total": 563
+    },
+    {
       "date": "2026-04-08",
-      "bayarea": 470,
-      "austin": 94,
-      "total": 564
-    },
-    {
-      "date": "2026-04-09",
-      "bayarea": 470,
-      "austin": 94,
-      "total": 564
-    },
-    {
-      "date": "2026-04-10",
       "bayarea": 471,
       "austin": 94,
       "total": 565
     },
     {
-      "date": "2026-04-11",
-      "bayarea": 476,
+      "date": "2026-04-09",
+      "bayarea": 471,
       "austin": 94,
-      "total": 570
+      "total": 565
+    },
+    {
+      "date": "2026-04-10",
+      "bayarea": 472,
+      "austin": 94,
+      "total": 566
+    },
+    {
+      "date": "2026-04-11",
+      "bayarea": 477,
+      "austin": 94,
+      "total": 571
     },
     {
       "date": "2026-04-12",
-      "bayarea": 476,
+      "bayarea": 477,
       "austin": 94,
-      "total": 570
+      "total": 571
     },
     {
       "date": "2026-04-13",
-      "bayarea": 479,
+      "bayarea": 480,
       "austin": 94,
-      "total": 573
+      "total": 574
+    },
+    {
+      "date": "2026-04-14",
+      "bayarea": 484,
+      "austin": 94,
+      "total": 578
+    },
+    {
+      "date": "2026-04-15",
+      "bayarea": 484,
+      "austin": 94,
+      "total": 578
     }
   ],
   "active_historical_data": [],
