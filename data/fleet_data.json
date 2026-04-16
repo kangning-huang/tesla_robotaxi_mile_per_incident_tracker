@@ -2978,6 +2978,14 @@
       "total_robotaxi": null,
       "source": "robotaxitracker.com",
       "notes": "Scraped from chart"
+    },
+    {
+      "date": "2026-04-16",
+      "austin_vehicles": 94,
+      "bayarea_vehicles": 485,
+      "total_robotaxi": 94,
+      "source": "robotaxitracker.com",
+      "notes": "Current fleet: 94 Austin + 485 Bay Area = 579 total"
     }
   ],
   "assumptions": {
