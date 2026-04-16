@@ -3,8 +3,8 @@
 // Fleet sizes use total Austin fleet from fleet_data.json
 //
 // Data arrays are organized by filter combination:
-// - Base: no backing incidents, no stationary incidents (most filtered, DEFAULT)
-// - Stationary: no backing, WITH stationary incidents
+// - Base: no backing incidents, no stationary incidents (most filtered)
+// - Stationary: no backing, WITH stationary incidents (DEFAULT)
 // - Backing: WITH backing, no stationary incidents
 // - All: WITH backing, WITH stationary incidents (least filtered)
 
@@ -156,15 +156,19 @@ const incidentDataReleaseActiveAll = [
 const incidentData = incidentDataStationary;
 const incidentDataActive = incidentDataActiveStationary;
 
-// Latest active fleet size (from fleet_growth_active.json)
-const latestActiveFleetSize = -94752;
+// Latest active fleet size (from fleet_data.json). Corrected from a bogus
+// scraped value (-94752) that came from a subtraction bug during a scrape
+// where Bay Area active vehicles were missing from the source.
+const latestActiveFleetSize = 94;
 
 // Fleet mode toggle state: 'total' or 'active'
 let fleetMode = 'total';
 
-// Incident filter state: by default both are OFF (excluded)
+// Incident filter state: stationary is ON by default (include stationary
+// incidents, since those are genuine robotaxi-at-fault events at 0 mph),
+// but parking-lot / backing incidents remain OFF by default.
 let includeBackingIncidents = false;
-let includeStationaryIncidents = false;
+let includeStationaryIncidents = true;
 
 // Aggregation mode: true = group by NHTSA public release window (DEFAULT),
 // false = group by redacted monthly incident date (legacy view).
@@ -309,12 +313,12 @@ const fleetData = [
     { date: '2026-02-27', size: 89 },
     { date: '2026-02-28', size: 89 },
     { date: '2026-03-01', size: 89 },
-    { date: '2026-03-06', size: 416 },
-    { date: '2026-03-07', size: 428 },
-    { date: '2026-03-12', size: 437 },
-    { date: '2026-03-16', size: 438 },
-    { date: '2026-04-09', size: 559 },
-    { date: '2026-04-10', size: 559 },
+    // Austin fleet has been stuck at 91-94 through March/April 2026 per
+    // robotaxitracker.com. Earlier scraped spikes to 416/559 were a data bug
+    // (the scraper pulled Bay Area / total-fleet values into austin_vehicles)
+    // and have been corrected in data/fleet_data.json.
+    { date: '2026-03-21', size: 94 },
+    { date: '2026-04-15', size: 94 },
 ];
 
 // Compute exponential trend parameters via log-linear regression on incidentData
@@ -449,6 +453,35 @@ const lightChartColors = {
 
 function getChartColors() {
     return isDarkMode() ? darkChartColors : lightChartColors;
+}
+
+// Compute a "nice" upper bound for a chart's y-axis given the max data value.
+// Rounds up to 1, 2, 3, 5, or 10 times the nearest power of 10.
+function computeNiceMax(maxValue) {
+    if (!isFinite(maxValue) || maxValue <= 0) return 10;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(maxValue)));
+    const normalized = maxValue / magnitude;
+    let niceNormalized;
+    if (normalized <= 1) niceNormalized = 1;
+    else if (normalized <= 2) niceNormalized = 2;
+    else if (normalized <= 3) niceNormalized = 3;
+    else if (normalized <= 5) niceNormalized = 5;
+    else niceNormalized = 10;
+    return niceNormalized * magnitude;
+}
+
+// Format a large numeric value compactly (e.g., 1500 -> "1.5K", 2000000 -> "2M").
+function formatAxisTick(value) {
+    if (value === 0) return '0';
+    if (value >= 1000000) {
+        const m = value / 1000000;
+        return (Number.isInteger(m) ? m : parseFloat(m.toFixed(1))) + 'M';
+    }
+    if (value >= 1000) {
+        const k = value / 1000;
+        return (Number.isInteger(k) ? k : parseFloat(k.toFixed(1))) + 'K';
+    }
+    return value.toString();
 }
 
 // Initialize with current theme
@@ -605,6 +638,29 @@ function initMPIChart() {
         { x: lastDate, y: 300000 }
     ];
 
+    // Compute dynamic y-axis max across every visible series (incidents, trend,
+    // benchmarks, and the ongoing miles-since-last-incident marker).
+    const mpiChartValues = [
+        ...mpiData.map(d => d.y),
+        ...trendDataPoints.map(d => d.y),
+        ...ongoingProgressData.map(d => d.y),
+        500000 // highest benchmark line
+    ].filter(v => v != null && isFinite(v) && v > 0);
+    const mpiDataMax = mpiChartValues.length ? Math.max(...mpiChartValues) : 500000;
+    const mpiYMax = computeNiceMax(mpiDataMax);
+    // Candidate log-scale tick anchors; we keep only ones within the computed max.
+    const logTickCandidates = [
+        1000, 2000, 5000,
+        10000, 20000, 50000,
+        100000, 200000, 300000, 500000,
+        1000000, 2000000, 3000000, 5000000,
+        10000000
+    ];
+    const logTicks = logTickCandidates.filter(v => v <= mpiYMax);
+    if (logTicks[logTicks.length - 1] !== mpiYMax) {
+        logTicks.push(mpiYMax);
+    }
+
     mpiChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
@@ -702,38 +758,15 @@ function initMPIChart() {
                         drawBorder: false
                     },
                     min: 1000,
-                    max: 1000000,
+                    max: mpiYMax,
                     afterBuildTicks: function(axis) {
-                        axis.ticks = [
-                            { value: 1000 },
-                            { value: 2000 },
-                            { value: 5000 },
-                            { value: 10000 },
-                            { value: 20000 },
-                            { value: 50000 },
-                            { value: 100000 },
-                            { value: 200000 },
-                            { value: 300000 },
-                            { value: 500000 },
-                            { value: 1000000 }
-                        ];
+                        axis.ticks = logTicks.map(v => ({ value: v }));
                     },
                     ticks: {
                         color: colors.muted,
                         font: { family: "'JetBrains Mono', monospace", size: 11 },
                         callback: function(value) {
-                            if (value === 1000) return '1K';
-                            if (value === 2000) return '2K';
-                            if (value === 5000) return '5K';
-                            if (value === 10000) return '10K';
-                            if (value === 20000) return '20K';
-                            if (value === 50000) return '50K';
-                            if (value === 100000) return '100K';
-                            if (value === 200000) return '200K';
-                            if (value === 300000) return '300K';
-                            if (value === 500000) return '500K';
-                            if (value === 1000000) return '1M';
-                            return '';
+                            return formatAxisTick(value);
                         }
                     }
                 } : {
@@ -743,14 +776,13 @@ function initMPIChart() {
                         drawBorder: false
                     },
                     min: 0,
+                    max: mpiYMax,
                     beginAtZero: true,
                     ticks: {
                         color: colors.muted,
                         font: { family: "'JetBrains Mono', monospace", size: 11 },
                         callback: function(value) {
-                            if (value === 0) return '0';
-                            if (value >= 1000000) return (value / 1000000) + 'M';
-                            return (value / 1000) + 'K';
+                            return formatAxisTick(value);
                         }
                     }
                 }
@@ -823,6 +855,11 @@ function initFleetChart() {
     const labels = fleetData.map(d => d.date);
     const sizes = fleetData.map(d => d.size);
 
+    // Dynamic y-axis max based on the largest fleet size observed. Using a
+    // nice round value (e.g. 100, 200, 500) keeps tick labels readable.
+    const fleetMax = sizes.length ? Math.max(...sizes) : 100;
+    const fleetYMax = computeNiceMax(fleetMax);
+
     // Get gradient colors based on theme
     const gradientStartAlpha = isDarkMode() ? 0.05 : 0.1;
     const gradientEndAlpha = isDarkMode() ? 0.4 : 0.3;
@@ -877,7 +914,7 @@ function initFleetChart() {
                 y: {
                     ...options.scales.y,
                     beginAtZero: true,
-                    max: 100
+                    max: fleetYMax
                 }
             }
         }

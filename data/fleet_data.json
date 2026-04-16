@@ -1,7 +1,7 @@
 {
   "metadata": {
     "description": "Tesla Robotaxi fleet size data from robotaxitracker.com (scraped) and news sources",
-    "last_updated": "2026-04-15",
+    "last_updated": "2026-04-16",
     "sources": [
       "robotaxitracker.com (primary - automated scraping)",
       "Tesla official announcements",
@@ -2593,21 +2593,21 @@
     },
     {
       "date": "2026-03-06",
-      "austin_vehicles": 416,
+      "austin_vehicles": null,
       "bayarea_vehicles": null,
-      "total_robotaxi": 416,
+      "total_robotaxi": null,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 416 Austin + 20 Bay Area = 436 total (active: 416 Austin, 436 total)",
+      "notes": "Corrected: prior scrape returned an implausible austin_vehicles value that did not match robotaxitracker.com (Austin fleet was ~91-94). Nulled until re-scraped.",
       "austin_active_vehicles": 91,
       "bayarea_active_vehicles": 391
     },
     {
       "date": "2026-03-07",
-      "austin_vehicles": 428,
+      "austin_vehicles": null,
       "bayarea_vehicles": null,
-      "total_robotaxi": 428,
+      "total_robotaxi": null,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 428 Austin + 8 Bay Area = 436 total (active: -94752 Austin, 436 total)",
+      "notes": "Corrected: prior scrape returned an implausible austin_vehicles value that did not match robotaxitracker.com (Austin fleet was ~91-94). Nulled until re-scraped.",
       "austin_active_vehicles": 91,
       "bayarea_active_vehicles": 394
     },
@@ -2653,11 +2653,11 @@
     },
     {
       "date": "2026-03-12",
-      "austin_vehicles": 437,
+      "austin_vehicles": null,
       "bayarea_vehicles": null,
-      "total_robotaxi": 437,
+      "total_robotaxi": null,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 437 Austin + 8 Bay Area = 445 total",
+      "notes": "Corrected: prior scrape returned an implausible austin_vehicles value that did not match robotaxitracker.com (Austin fleet was ~91-94). Nulled until re-scraped.",
       "austin_active_vehicles": 91,
       "bayarea_active_vehicles": 404
     },
@@ -2693,11 +2693,11 @@
     },
     {
       "date": "2026-03-16",
-      "austin_vehicles": 438,
+      "austin_vehicles": null,
       "bayarea_vehicles": null,
-      "total_robotaxi": 438,
+      "total_robotaxi": null,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 438 Austin + 12 Bay Area = 450 total",
+      "notes": "Corrected: prior scrape returned an implausible austin_vehicles value that did not match robotaxitracker.com (Austin fleet was ~91-94). Nulled until re-scraped.",
       "austin_active_vehicles": 91,
       "bayarea_active_vehicles": 412
     },
@@ -2925,19 +2925,19 @@
     },
     {
       "date": "2026-04-09",
-      "austin_vehicles": 559,
+      "austin_vehicles": null,
       "bayarea_vehicles": null,
-      "total_robotaxi": 559,
+      "total_robotaxi": null,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 559 Austin + None Bay Area = 559 total"
+      "notes": "Corrected: prior scrape returned an implausible austin_vehicles value that did not match robotaxitracker.com (Austin fleet was ~91-94). Nulled until re-scraped."
     },
     {
       "date": "2026-04-10",
-      "austin_vehicles": 559,
+      "austin_vehicles": null,
       "bayarea_vehicles": null,
-      "total_robotaxi": 559,
+      "total_robotaxi": null,
       "source": "robotaxitracker.com",
-      "notes": "Current fleet: 559 Austin + None Bay Area = 559 total"
+      "notes": "Corrected: prior scrape returned an implausible austin_vehicles value that did not match robotaxitracker.com (Austin fleet was ~91-94). Nulled until re-scraped."
     },
     {
       "date": "2026-04-11",
