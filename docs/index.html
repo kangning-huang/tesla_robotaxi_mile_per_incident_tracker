@@ -382,12 +382,16 @@
                 <div class="section-header-row">
                     <div>
                         <h2>Robotaxi Safety Trend Analysis</h2>
-                        <p>Each data point shows the monthly Miles Per Incident (MPI) for Tesla Robotaxi, with an exponential trendline toward human driver crash rates</p>
+                        <p>Each data point shows Tesla Robotaxi Miles Per Incident (MPI) aggregated by NHTSA public data release, with an exponential trendline toward human driver crash rates. Toggle to "By Month" to view the legacy incident-date grouping.</p>
                     </div>
                     <div class="section-header-controls">
                         <div class="fleet-toggle" role="group" aria-label="Fleet metric toggle">
                             <button class="fleet-toggle-btn active" data-mode="total" title="Use total fleet size (all registered vehicles)">Total Fleet</button>
                             <button class="fleet-toggle-btn" data-mode="active" title="Use active fleet size (vehicles actually on road)">Active Fleet</button>
+                        </div>
+                        <div class="aggregation-toggle fleet-toggle" role="group" aria-label="Aggregation mode toggle">
+                            <button class="aggregation-toggle-btn fleet-toggle-btn active" data-mode="release" title="Group incidents by NHTSA public release window (aligns with actual data publication cadence; avoids NHTSA's first-of-month date redaction)">By NHTSA Release</button>
+                            <button class="aggregation-toggle-btn fleet-toggle-btn" data-mode="month" title="Group incidents by NHTSA incident date (clusters on first-of-month due to NHTSA redaction)">By Month</button>
                         </div>
                         <div class="incident-filters" role="group" aria-label="Incident type filters">
                             <label class="filter-checkbox" title="Include parking lot incidents (low-speed, 1-2 mph reversing events)">
