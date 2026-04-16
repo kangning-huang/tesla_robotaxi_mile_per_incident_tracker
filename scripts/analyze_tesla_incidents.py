@@ -11,11 +11,72 @@ This script:
 6. Visualizes the MPI trend over time
 """
 
+import calendar
 import json
 import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
+
+
+# NHTSA SGO-2021-01 public release schedule.
+# Each entry: {release_date, through_date} — `through_date` is the cutoff
+# ("reports received through …") stated in NHTSA's release notes.
+# Releases confirmed from NHTSA release notes are marked verified=True.
+# Entries with verified=False are inferred from the ~monthly mid-month cadence.
+NHTSA_RELEASES = [
+    {"release_date": "2025-07-15", "through_date": "2025-06-13", "verified": True},
+    {"release_date": "2025-08-15", "through_date": "2025-07-15", "verified": False},
+    {"release_date": "2025-09-15", "through_date": "2025-08-15", "verified": False},
+    {"release_date": "2025-10-15", "through_date": "2025-09-15", "verified": False},
+    {"release_date": "2025-11-17", "through_date": "2025-10-15", "verified": False},
+    {"release_date": "2025-12-15", "through_date": "2025-11-17", "verified": False},
+    {"release_date": "2026-01-15", "through_date": "2025-12-15", "verified": True},
+    {"release_date": "2026-02-17", "through_date": "2026-01-15", "verified": True},
+    {"release_date": "2026-03-16", "through_date": "2026-02-17", "verified": True},
+]
+
+
+_MONTH_ABBR_TO_NUM = {
+    "JAN": 1, "FEB": 2, "MAR": 3, "APR": 4, "MAY": 5, "JUN": 6,
+    "JUL": 7, "AUG": 8, "SEP": 9, "OCT": 10, "NOV": 11, "DEC": 12,
+}
+
+
+def parse_submission_month(submission_str) -> Optional[tuple[int, int]]:
+    """Parse NHTSA 'MMM-YYYY' submission-date strings into (year, month)."""
+    if not isinstance(submission_str, str) or len(submission_str) < 8:
+        return None
+    month_abbr = submission_str[:3].upper()
+    if month_abbr not in _MONTH_ABBR_TO_NUM:
+        return None
+    try:
+        year = int(submission_str[4:8])
+    except ValueError:
+        return None
+    return (year, _MONTH_ABBR_TO_NUM[month_abbr])
+
+
+def submission_to_release_date(submission_str, releases: list[dict]) -> Optional[str]:
+    """Map a NHTSA submission month (e.g. 'JAN-2026') to the release date where
+    that report first becomes public.
+
+    Heuristic: submissions during month N are first published in the earliest
+    NHTSA release that occurs after the end of month N. Empirically this
+    matches the published filing-cycle behavior — JAN-2026 submissions first
+    appear in the 2026-02-17 release, FEB-2026 in 2026-03-16, etc.
+    """
+    parsed = parse_submission_month(submission_str)
+    if not parsed:
+        return None
+    year, month = parsed
+    last_day = calendar.monthrange(year, month)[1]
+    end_of_month = datetime(year, month, last_day)
+    for rel in releases:
+        rdate = datetime.strptime(rel["release_date"], "%Y-%m-%d")
+        if rdate >= end_of_month:
+            return rel["release_date"]
+    return None  # Future submission — no known release yet
 
 try:
     import pandas as pd
@@ -523,6 +584,125 @@ def calculate_mpi_between_incidents(
     return results
 
 
+def aggregate_incidents_by_release(
+    incidents_df: pd.DataFrame,
+    fleet_interpolator: FleetInterpolator,
+    daily_miles: int,
+    service_start: datetime,
+    releases: list[dict],
+    excluded_dates: set[str] | None = None,
+) -> list[dict]:
+    """Group incidents by the NHTSA release where they first became public.
+
+    Unlike calculate_mpi_between_incidents (which buckets by redacted incident
+    date), this function:
+      - Deduplicates by Report ID (amendments don't double-count)
+      - Maps each report to its first-appearance NHTSA release
+      - Computes fleet miles per release window (prev release → this release)
+      - Emits one entry per release, regardless of whether incidents occurred
+
+    The resulting series aligns the tracker with the actual cadence at which
+    NHTSA publishes data, avoiding the "all Jan incidents on Jan 1" clustering
+    caused by NHTSA's date redaction.
+    """
+    if incidents_df is None or len(incidents_df) == 0:
+        return []
+
+    has_report_id = "Report ID" in incidents_df.columns
+    has_submission = "Report Submission Date" in incidents_df.columns
+    if not has_report_id or not has_submission:
+        print("  Warning: CSV missing Report ID or Report Submission Date — "
+              "release-window aggregation skipped")
+        return []
+
+    # Dedupe by Report ID, keeping the earliest Report Version (first filing).
+    version_col = "Report Version" if "Report Version" in incidents_df.columns else None
+    sort_cols = ["Report ID"] + ([version_col] if version_col else [])
+    sorted_df = incidents_df.sort_values(sort_cols)
+    deduped_rows: list = []
+    seen_ids: set = set()
+    for _, row in sorted_df.iterrows():
+        rid = row.get("Report ID")
+        if pd.isna(rid) or rid in seen_ids:
+            continue
+        seen_ids.add(rid)
+        deduped_rows.append(row)
+
+    # Map each deduped report to its first-appearance NHTSA release.
+    from collections import defaultdict
+    by_release: dict = defaultdict(list)
+    unmapped = 0
+    for row in deduped_rows:
+        release_date = submission_to_release_date(row.get("Report Submission Date"), releases)
+        if release_date is None:
+            unmapped += 1
+            continue
+        by_release[release_date].append(row)
+
+    if unmapped:
+        print(f"  Note: {unmapped} unique Report IDs had an unrecognized submission date "
+              f"and were excluded from release aggregation")
+
+    # Build one window per NHTSA release (skipping releases before service start).
+    windows: list[dict] = []
+    prev_boundary = service_start
+    for rel in releases:
+        release_date_str = rel["release_date"]
+        release_dt = datetime.strptime(release_date_str, "%Y-%m-%d")
+        if release_dt < service_start:
+            continue
+
+        window_days = (release_dt - prev_boundary).days
+        miles, breakdown = fleet_interpolator.calculate_miles_in_period(
+            prev_boundary, release_dt, daily_miles, excluded_dates
+        )
+        avg_fleet = (
+            sum(d["fleet_size"] for d in breakdown) / len(breakdown)
+            if breakdown else 0
+        )
+        excluded_days = sum(1 for d in breakdown if d.get("excluded", False))
+
+        rows = by_release.get(release_date_str, [])
+        incidents: list[dict] = []
+        for row in rows:
+            inc = {
+                "report_id": str(row.get("Report ID", "")),
+                "report_submission_date": str(row.get("Report Submission Date", "")),
+                "incident_date_raw": str(row.get("Incident Date", "")),
+                "roadway_type": (
+                    str(row["Roadway Type"]) if pd.notna(row.get("Roadway Type")) else ""
+                ),
+                "precrash_movement": (
+                    str(row["SV Pre-Crash Movement"])
+                    if pd.notna(row.get("SV Pre-Crash Movement")) else ""
+                ),
+            }
+            try:
+                inc["precrash_speed_mph"] = int(row.get("SV Precrash Speed (MPH)"))
+            except (ValueError, TypeError):
+                inc["precrash_speed_mph"] = None
+            incidents.append(inc)
+
+        windows.append({
+            "release_date": release_date_str,
+            "release_through_date": rel.get("through_date"),
+            "release_verified": bool(rel.get("verified", False)),
+            "window_start": prev_boundary.strftime("%Y-%m-%d"),
+            "window_end": release_date_str,
+            "window_days": window_days,
+            "excluded_days": excluded_days,
+            "window_miles": miles,
+            "avg_fleet_size": avg_fleet,
+            "new_incident_count": len(incidents),
+            "mpi": (miles / len(incidents)) if incidents else None,
+            "incidents": incidents,
+        })
+
+        prev_boundary = release_dt
+
+    return windows
+
+
 def get_sample_incidents() -> pd.DataFrame:
     """Return sample incident data based on known Tesla Robotaxi crashes."""
     incidents = [
@@ -764,6 +944,17 @@ def main():
     if results_active:
         analyzer_active = MPITrendAnalyzer(results_active)
 
+    # Release-window aggregation — aligns data points with NHTSA's discrete
+    # release cadence rather than redacted monthly incident dates.
+    release_windows_total = aggregate_incidents_by_release(
+        all_tesla, fleet_interpolator, daily_miles, service_start,
+        NHTSA_RELEASES, excluded_dates,
+    )
+    release_windows_active = aggregate_incidents_by_release(
+        all_tesla, fleet_interpolator_active, daily_miles, service_start,
+        NHTSA_RELEASES, excluded_dates,
+    )
+
     # Comparison
     print("\n" + "=" * 75)
     print("COMPARISON BENCHMARKS")
@@ -881,7 +1072,12 @@ def main():
             "total_miles": results[-1]['cumulative_miles'] if results else 0,
             "total_excluded_days": len(excluded_dates)
         },
-        "active_fleet": active_fleet_output
+        "active_fleet": active_fleet_output,
+        "by_release": {
+            "releases": NHTSA_RELEASES,
+            "total_fleet_windows": release_windows_total,
+            "active_fleet_windows": release_windows_active,
+        },
     }
 
     with open(output_file, 'w') as f:

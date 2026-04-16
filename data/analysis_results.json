@@ -1,5 +1,5 @@
 {
-  "analysis_date": "2026-04-15T06:54:32.875272",
+  "analysis_date": "2026-04-16T04:29:21.705915",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "fleet_data_source": "total",
@@ -276,7 +276,7 @@
     "best_model": "exponential",
     "best_fit": {
       "type": "exponential",
-      "a": 2699.827825394305,
+      "a": 2699.8278253943045,
       "b": 0.009526776137291493,
       "r_squared": 0.16807275068968575,
       "interpretation": "improving",
@@ -287,7 +287,7 @@
     "all_models": {
       "exponential": {
         "type": "exponential",
-        "a": 2699.827825394305,
+        "a": 2699.8278253943045,
         "b": 0.009526776137291493,
         "r_squared": 0.16807275068968575,
         "interpretation": "improving",
@@ -591,5 +591,562 @@
       "total_miles": 526240,
       "total_excluded_days": 2
     }
+  },
+  "by_release": {
+    "releases": [
+      {
+        "release_date": "2025-07-15",
+        "through_date": "2025-06-13",
+        "verified": true
+      },
+      {
+        "release_date": "2025-08-15",
+        "through_date": "2025-07-15",
+        "verified": false
+      },
+      {
+        "release_date": "2025-09-15",
+        "through_date": "2025-08-15",
+        "verified": false
+      },
+      {
+        "release_date": "2025-10-15",
+        "through_date": "2025-09-15",
+        "verified": false
+      },
+      {
+        "release_date": "2025-11-17",
+        "through_date": "2025-10-15",
+        "verified": false
+      },
+      {
+        "release_date": "2025-12-15",
+        "through_date": "2025-11-17",
+        "verified": false
+      },
+      {
+        "release_date": "2026-01-15",
+        "through_date": "2025-12-15",
+        "verified": true
+      },
+      {
+        "release_date": "2026-02-17",
+        "through_date": "2026-01-15",
+        "verified": true
+      },
+      {
+        "release_date": "2026-03-16",
+        "through_date": "2026-02-17",
+        "verified": true
+      }
+    ],
+    "total_fleet_windows": [
+      {
+        "release_date": "2025-07-15",
+        "release_through_date": "2025-06-13",
+        "release_verified": true,
+        "window_start": "2025-06-25",
+        "window_end": "2025-07-15",
+        "window_days": 20,
+        "excluded_days": 0,
+        "window_miles": 28980,
+        "avg_fleet_size": 12.0,
+        "new_incident_count": 0,
+        "mpi": null,
+        "incidents": []
+      },
+      {
+        "release_date": "2025-08-15",
+        "release_through_date": "2025-07-15",
+        "release_verified": false,
+        "window_start": "2025-07-15",
+        "window_end": "2025-08-15",
+        "window_days": 31,
+        "excluded_days": 0,
+        "window_miles": 51750,
+        "avg_fleet_size": 14.0625,
+        "new_incident_count": 0,
+        "mpi": null,
+        "incidents": []
+      },
+      {
+        "release_date": "2025-09-15",
+        "release_through_date": "2025-08-15",
+        "release_verified": false,
+        "window_start": "2025-08-15",
+        "window_end": "2025-09-15",
+        "window_days": 31,
+        "excluded_days": 0,
+        "window_miles": 58765,
+        "avg_fleet_size": 15.96875,
+        "new_incident_count": 3,
+        "mpi": 19588.333333333332,
+        "incidents": [
+          {
+            "report_id": "13781-11375",
+            "report_submission_date": "AUG-2025",
+            "incident_date_raw": "JUL-2025",
+            "roadway_type": "Intersection",
+            "precrash_movement": "Making Right Turn",
+            "precrash_speed_mph": 2
+          },
+          {
+            "report_id": "13781-11459",
+            "report_submission_date": "AUG-2025",
+            "incident_date_raw": "JUL-2025",
+            "roadway_type": "Street",
+            "precrash_movement": "Other, see Narrative",
+            "precrash_speed_mph": 8
+          },
+          {
+            "report_id": "13781-11507",
+            "report_submission_date": "AUG-2025",
+            "incident_date_raw": "JUL-2025",
+            "roadway_type": "Street",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 0
+          }
+        ]
+      },
+      {
+        "release_date": "2025-10-15",
+        "release_through_date": "2025-09-15",
+        "release_verified": false,
+        "window_start": "2025-09-15",
+        "window_end": "2025-10-15",
+        "window_days": 30,
+        "excluded_days": 0,
+        "window_miles": 64170,
+        "avg_fleet_size": 18.0,
+        "new_incident_count": 3,
+        "mpi": 21390.0,
+        "incidents": [
+          {
+            "report_id": "13781-11687",
+            "report_submission_date": "SEP-2025",
+            "incident_date_raw": "SEP-2025",
+            "roadway_type": "Parking Lot",
+            "precrash_movement": "Making Left Turn",
+            "precrash_speed_mph": 6
+          },
+          {
+            "report_id": "13781-11784",
+            "report_submission_date": "SEP-2025",
+            "incident_date_raw": "SEP-2025",
+            "roadway_type": "Intersection",
+            "precrash_movement": "Proceeding Straight",
+            "precrash_speed_mph": 6
+          },
+          {
+            "report_id": "13781-11786",
+            "report_submission_date": "SEP-2025",
+            "incident_date_raw": "SEP-2025",
+            "roadway_type": "Street",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 0
+          }
+        ]
+      },
+      {
+        "release_date": "2025-11-17",
+        "release_through_date": "2025-10-15",
+        "release_verified": false,
+        "window_start": "2025-10-15",
+        "window_end": "2025-11-17",
+        "window_days": 33,
+        "excluded_days": 0,
+        "window_miles": 77165,
+        "avg_fleet_size": 19.735294117647058,
+        "new_incident_count": 2,
+        "mpi": 38582.5,
+        "incidents": [
+          {
+            "report_id": "13781-11787",
+            "report_submission_date": "OCT-2025",
+            "incident_date_raw": "SEP-2025",
+            "roadway_type": "Intersection",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 27
+          },
+          {
+            "report_id": "13781-11986",
+            "report_submission_date": "OCT-2025",
+            "incident_date_raw": "OCT-2025",
+            "roadway_type": "Street",
+            "precrash_movement": "Proceeding Straight",
+            "precrash_speed_mph": 18
+          }
+        ]
+      },
+      {
+        "release_date": "2025-12-15",
+        "release_through_date": "2025-11-17",
+        "release_verified": false,
+        "window_start": "2025-11-17",
+        "window_end": "2025-12-15",
+        "window_days": 28,
+        "excluded_days": 0,
+        "window_miles": 95795,
+        "avg_fleet_size": 28.724137931034484,
+        "new_incident_count": 1,
+        "mpi": 95795.0,
+        "incidents": [
+          {
+            "report_id": "13781-13237",
+            "report_submission_date": "NOV-2025",
+            "incident_date_raw": "NOV-2025",
+            "roadway_type": "Street",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 0
+          }
+        ]
+      },
+      {
+        "release_date": "2026-01-15",
+        "release_through_date": "2025-12-15",
+        "release_verified": true,
+        "window_start": "2025-12-15",
+        "window_end": "2026-01-15",
+        "window_days": 31,
+        "excluded_days": 0,
+        "window_miles": 122015,
+        "avg_fleet_size": 33.15625,
+        "new_incident_count": 0,
+        "mpi": null,
+        "incidents": []
+      },
+      {
+        "release_date": "2026-02-17",
+        "release_through_date": "2026-01-15",
+        "release_verified": true,
+        "window_start": "2026-01-15",
+        "window_end": "2026-02-17",
+        "window_days": 33,
+        "excluded_days": 2,
+        "window_miles": 270365,
+        "avg_fleet_size": 73.73529411764706,
+        "new_incident_count": 5,
+        "mpi": 54073.0,
+        "incidents": [
+          {
+            "report_id": "13781-13644",
+            "report_submission_date": "JAN-2026",
+            "incident_date_raw": "JAN-2026",
+            "roadway_type": "Street",
+            "precrash_movement": "Proceeding Straight",
+            "precrash_speed_mph": 4
+          },
+          {
+            "report_id": "13781-13645",
+            "report_submission_date": "JAN-2026",
+            "incident_date_raw": "JAN-2026",
+            "roadway_type": "Parking Lot",
+            "precrash_movement": "Backing",
+            "precrash_speed_mph": 1
+          },
+          {
+            "report_id": "13781-13646",
+            "report_submission_date": "JAN-2026",
+            "incident_date_raw": "JAN-2026",
+            "roadway_type": "Parking Lot",
+            "precrash_movement": "Backing",
+            "precrash_speed_mph": 2
+          },
+          {
+            "report_id": "13781-13647",
+            "report_submission_date": "JAN-2026",
+            "incident_date_raw": "DEC-2025",
+            "roadway_type": "Street",
+            "precrash_movement": "Proceeding Straight",
+            "precrash_speed_mph": 17
+          },
+          {
+            "report_id": "13781-13648",
+            "report_submission_date": "JAN-2026",
+            "incident_date_raw": "JAN-2026",
+            "roadway_type": "Street",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 0
+          }
+        ]
+      },
+      {
+        "release_date": "2026-03-16",
+        "release_through_date": "2026-02-17",
+        "release_verified": true,
+        "window_start": "2026-02-17",
+        "window_end": "2026-03-16",
+        "window_days": 27,
+        "excluded_days": 0,
+        "window_miles": 796145,
+        "avg_fleet_size": 247.25,
+        "new_incident_count": 1,
+        "mpi": 796145.0,
+        "incidents": [
+          {
+            "report_id": "13781-14043",
+            "report_submission_date": "FEB-2026",
+            "incident_date_raw": "JAN-2026",
+            "roadway_type": "Street",
+            "precrash_movement": "Lane / Road Departure",
+            "precrash_speed_mph": 9
+          }
+        ]
+      }
+    ],
+    "active_fleet_windows": [
+      {
+        "release_date": "2025-07-15",
+        "release_through_date": "2025-06-13",
+        "release_verified": true,
+        "window_start": "2025-06-25",
+        "window_end": "2025-07-15",
+        "window_days": 20,
+        "excluded_days": 0,
+        "window_miles": 26565,
+        "avg_fleet_size": 11.0,
+        "new_incident_count": 0,
+        "mpi": null,
+        "incidents": []
+      },
+      {
+        "release_date": "2025-08-15",
+        "release_through_date": "2025-07-15",
+        "release_verified": false,
+        "window_start": "2025-07-15",
+        "window_end": "2025-08-15",
+        "window_days": 31,
+        "excluded_days": 0,
+        "window_miles": 47150,
+        "avg_fleet_size": 12.8125,
+        "new_incident_count": 0,
+        "mpi": null,
+        "incidents": []
+      },
+      {
+        "release_date": "2025-09-15",
+        "release_through_date": "2025-08-15",
+        "release_verified": false,
+        "window_start": "2025-08-15",
+        "window_end": "2025-09-15",
+        "window_days": 31,
+        "excluded_days": 0,
+        "window_miles": 66930,
+        "avg_fleet_size": 18.1875,
+        "new_incident_count": 3,
+        "mpi": 22310.0,
+        "incidents": [
+          {
+            "report_id": "13781-11375",
+            "report_submission_date": "AUG-2025",
+            "incident_date_raw": "JUL-2025",
+            "roadway_type": "Intersection",
+            "precrash_movement": "Making Right Turn",
+            "precrash_speed_mph": 2
+          },
+          {
+            "report_id": "13781-11459",
+            "report_submission_date": "AUG-2025",
+            "incident_date_raw": "JUL-2025",
+            "roadway_type": "Street",
+            "precrash_movement": "Other, see Narrative",
+            "precrash_speed_mph": 8
+          },
+          {
+            "report_id": "13781-11507",
+            "report_submission_date": "AUG-2025",
+            "incident_date_raw": "JUL-2025",
+            "roadway_type": "Street",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 0
+          }
+        ]
+      },
+      {
+        "release_date": "2025-10-15",
+        "release_through_date": "2025-09-15",
+        "release_verified": false,
+        "window_start": "2025-09-15",
+        "window_end": "2025-10-15",
+        "window_days": 30,
+        "excluded_days": 0,
+        "window_miles": 83030,
+        "avg_fleet_size": 23.29032258064516,
+        "new_incident_count": 3,
+        "mpi": 27676.666666666668,
+        "incidents": [
+          {
+            "report_id": "13781-11687",
+            "report_submission_date": "SEP-2025",
+            "incident_date_raw": "SEP-2025",
+            "roadway_type": "Parking Lot",
+            "precrash_movement": "Making Left Turn",
+            "precrash_speed_mph": 6
+          },
+          {
+            "report_id": "13781-11784",
+            "report_submission_date": "SEP-2025",
+            "incident_date_raw": "SEP-2025",
+            "roadway_type": "Intersection",
+            "precrash_movement": "Proceeding Straight",
+            "precrash_speed_mph": 6
+          },
+          {
+            "report_id": "13781-11786",
+            "report_submission_date": "SEP-2025",
+            "incident_date_raw": "SEP-2025",
+            "roadway_type": "Street",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 0
+          }
+        ]
+      },
+      {
+        "release_date": "2025-11-17",
+        "release_through_date": "2025-10-15",
+        "release_verified": false,
+        "window_start": "2025-10-15",
+        "window_end": "2025-11-17",
+        "window_days": 33,
+        "excluded_days": 0,
+        "window_miles": 102695,
+        "avg_fleet_size": 26.264705882352942,
+        "new_incident_count": 2,
+        "mpi": 51347.5,
+        "incidents": [
+          {
+            "report_id": "13781-11787",
+            "report_submission_date": "OCT-2025",
+            "incident_date_raw": "SEP-2025",
+            "roadway_type": "Intersection",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 27
+          },
+          {
+            "report_id": "13781-11986",
+            "report_submission_date": "OCT-2025",
+            "incident_date_raw": "OCT-2025",
+            "roadway_type": "Street",
+            "precrash_movement": "Proceeding Straight",
+            "precrash_speed_mph": 18
+          }
+        ]
+      },
+      {
+        "release_date": "2025-12-15",
+        "release_through_date": "2025-11-17",
+        "release_verified": false,
+        "window_start": "2025-11-17",
+        "window_end": "2025-12-15",
+        "window_days": 28,
+        "excluded_days": 0,
+        "window_miles": 103385,
+        "avg_fleet_size": 31.0,
+        "new_incident_count": 1,
+        "mpi": 103385.0,
+        "incidents": [
+          {
+            "report_id": "13781-13237",
+            "report_submission_date": "NOV-2025",
+            "incident_date_raw": "NOV-2025",
+            "roadway_type": "Street",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 0
+          }
+        ]
+      },
+      {
+        "release_date": "2026-01-15",
+        "release_through_date": "2025-12-15",
+        "release_verified": true,
+        "window_start": "2025-12-15",
+        "window_end": "2026-01-15",
+        "window_days": 31,
+        "excluded_days": 0,
+        "window_miles": 140070,
+        "avg_fleet_size": 38.0625,
+        "new_incident_count": 0,
+        "mpi": null,
+        "incidents": []
+      },
+      {
+        "release_date": "2026-02-17",
+        "release_through_date": "2026-01-15",
+        "release_verified": true,
+        "window_start": "2026-01-15",
+        "window_end": "2026-02-17",
+        "window_days": 33,
+        "excluded_days": 2,
+        "window_miles": 306360,
+        "avg_fleet_size": 83.47058823529412,
+        "new_incident_count": 5,
+        "mpi": 61272.0,
+        "incidents": [
+          {
+            "report_id": "13781-13644",
+            "report_submission_date": "JAN-2026",
+            "incident_date_raw": "JAN-2026",
+            "roadway_type": "Street",
+            "precrash_movement": "Proceeding Straight",
+            "precrash_speed_mph": 4
+          },
+          {
+            "report_id": "13781-13645",
+            "report_submission_date": "JAN-2026",
+            "incident_date_raw": "JAN-2026",
+            "roadway_type": "Parking Lot",
+            "precrash_movement": "Backing",
+            "precrash_speed_mph": 1
+          },
+          {
+            "report_id": "13781-13646",
+            "report_submission_date": "JAN-2026",
+            "incident_date_raw": "JAN-2026",
+            "roadway_type": "Parking Lot",
+            "precrash_movement": "Backing",
+            "precrash_speed_mph": 2
+          },
+          {
+            "report_id": "13781-13647",
+            "report_submission_date": "JAN-2026",
+            "incident_date_raw": "DEC-2025",
+            "roadway_type": "Street",
+            "precrash_movement": "Proceeding Straight",
+            "precrash_speed_mph": 17
+          },
+          {
+            "report_id": "13781-13648",
+            "report_submission_date": "JAN-2026",
+            "incident_date_raw": "JAN-2026",
+            "roadway_type": "Street",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 0
+          }
+        ]
+      },
+      {
+        "release_date": "2026-03-16",
+        "release_through_date": "2026-02-17",
+        "release_verified": true,
+        "window_start": "2026-02-17",
+        "window_end": "2026-03-16",
+        "window_days": 27,
+        "excluded_days": 0,
+        "window_miles": 293020,
+        "avg_fleet_size": 91.0,
+        "new_incident_count": 1,
+        "mpi": 293020.0,
+        "incidents": [
+          {
+            "report_id": "13781-14043",
+            "report_submission_date": "FEB-2026",
+            "incident_date_raw": "JAN-2026",
+            "roadway_type": "Street",
+            "precrash_movement": "Lane / Road Departure",
+            "precrash_speed_mph": 9
+          }
+        ]
+      }
+    ]
   }
 }

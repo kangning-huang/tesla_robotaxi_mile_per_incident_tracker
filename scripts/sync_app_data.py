@@ -206,6 +206,98 @@ def generate_all_filter_combinations(analysis: dict) -> dict:
     return combinations
 
 
+def _filter_release_incidents(
+    window_incidents: list,
+    exclude_backing: bool = True,
+    exclude_stationary: bool = True,
+) -> list:
+    """Apply backing/stationary filters to a release window's incident list."""
+    kept = []
+    for inc in window_incidents:
+        precrash_speed = inc.get("precrash_speed_mph")
+        movement = inc.get("precrash_movement", "") or ""
+        roadway = inc.get("roadway_type", "") or ""
+        is_backing = (roadway == "Parking Lot" and movement == "Backing")
+        is_stationary = (precrash_speed == 0 and movement == "Stopped")
+        if exclude_backing and is_backing:
+            continue
+        if exclude_stationary and is_stationary:
+            continue
+        kept.append(inc)
+    return kept
+
+
+def aggregate_release_windows(
+    windows: list,
+    exclude_backing: bool = True,
+    exclude_stationary: bool = True,
+) -> list:
+    """Turn release-window entries from analysis_results.json into chart data
+    points, applying the requested filters.
+
+    Each point uses the release_date as the x-axis value, window_miles as the
+    numerator of MPI, and the filtered incident count as the denominator.
+    Windows with zero filtered incidents are omitted from the chart (MPI is
+    undefined) but kept in the cumulative fleet-miles calculation.
+    """
+    points = []
+    for w in windows or []:
+        kept = _filter_release_incidents(
+            w.get("incidents", []),
+            exclude_backing=exclude_backing,
+            exclude_stationary=exclude_stationary,
+        )
+        count = len(kept)
+        if count == 0:
+            continue  # skip zero-incident windows — MPI undefined
+        miles = int(w.get("window_miles") or 0)
+        points.append({
+            "date": w["release_date"],
+            "window_start": w.get("window_start"),
+            "window_end": w.get("window_end"),
+            "days": int(w.get("window_days") or 0),
+            "fleet": int(round(w.get("avg_fleet_size") or 0)),
+            "miles": miles,
+            "mpi": miles // count if count > 0 else 0,
+            "count": count,
+            "through_date": w.get("release_through_date"),
+            "verified": bool(w.get("release_verified", False)),
+        })
+    return points
+
+
+def generate_release_array(points: list, var_name: str) -> str:
+    """Generate a JavaScript array for release-window chart data."""
+    if not points:
+        return f"const {var_name} = [];"
+    lines = []
+    for p in points:
+        lines.append(
+            f"    {{ date: '{p['date']}', days: {p['days']}, fleet: {p['fleet']}, "
+            f"miles: {p['miles']}, mpi: {p['mpi']}, count: {p['count']}, "
+            f"windowStart: '{p['window_start']}', throughDate: '{p['through_date']}' }},"
+        )
+    return f"const {var_name} = [\n" + "\n".join(lines) + "\n];"
+
+
+def generate_all_release_combinations(analysis: dict) -> dict:
+    """Generate release-window chart data for all filter combinations."""
+    by_release = analysis.get("by_release", {}) or {}
+    total_windows = by_release.get("total_fleet_windows", [])
+    active_windows = by_release.get("active_fleet_windows", [])
+
+    combos = {}
+    combos["total_base"] = aggregate_release_windows(total_windows, True, True)
+    combos["total_stationary"] = aggregate_release_windows(total_windows, True, False)
+    combos["total_backing"] = aggregate_release_windows(total_windows, False, True)
+    combos["total_all"] = aggregate_release_windows(total_windows, False, False)
+    combos["active_base"] = aggregate_release_windows(active_windows, True, True)
+    combos["active_stationary"] = aggregate_release_windows(active_windows, True, False)
+    combos["active_backing"] = aggregate_release_windows(active_windows, False, True)
+    combos["active_all"] = aggregate_release_windows(active_windows, False, False)
+    return combos
+
+
 def update_app_js(app_js_path: Path, analysis: dict, fleet: dict) -> bool:
     """
     Update app.js with new data from analysis results and fleet data.
@@ -219,8 +311,11 @@ def update_app_js(app_js_path: Path, analysis: dict, fleet: dict) -> bool:
 
     content = original_content
 
-    # Generate all filter combinations
+    # Generate all filter combinations (monthly / per-incident view)
     combinations = generate_all_filter_combinations(analysis)
+
+    # Generate all filter combinations (NHTSA release-window view)
+    release_combos = generate_all_release_combinations(analysis)
 
     # Generate JavaScript arrays for each combination
     # Total fleet
@@ -235,6 +330,16 @@ def update_app_js(app_js_path: Path, analysis: dict, fleet: dict) -> bool:
     active_backing_str = generate_incident_array(combinations['active_backing'], 'incidentDataActiveBacking')
     active_all_str = generate_incident_array(combinations['active_all'], 'incidentDataActiveAll')
 
+    # Release-window arrays (NEW: default view for the dashboard)
+    rel_base_str = generate_release_array(release_combos['total_base'], 'incidentDataReleaseBase')
+    rel_stationary_str = generate_release_array(release_combos['total_stationary'], 'incidentDataReleaseStationary')
+    rel_backing_str = generate_release_array(release_combos['total_backing'], 'incidentDataReleaseBacking')
+    rel_all_str = generate_release_array(release_combos['total_all'], 'incidentDataReleaseAll')
+    rel_active_base_str = generate_release_array(release_combos['active_base'], 'incidentDataReleaseActiveBase')
+    rel_active_stationary_str = generate_release_array(release_combos['active_stationary'], 'incidentDataReleaseActiveStationary')
+    rel_active_backing_str = generate_release_array(release_combos['active_backing'], 'incidentDataReleaseActiveBacking')
+    rel_active_all_str = generate_release_array(release_combos['active_all'], 'incidentDataReleaseActiveAll')
+
     fleet_data_str = generate_fleet_data(fleet['snapshots'])
     latest_active = get_latest_active_fleet(fleet['snapshots'])
 
@@ -248,6 +353,14 @@ def update_app_js(app_js_path: Path, analysis: dict, fleet: dict) -> bool:
         (r'const incidentDataActiveStationary = \[[\s\S]*?\];', active_stationary_str),
         (r'const incidentDataActiveBacking = \[[\s\S]*?\];', active_backing_str),
         (r'const incidentDataActiveAll = \[[\s\S]*?\];', active_all_str),
+        (r'const incidentDataReleaseBase = \[[\s\S]*?\];', rel_base_str),
+        (r'const incidentDataReleaseStationary = \[[\s\S]*?\];', rel_stationary_str),
+        (r'const incidentDataReleaseBacking = \[[\s\S]*?\];', rel_backing_str),
+        (r'const incidentDataReleaseAll = \[[\s\S]*?\];', rel_all_str),
+        (r'const incidentDataReleaseActiveBase = \[[\s\S]*?\];', rel_active_base_str),
+        (r'const incidentDataReleaseActiveStationary = \[[\s\S]*?\];', rel_active_stationary_str),
+        (r'const incidentDataReleaseActiveBacking = \[[\s\S]*?\];', rel_active_backing_str),
+        (r'const incidentDataReleaseActiveAll = \[[\s\S]*?\];', rel_active_all_str),
         (r'const latestActiveFleetSize = \d+;', f'const latestActiveFleetSize = {latest_active};'),
         (r'const fleetData = \[[\s\S]*?\];', fleet_data_str),
     ]
