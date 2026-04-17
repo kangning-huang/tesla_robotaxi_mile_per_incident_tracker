@@ -96,7 +96,7 @@ const incidentDataReleaseBase = [
     { date: '2025-10-15', days: 30, fleet: 18, miles: 64170, mpi: 32085, count: 2, windowStart: '2025-09-15', throughDate: '2025-09-15' },
     { date: '2025-11-17', days: 33, fleet: 20, miles: 77165, mpi: 38582, count: 2, windowStart: '2025-10-15', throughDate: '2025-10-15' },
     { date: '2026-02-17', days: 33, fleet: 74, miles: 270365, mpi: 135182, count: 2, windowStart: '2026-01-15', throughDate: '2026-01-15' },
-    { date: '2026-03-16', days: 27, fleet: 89, miles: 286580, mpi: 286580, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
+    { date: '2026-03-16', days: 27, fleet: 89, miles: 287270, mpi: 287270, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
 ];
 const incidentDataReleaseStationary = [
     { date: '2025-09-15', days: 31, fleet: 16, miles: 58765, mpi: 19588, count: 3, windowStart: '2025-08-15', throughDate: '2025-08-15' },
@@ -104,14 +104,14 @@ const incidentDataReleaseStationary = [
     { date: '2025-11-17', days: 33, fleet: 20, miles: 77165, mpi: 38582, count: 2, windowStart: '2025-10-15', throughDate: '2025-10-15' },
     { date: '2025-12-15', days: 28, fleet: 29, miles: 95795, mpi: 95795, count: 1, windowStart: '2025-11-17', throughDate: '2025-11-17' },
     { date: '2026-02-17', days: 33, fleet: 74, miles: 270365, mpi: 90121, count: 3, windowStart: '2026-01-15', throughDate: '2026-01-15' },
-    { date: '2026-03-16', days: 27, fleet: 89, miles: 286580, mpi: 286580, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
+    { date: '2026-03-16', days: 27, fleet: 89, miles: 287270, mpi: 287270, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
 ];
 const incidentDataReleaseBacking = [
     { date: '2025-09-15', days: 31, fleet: 16, miles: 58765, mpi: 29382, count: 2, windowStart: '2025-08-15', throughDate: '2025-08-15' },
     { date: '2025-10-15', days: 30, fleet: 18, miles: 64170, mpi: 32085, count: 2, windowStart: '2025-09-15', throughDate: '2025-09-15' },
     { date: '2025-11-17', days: 33, fleet: 20, miles: 77165, mpi: 38582, count: 2, windowStart: '2025-10-15', throughDate: '2025-10-15' },
     { date: '2026-02-17', days: 33, fleet: 74, miles: 270365, mpi: 67591, count: 4, windowStart: '2026-01-15', throughDate: '2026-01-15' },
-    { date: '2026-03-16', days: 27, fleet: 89, miles: 286580, mpi: 286580, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
+    { date: '2026-03-16', days: 27, fleet: 89, miles: 287270, mpi: 287270, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
 ];
 const incidentDataReleaseAll = [
     { date: '2025-09-15', days: 31, fleet: 16, miles: 58765, mpi: 19588, count: 3, windowStart: '2025-08-15', throughDate: '2025-08-15' },
@@ -119,7 +119,7 @@ const incidentDataReleaseAll = [
     { date: '2025-11-17', days: 33, fleet: 20, miles: 77165, mpi: 38582, count: 2, windowStart: '2025-10-15', throughDate: '2025-10-15' },
     { date: '2025-12-15', days: 28, fleet: 29, miles: 95795, mpi: 95795, count: 1, windowStart: '2025-11-17', throughDate: '2025-11-17' },
     { date: '2026-02-17', days: 33, fleet: 74, miles: 270365, mpi: 54073, count: 5, windowStart: '2026-01-15', throughDate: '2026-01-15' },
-    { date: '2026-03-16', days: 27, fleet: 89, miles: 286580, mpi: 286580, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
+    { date: '2026-03-16', days: 27, fleet: 89, miles: 287270, mpi: 287270, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
 ];
 const incidentDataReleaseActiveBase = [
     { date: '2025-09-15', days: 31, fleet: 18, miles: 66930, mpi: 33465, count: 2, windowStart: '2025-08-15', throughDate: '2025-08-15' },
@@ -313,6 +313,7 @@ const fleetData = [
     { date: '2026-02-27', size: 89 },
     { date: '2026-02-28', size: 89 },
     { date: '2026-03-01', size: 89 },
+    { date: '2026-04-16', size: 94 },
 ];
 
 // Compute exponential trend parameters via log-linear regression on incidentData

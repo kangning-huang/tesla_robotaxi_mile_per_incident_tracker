@@ -1,5 +1,5 @@
 {
-  "analysis_date": "2026-04-16T06:55:05.013766",
+  "analysis_date": "2026-04-17T06:55:40.741015",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "fleet_data_source": "total",
@@ -878,10 +878,10 @@
         "window_end": "2026-03-16",
         "window_days": 27,
         "excluded_days": 0,
-        "window_miles": 286580,
-        "avg_fleet_size": 89.0,
+        "window_miles": 287270,
+        "avg_fleet_size": 89.21428571428571,
         "new_incident_count": 1,
-        "mpi": 286580.0,
+        "mpi": 287270.0,
         "incidents": [
           {
             "report_id": "13781-14043",
