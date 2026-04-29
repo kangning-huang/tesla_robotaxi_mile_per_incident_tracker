@@ -1,5 +1,5 @@
 {
-  "analysis_date": "2026-04-28T07:11:40.383655",
+  "analysis_date": "2026-04-29T07:06:46.985501",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "fleet_data_source": "total",
@@ -276,7 +276,7 @@
     "best_model": "exponential",
     "best_fit": {
       "type": "exponential",
-      "a": 2699.827825394305,
+      "a": 2699.8278253943045,
       "b": 0.009526776137291493,
       "r_squared": 0.16807275068968575,
       "interpretation": "improving",
@@ -287,7 +287,7 @@
     "all_models": {
       "exponential": {
         "type": "exponential",
-        "a": 2699.827825394305,
+        "a": 2699.8278253943045,
         "b": 0.009526776137291493,
         "r_squared": 0.16807275068968575,
         "interpretation": "improving",
