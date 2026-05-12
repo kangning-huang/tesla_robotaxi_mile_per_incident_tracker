@@ -50,40 +50,40 @@ const incidentDataAll = [
 // ===== Active Fleet Data (all filter combinations) =====
 // Base: no backing, no stationary
 const incidentDataActiveBase = [
-    { date: '2025-07-15', days: 6, fleet: 11, miles: 12650, mpi: 3162, count: 4 },
-    { date: '2025-09-15', days: 62, fleet: 17, miles: 97060, mpi: 32353, count: 3 },
-    { date: '2025-10-15', days: 30, fleet: 23, miles: 78660, mpi: 39330, count: 2 },
-    { date: '2025-12-10', days: 61, fleet: 29, miles: 203435, mpi: 203435, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 37, miles: 136160, mpi: 68080, count: 2 },
+    { date: '2025-07-15', days: 6, fleet: 0, miles: 0, mpi: 0, count: 4 },
+    { date: '2025-09-15', days: 62, fleet: 0, miles: 0, mpi: 0, count: 3 },
+    { date: '2025-10-15', days: 30, fleet: 0, miles: 0, mpi: 0, count: 2 },
+    { date: '2025-12-10', days: 61, fleet: 0, miles: 0, mpi: 0, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 0, miles: 0, mpi: 0, count: 2 },
 ];
 
 // Stationary: no backing, WITH stationary
 const incidentDataActiveStationary = [
-    { date: '2025-07-15', days: 6, fleet: 11, miles: 13915, mpi: 2783, count: 5 },
-    { date: '2025-09-15', days: 62, fleet: 17, miles: 99245, mpi: 24811, count: 4 },
-    { date: '2025-10-15', days: 30, fleet: 23, miles: 78660, mpi: 39330, count: 2 },
-    { date: '2025-11-12', days: 31, fleet: 24, miles: 85560, mpi: 85560, count: 1 },
-    { date: '2025-12-10', days: 30, fleet: 29, miles: 100050, mpi: 100050, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 37, miles: 140415, mpi: 46805, count: 3 },
+    { date: '2025-07-15', days: 6, fleet: 0, miles: 0, mpi: 0, count: 5 },
+    { date: '2025-09-15', days: 62, fleet: 0, miles: 0, mpi: 0, count: 4 },
+    { date: '2025-10-15', days: 30, fleet: 0, miles: 0, mpi: 0, count: 2 },
+    { date: '2025-11-12', days: 31, fleet: 0, miles: 0, mpi: 0, count: 1 },
+    { date: '2025-12-10', days: 30, fleet: 0, miles: 0, mpi: 0, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 0, miles: 0, mpi: 0, count: 3 },
 ];
 
 // Backing: WITH backing, no stationary
 const incidentDataActiveBacking = [
-    { date: '2025-07-15', days: 6, fleet: 11, miles: 12650, mpi: 3162, count: 4 },
-    { date: '2025-09-15', days: 62, fleet: 17, miles: 97060, mpi: 32353, count: 3 },
-    { date: '2025-10-15', days: 30, fleet: 23, miles: 78660, mpi: 39330, count: 2 },
-    { date: '2025-12-10', days: 61, fleet: 29, miles: 203435, mpi: 203435, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 35, miles: 126845, mpi: 31711, count: 4 },
+    { date: '2025-07-15', days: 6, fleet: 0, miles: 0, mpi: 0, count: 4 },
+    { date: '2025-09-15', days: 62, fleet: 0, miles: 0, mpi: 0, count: 3 },
+    { date: '2025-10-15', days: 30, fleet: 0, miles: 0, mpi: 0, count: 2 },
+    { date: '2025-12-10', days: 61, fleet: 0, miles: 0, mpi: 0, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 0, miles: 0, mpi: 0, count: 4 },
 ];
 
 // All: WITH backing, WITH stationary
 const incidentDataActiveAll = [
-    { date: '2025-07-15', days: 6, fleet: 11, miles: 13915, mpi: 2783, count: 5 },
-    { date: '2025-09-15', days: 62, fleet: 17, miles: 99245, mpi: 24811, count: 4 },
-    { date: '2025-10-15', days: 30, fleet: 23, miles: 78660, mpi: 39330, count: 2 },
-    { date: '2025-11-12', days: 31, fleet: 24, miles: 85560, mpi: 85560, count: 1 },
-    { date: '2025-12-10', days: 30, fleet: 29, miles: 100050, mpi: 100050, count: 1 },
-    { date: '2026-01-10', days: 31, fleet: 36, miles: 131100, mpi: 26220, count: 5 },
+    { date: '2025-07-15', days: 6, fleet: 0, miles: 0, mpi: 0, count: 5 },
+    { date: '2025-09-15', days: 62, fleet: 0, miles: 0, mpi: 0, count: 4 },
+    { date: '2025-10-15', days: 30, fleet: 0, miles: 0, mpi: 0, count: 2 },
+    { date: '2025-11-12', days: 31, fleet: 0, miles: 0, mpi: 0, count: 1 },
+    { date: '2025-12-10', days: 30, fleet: 0, miles: 0, mpi: 0, count: 1 },
+    { date: '2026-01-10', days: 31, fleet: 0, miles: 0, mpi: 0, count: 5 },
 ];
 
 // ===== NHTSA Release-Window Datasets =====
@@ -122,34 +122,34 @@ const incidentDataReleaseAll = [
     { date: '2026-03-16', days: 27, fleet: 89, miles: 287270, mpi: 287270, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
 ];
 const incidentDataReleaseActiveBase = [
-    { date: '2025-09-15', days: 31, fleet: 18, miles: 66930, mpi: 33465, count: 2, windowStart: '2025-08-15', throughDate: '2025-08-15' },
-    { date: '2025-10-15', days: 30, fleet: 23, miles: 83030, mpi: 41515, count: 2, windowStart: '2025-09-15', throughDate: '2025-09-15' },
-    { date: '2025-11-17', days: 33, fleet: 26, miles: 102695, mpi: 51347, count: 2, windowStart: '2025-10-15', throughDate: '2025-10-15' },
-    { date: '2026-02-17', days: 33, fleet: 83, miles: 306360, mpi: 153180, count: 2, windowStart: '2026-01-15', throughDate: '2026-01-15' },
-    { date: '2026-03-16', days: 27, fleet: 91, miles: 293020, mpi: 293020, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
+    { date: '2025-09-15', days: 31, fleet: 0, miles: 0, mpi: 0, count: 2, windowStart: '2025-08-15', throughDate: '2025-08-15' },
+    { date: '2025-10-15', days: 30, fleet: 0, miles: 0, mpi: 0, count: 2, windowStart: '2025-09-15', throughDate: '2025-09-15' },
+    { date: '2025-11-17', days: 33, fleet: 0, miles: 0, mpi: 0, count: 2, windowStart: '2025-10-15', throughDate: '2025-10-15' },
+    { date: '2026-02-17', days: 33, fleet: 3, miles: 11615, mpi: 5807, count: 2, windowStart: '2026-01-15', throughDate: '2026-01-15' },
+    { date: '2026-03-16', days: 27, fleet: 8, miles: 25185, mpi: 25185, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
 ];
 const incidentDataReleaseActiveStationary = [
-    { date: '2025-09-15', days: 31, fleet: 18, miles: 66930, mpi: 22310, count: 3, windowStart: '2025-08-15', throughDate: '2025-08-15' },
-    { date: '2025-10-15', days: 30, fleet: 23, miles: 83030, mpi: 27676, count: 3, windowStart: '2025-09-15', throughDate: '2025-09-15' },
-    { date: '2025-11-17', days: 33, fleet: 26, miles: 102695, mpi: 51347, count: 2, windowStart: '2025-10-15', throughDate: '2025-10-15' },
-    { date: '2025-12-15', days: 28, fleet: 31, miles: 103385, mpi: 103385, count: 1, windowStart: '2025-11-17', throughDate: '2025-11-17' },
-    { date: '2026-02-17', days: 33, fleet: 83, miles: 306360, mpi: 102120, count: 3, windowStart: '2026-01-15', throughDate: '2026-01-15' },
-    { date: '2026-03-16', days: 27, fleet: 91, miles: 293020, mpi: 293020, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
+    { date: '2025-09-15', days: 31, fleet: 0, miles: 0, mpi: 0, count: 3, windowStart: '2025-08-15', throughDate: '2025-08-15' },
+    { date: '2025-10-15', days: 30, fleet: 0, miles: 0, mpi: 0, count: 3, windowStart: '2025-09-15', throughDate: '2025-09-15' },
+    { date: '2025-11-17', days: 33, fleet: 0, miles: 0, mpi: 0, count: 2, windowStart: '2025-10-15', throughDate: '2025-10-15' },
+    { date: '2025-12-15', days: 28, fleet: 0, miles: 0, mpi: 0, count: 1, windowStart: '2025-11-17', throughDate: '2025-11-17' },
+    { date: '2026-02-17', days: 33, fleet: 3, miles: 11615, mpi: 3871, count: 3, windowStart: '2026-01-15', throughDate: '2026-01-15' },
+    { date: '2026-03-16', days: 27, fleet: 8, miles: 25185, mpi: 25185, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
 ];
 const incidentDataReleaseActiveBacking = [
-    { date: '2025-09-15', days: 31, fleet: 18, miles: 66930, mpi: 33465, count: 2, windowStart: '2025-08-15', throughDate: '2025-08-15' },
-    { date: '2025-10-15', days: 30, fleet: 23, miles: 83030, mpi: 41515, count: 2, windowStart: '2025-09-15', throughDate: '2025-09-15' },
-    { date: '2025-11-17', days: 33, fleet: 26, miles: 102695, mpi: 51347, count: 2, windowStart: '2025-10-15', throughDate: '2025-10-15' },
-    { date: '2026-02-17', days: 33, fleet: 83, miles: 306360, mpi: 76590, count: 4, windowStart: '2026-01-15', throughDate: '2026-01-15' },
-    { date: '2026-03-16', days: 27, fleet: 91, miles: 293020, mpi: 293020, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
+    { date: '2025-09-15', days: 31, fleet: 0, miles: 0, mpi: 0, count: 2, windowStart: '2025-08-15', throughDate: '2025-08-15' },
+    { date: '2025-10-15', days: 30, fleet: 0, miles: 0, mpi: 0, count: 2, windowStart: '2025-09-15', throughDate: '2025-09-15' },
+    { date: '2025-11-17', days: 33, fleet: 0, miles: 0, mpi: 0, count: 2, windowStart: '2025-10-15', throughDate: '2025-10-15' },
+    { date: '2026-02-17', days: 33, fleet: 3, miles: 11615, mpi: 2903, count: 4, windowStart: '2026-01-15', throughDate: '2026-01-15' },
+    { date: '2026-03-16', days: 27, fleet: 8, miles: 25185, mpi: 25185, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
 ];
 const incidentDataReleaseActiveAll = [
-    { date: '2025-09-15', days: 31, fleet: 18, miles: 66930, mpi: 22310, count: 3, windowStart: '2025-08-15', throughDate: '2025-08-15' },
-    { date: '2025-10-15', days: 30, fleet: 23, miles: 83030, mpi: 27676, count: 3, windowStart: '2025-09-15', throughDate: '2025-09-15' },
-    { date: '2025-11-17', days: 33, fleet: 26, miles: 102695, mpi: 51347, count: 2, windowStart: '2025-10-15', throughDate: '2025-10-15' },
-    { date: '2025-12-15', days: 28, fleet: 31, miles: 103385, mpi: 103385, count: 1, windowStart: '2025-11-17', throughDate: '2025-11-17' },
-    { date: '2026-02-17', days: 33, fleet: 83, miles: 306360, mpi: 61272, count: 5, windowStart: '2026-01-15', throughDate: '2026-01-15' },
-    { date: '2026-03-16', days: 27, fleet: 91, miles: 293020, mpi: 293020, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
+    { date: '2025-09-15', days: 31, fleet: 0, miles: 0, mpi: 0, count: 3, windowStart: '2025-08-15', throughDate: '2025-08-15' },
+    { date: '2025-10-15', days: 30, fleet: 0, miles: 0, mpi: 0, count: 3, windowStart: '2025-09-15', throughDate: '2025-09-15' },
+    { date: '2025-11-17', days: 33, fleet: 0, miles: 0, mpi: 0, count: 2, windowStart: '2025-10-15', throughDate: '2025-10-15' },
+    { date: '2025-12-15', days: 28, fleet: 0, miles: 0, mpi: 0, count: 1, windowStart: '2025-11-17', throughDate: '2025-11-17' },
+    { date: '2026-02-17', days: 33, fleet: 3, miles: 11615, mpi: 2323, count: 5, windowStart: '2026-01-15', throughDate: '2026-01-15' },
+    { date: '2026-03-16', days: 27, fleet: 8, miles: 25185, mpi: 25185, count: 1, windowStart: '2026-02-17', throughDate: '2026-02-17' },
 ];
 
 // Legacy aliases for backward compatibility
