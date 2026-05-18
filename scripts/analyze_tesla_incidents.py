@@ -34,6 +34,7 @@ NHTSA_RELEASES = [
     {"release_date": "2026-01-15", "through_date": "2025-12-15", "verified": True},
     {"release_date": "2026-02-17", "through_date": "2026-01-15", "verified": True},
     {"release_date": "2026-03-16", "through_date": "2026-02-17", "verified": True},
+    {"release_date": "2026-05-15", "through_date": "2026-04-15", "verified": True},
 ]
 
 

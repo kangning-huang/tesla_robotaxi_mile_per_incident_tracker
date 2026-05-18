@@ -1,5 +1,5 @@
 {
-  "analysis_date": "2026-05-18T09:31:05.881421",
+  "analysis_date": "2026-05-18T09:40:10.861016",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "fleet_data_source": "total",
@@ -1174,6 +1174,11 @@
         "release_date": "2026-03-16",
         "through_date": "2026-02-17",
         "verified": true
+      },
+      {
+        "release_date": "2026-05-15",
+        "through_date": "2026-04-15",
+        "verified": true
       }
     ],
     "total_fleet_windows": [
@@ -1428,6 +1433,37 @@
             "precrash_speed_mph": 9
           }
         ]
+      },
+      {
+        "release_date": "2026-05-15",
+        "release_through_date": "2026-04-15",
+        "release_verified": true,
+        "window_start": "2026-03-16",
+        "window_end": "2026-05-15",
+        "window_days": 60,
+        "excluded_days": 0,
+        "window_miles": 658030,
+        "avg_fleet_size": 93.80327868852459,
+        "new_incident_count": 2,
+        "mpi": 329015.0,
+        "incidents": [
+          {
+            "report_id": "13781-14630",
+            "report_submission_date": "APR-2026",
+            "incident_date_raw": "MAR-2026",
+            "roadway_type": "Street",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 0
+          },
+          {
+            "report_id": "13781-14631",
+            "report_submission_date": "APR-2026",
+            "incident_date_raw": "MAR-2026",
+            "roadway_type": "Street",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 0
+          }
+        ]
       }
     ],
     "active_fleet_windows": [
@@ -1680,6 +1716,37 @@
             "roadway_type": "Street",
             "precrash_movement": "Lane / Road Departure",
             "precrash_speed_mph": 9
+          }
+        ]
+      },
+      {
+        "release_date": "2026-05-15",
+        "release_through_date": "2026-04-15",
+        "release_verified": true,
+        "window_start": "2026-03-16",
+        "window_end": "2026-05-15",
+        "window_days": 60,
+        "excluded_days": 0,
+        "window_miles": 102005,
+        "avg_fleet_size": 14.540983606557377,
+        "new_incident_count": 2,
+        "mpi": 51002.5,
+        "incidents": [
+          {
+            "report_id": "13781-14630",
+            "report_submission_date": "APR-2026",
+            "incident_date_raw": "MAR-2026",
+            "roadway_type": "Street",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 0
+          },
+          {
+            "report_id": "13781-14631",
+            "report_submission_date": "APR-2026",
+            "incident_date_raw": "MAR-2026",
+            "roadway_type": "Street",
+            "precrash_movement": "Stopped",
+            "precrash_speed_mph": 0
           }
         ]
       }
