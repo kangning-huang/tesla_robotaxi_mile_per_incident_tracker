@@ -235,8 +235,9 @@ def aggregate_release_windows(
     """Turn release-window entries from analysis_results.json into chart data
     points, applying the requested filters.
 
-    Each point uses the release_date as the x-axis value, window_miles as the
-    numerator of MPI, and the filtered incident count as the denominator.
+    Each point is plotted at the release's `through_date` — the date the data
+    is current to per NHTSA's release notes — rather than the publication
+    date, so the chart reflects "data as of" rather than "published on".
     Windows with zero filtered incidents are omitted from the chart (MPI is
     undefined) but kept in the cumulative fleet-miles calculation.
     """
@@ -251,8 +252,9 @@ def aggregate_release_windows(
         if count == 0:
             continue  # skip zero-incident windows — MPI undefined
         miles = int(w.get("window_miles") or 0)
+        through_date = w.get("release_through_date") or w["release_date"]
         points.append({
-            "date": w["release_date"],
+            "date": through_date,
             "window_start": w.get("window_start"),
             "window_end": w.get("window_end"),
             "days": int(w.get("window_days") or 0),
@@ -260,7 +262,8 @@ def aggregate_release_windows(
             "miles": miles,
             "mpi": miles // count if count > 0 else 0,
             "count": count,
-            "through_date": w.get("release_through_date"),
+            "through_date": through_date,
+            "release_date": w["release_date"],
             "verified": bool(w.get("release_verified", False)),
         })
     return points
@@ -275,7 +278,8 @@ def generate_release_array(points: list, var_name: str) -> str:
         lines.append(
             f"    {{ date: '{p['date']}', days: {p['days']}, fleet: {p['fleet']}, "
             f"miles: {p['miles']}, mpi: {p['mpi']}, count: {p['count']}, "
-            f"windowStart: '{p['window_start']}', throughDate: '{p['through_date']}' }},"
+            f"windowStart: '{p['window_start']}', throughDate: '{p['through_date']}', "
+            f"releaseDate: '{p['release_date']}' }},"
         )
     return f"const {var_name} = [\n" + "\n".join(lines) + "\n];"
 
