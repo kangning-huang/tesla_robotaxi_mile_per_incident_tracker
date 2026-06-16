@@ -1,9 +1,9 @@
 {
-  "analysis_date": "2026-06-15T08:28:12.896532",
+  "analysis_date": "2026-06-16T08:19:49.153037",
   "service_start": "2025-06-25",
   "data_source": "nhtsa",
   "fleet_data_source": "total",
-  "incident_count": 37,
+  "incident_count": 38,
   "daily_miles_assumption": 115,
   "excluded_dates": [
     "2026-01-25",
@@ -29,9 +29,9 @@
       "cumulative_miles": 8625,
       "cumulative_incidents": 1,
       "cumulative_mpi": 8625.0,
-      "roadway_type": "Intersection",
-      "precrash_speed_mph": 2,
-      "precrash_movement": "Making Right Turn"
+      "roadway_type": "Street",
+      "precrash_speed_mph": 0,
+      "precrash_movement": "Stopped"
     },
     {
       "incident_number": 2,
@@ -99,9 +99,9 @@
       "cumulative_miles": 15525,
       "cumulative_incidents": 6,
       "cumulative_mpi": 2587.5,
-      "roadway_type": "Street",
-      "precrash_speed_mph": 0,
-      "precrash_movement": "Stopped"
+      "roadway_type": "Intersection",
+      "precrash_speed_mph": 2,
+      "precrash_movement": "Making Right Turn"
     },
     {
       "incident_number": 7,
@@ -156,8 +156,8 @@
       "cumulative_incidents": 10,
       "cumulative_mpi": 12086.5,
       "roadway_type": "Intersection",
-      "precrash_speed_mph": 27,
-      "precrash_movement": "Stopped"
+      "precrash_speed_mph": 6,
+      "precrash_movement": "Proceeding Straight"
     },
     {
       "incident_number": 11,
@@ -183,9 +183,9 @@
       "cumulative_miles": 124315,
       "cumulative_incidents": 12,
       "cumulative_mpi": 10359.583333333334,
-      "roadway_type": "Street",
-      "precrash_speed_mph": 0,
-      "precrash_movement": "Stopped"
+      "roadway_type": "Intersection",
+      "precrash_speed_mph": 6,
+      "precrash_movement": "Proceeding Straight"
     },
     {
       "incident_number": 13,
@@ -197,9 +197,9 @@
       "cumulative_miles": 126040,
       "cumulative_incidents": 13,
       "cumulative_mpi": 9695.384615384615,
-      "roadway_type": "Intersection",
+      "roadway_type": "Parking Lot",
       "precrash_speed_mph": 6,
-      "precrash_movement": "Proceeding Straight"
+      "precrash_movement": "Making Left Turn"
     },
     {
       "incident_number": 14,
@@ -211,9 +211,9 @@
       "cumulative_miles": 127765,
       "cumulative_incidents": 14,
       "cumulative_mpi": 9126.07142857143,
-      "roadway_type": "Parking Lot",
-      "precrash_speed_mph": 6,
-      "precrash_movement": "Making Left Turn"
+      "roadway_type": "Street",
+      "precrash_speed_mph": 0,
+      "precrash_movement": "Stopped"
     },
     {
       "incident_number": 15,
@@ -239,9 +239,9 @@
       "cumulative_miles": 131215,
       "cumulative_incidents": 16,
       "cumulative_mpi": 8200.9375,
-      "roadway_type": "Street",
-      "precrash_speed_mph": 0,
-      "precrash_movement": "Stopped"
+      "roadway_type": "Parking Lot",
+      "precrash_speed_mph": 6,
+      "precrash_movement": "Making Left Turn"
     },
     {
       "incident_number": 17,
@@ -253,9 +253,9 @@
       "cumulative_miles": 132940,
       "cumulative_incidents": 17,
       "cumulative_mpi": 7820.0,
-      "roadway_type": "Parking Lot",
-      "precrash_speed_mph": 6,
-      "precrash_movement": "Making Left Turn"
+      "roadway_type": "Intersection",
+      "precrash_speed_mph": 27,
+      "precrash_movement": "Stopped"
     },
     {
       "incident_number": 18,
@@ -267,9 +267,9 @@
       "cumulative_miles": 134665,
       "cumulative_incidents": 18,
       "cumulative_mpi": 7481.388888888889,
-      "roadway_type": "Intersection",
-      "precrash_speed_mph": 6,
-      "precrash_movement": "Proceeding Straight"
+      "roadway_type": "Street",
+      "precrash_speed_mph": 0,
+      "precrash_movement": "Stopped"
     },
     {
       "incident_number": 19,
@@ -407,9 +407,9 @@
       "cumulative_miles": 478975,
       "cumulative_incidents": 28,
       "cumulative_mpi": 17106.25,
-      "roadway_type": "Street",
-      "precrash_speed_mph": 4,
-      "precrash_movement": "Proceeding Straight"
+      "roadway_type": "Parking Lot",
+      "precrash_speed_mph": 1,
+      "precrash_movement": "Backing"
     },
     {
       "incident_number": 29,
@@ -421,9 +421,9 @@
       "cumulative_miles": 482885,
       "cumulative_incidents": 29,
       "cumulative_mpi": 16651.206896551725,
-      "roadway_type": "Parking Lot",
-      "precrash_speed_mph": 1,
-      "precrash_movement": "Backing"
+      "roadway_type": "Street",
+      "precrash_speed_mph": 0,
+      "precrash_movement": "Stopped"
     },
     {
       "incident_number": 30,
@@ -436,8 +436,8 @@
       "cumulative_incidents": 30,
       "cumulative_mpi": 16226.5,
       "roadway_type": "Street",
-      "precrash_speed_mph": 0,
-      "precrash_movement": "Stopped"
+      "precrash_speed_mph": 9,
+      "precrash_movement": "Lane / Road Departure"
     },
     {
       "incident_number": 31,
@@ -449,9 +449,9 @@
       "cumulative_miles": 490705,
       "cumulative_incidents": 31,
       "cumulative_mpi": 15829.193548387097,
-      "roadway_type": "Street",
-      "precrash_speed_mph": 9,
-      "precrash_movement": "Lane / Road Departure"
+      "roadway_type": "Parking Lot",
+      "precrash_speed_mph": 2,
+      "precrash_movement": "Backing"
     },
     {
       "incident_number": 32,
@@ -505,9 +505,9 @@
       "cumulative_miles": 506345,
       "cumulative_incidents": 35,
       "cumulative_mpi": 14467.0,
-      "roadway_type": "Parking Lot",
-      "precrash_speed_mph": 2,
-      "precrash_movement": "Backing"
+      "roadway_type": "Street",
+      "precrash_speed_mph": 4,
+      "precrash_movement": "Proceeding Straight"
     },
     {
       "incident_number": 36,
@@ -538,38 +538,52 @@
       "roadway_type": "Street",
       "precrash_speed_mph": 0,
       "precrash_movement": "Stopped"
+    },
+    {
+      "incident_number": 38,
+      "incident_date": "2026-04-01",
+      "days_since_previous": 31,
+      "miles_since_previous": 332005,
+      "mpi_since_previous": 332005,
+      "avg_fleet_size": 90.21875,
+      "cumulative_miles": 1300190,
+      "cumulative_incidents": 38,
+      "cumulative_mpi": 34215.52631578947,
+      "roadway_type": "Street",
+      "precrash_speed_mph": 0,
+      "precrash_movement": "Stopped"
     }
   ],
   "trend_analysis": {
     "best_model": "exponential",
     "best_fit": {
       "type": "exponential",
-      "a": 1669.432746930373,
-      "b": 0.009808589923281754,
-      "r_squared": 0.248220149742716,
+      "a": 1486.9185560609778,
+      "b": 0.01156590967432669,
+      "r_squared": 0.3228911648801064,
       "interpretation": "improving",
-      "growth_rate_per_day": 0.009808589923281754,
-      "doubling_time_days": 70.66736258538907,
+      "growth_rate_per_day": 0.01156590967432669,
+      "doubling_time_days": 59.930191405398205,
       "halving_time_days": null
     },
     "all_models": {
       "exponential": {
         "type": "exponential",
-        "a": 1669.432746930373,
-        "b": 0.009808589923281754,
-        "r_squared": 0.248220149742716,
+        "a": 1486.9185560609778,
+        "b": 0.01156590967432669,
+        "r_squared": 0.3228911648801064,
         "interpretation": "improving",
-        "growth_rate_per_day": 0.009808589923281754,
-        "doubling_time_days": 70.66736258538907,
+        "growth_rate_per_day": 0.01156590967432669,
+        "doubling_time_days": 59.930191405398205,
         "halving_time_days": null
       }
     }
   },
   "summary": {
-    "average_mpi": 26167.162162162163,
-    "latest_mpi": 10235,
-    "cumulative_mpi": 26167.162162162163,
-    "total_miles": 968185,
+    "average_mpi": 34215.52631578947,
+    "latest_mpi": 332005,
+    "cumulative_mpi": 34215.52631578947,
+    "total_miles": 1300190,
     "total_excluded_days": 2
   },
   "active_fleet": {
@@ -584,9 +598,9 @@
         "cumulative_miles": 0,
         "cumulative_incidents": 1,
         "cumulative_mpi": 0.0,
-        "roadway_type": "Intersection",
-        "precrash_speed_mph": 2,
-        "precrash_movement": "Making Right Turn"
+        "roadway_type": "Street",
+        "precrash_speed_mph": 0,
+        "precrash_movement": "Stopped"
       },
       {
         "incident_number": 2,
@@ -654,9 +668,9 @@
         "cumulative_miles": 0,
         "cumulative_incidents": 6,
         "cumulative_mpi": 0.0,
-        "roadway_type": "Street",
-        "precrash_speed_mph": 0,
-        "precrash_movement": "Stopped"
+        "roadway_type": "Intersection",
+        "precrash_speed_mph": 2,
+        "precrash_movement": "Making Right Turn"
       },
       {
         "incident_number": 7,
@@ -711,8 +725,8 @@
         "cumulative_incidents": 10,
         "cumulative_mpi": 0.0,
         "roadway_type": "Intersection",
-        "precrash_speed_mph": 27,
-        "precrash_movement": "Stopped"
+        "precrash_speed_mph": 6,
+        "precrash_movement": "Proceeding Straight"
       },
       {
         "incident_number": 11,
@@ -738,9 +752,9 @@
         "cumulative_miles": 0,
         "cumulative_incidents": 12,
         "cumulative_mpi": 0.0,
-        "roadway_type": "Street",
-        "precrash_speed_mph": 0,
-        "precrash_movement": "Stopped"
+        "roadway_type": "Intersection",
+        "precrash_speed_mph": 6,
+        "precrash_movement": "Proceeding Straight"
       },
       {
         "incident_number": 13,
@@ -752,9 +766,9 @@
         "cumulative_miles": 0,
         "cumulative_incidents": 13,
         "cumulative_mpi": 0.0,
-        "roadway_type": "Intersection",
+        "roadway_type": "Parking Lot",
         "precrash_speed_mph": 6,
-        "precrash_movement": "Proceeding Straight"
+        "precrash_movement": "Making Left Turn"
       },
       {
         "incident_number": 14,
@@ -766,9 +780,9 @@
         "cumulative_miles": 0,
         "cumulative_incidents": 14,
         "cumulative_mpi": 0.0,
-        "roadway_type": "Parking Lot",
-        "precrash_speed_mph": 6,
-        "precrash_movement": "Making Left Turn"
+        "roadway_type": "Street",
+        "precrash_speed_mph": 0,
+        "precrash_movement": "Stopped"
       },
       {
         "incident_number": 15,
@@ -794,9 +808,9 @@
         "cumulative_miles": 0,
         "cumulative_incidents": 16,
         "cumulative_mpi": 0.0,
-        "roadway_type": "Street",
-        "precrash_speed_mph": 0,
-        "precrash_movement": "Stopped"
+        "roadway_type": "Parking Lot",
+        "precrash_speed_mph": 6,
+        "precrash_movement": "Making Left Turn"
       },
       {
         "incident_number": 17,
@@ -808,9 +822,9 @@
         "cumulative_miles": 0,
         "cumulative_incidents": 17,
         "cumulative_mpi": 0.0,
-        "roadway_type": "Parking Lot",
-        "precrash_speed_mph": 6,
-        "precrash_movement": "Making Left Turn"
+        "roadway_type": "Intersection",
+        "precrash_speed_mph": 27,
+        "precrash_movement": "Stopped"
       },
       {
         "incident_number": 18,
@@ -822,9 +836,9 @@
         "cumulative_miles": 0,
         "cumulative_incidents": 18,
         "cumulative_mpi": 0.0,
-        "roadway_type": "Intersection",
-        "precrash_speed_mph": 6,
-        "precrash_movement": "Proceeding Straight"
+        "roadway_type": "Street",
+        "precrash_speed_mph": 0,
+        "precrash_movement": "Stopped"
       },
       {
         "incident_number": 19,
@@ -962,9 +976,9 @@
         "cumulative_miles": 0,
         "cumulative_incidents": 28,
         "cumulative_mpi": 0.0,
-        "roadway_type": "Street",
-        "precrash_speed_mph": 4,
-        "precrash_movement": "Proceeding Straight"
+        "roadway_type": "Parking Lot",
+        "precrash_speed_mph": 1,
+        "precrash_movement": "Backing"
       },
       {
         "incident_number": 29,
@@ -976,9 +990,9 @@
         "cumulative_miles": 0,
         "cumulative_incidents": 29,
         "cumulative_mpi": 0.0,
-        "roadway_type": "Parking Lot",
-        "precrash_speed_mph": 1,
-        "precrash_movement": "Backing"
+        "roadway_type": "Street",
+        "precrash_speed_mph": 0,
+        "precrash_movement": "Stopped"
       },
       {
         "incident_number": 30,
@@ -991,8 +1005,8 @@
         "cumulative_incidents": 30,
         "cumulative_mpi": 0.0,
         "roadway_type": "Street",
-        "precrash_speed_mph": 0,
-        "precrash_movement": "Stopped"
+        "precrash_speed_mph": 9,
+        "precrash_movement": "Lane / Road Departure"
       },
       {
         "incident_number": 31,
@@ -1004,9 +1018,9 @@
         "cumulative_miles": 0,
         "cumulative_incidents": 31,
         "cumulative_mpi": 0.0,
-        "roadway_type": "Street",
-        "precrash_speed_mph": 9,
-        "precrash_movement": "Lane / Road Departure"
+        "roadway_type": "Parking Lot",
+        "precrash_speed_mph": 2,
+        "precrash_movement": "Backing"
       },
       {
         "incident_number": 32,
@@ -1060,9 +1074,9 @@
         "cumulative_miles": 0,
         "cumulative_incidents": 35,
         "cumulative_mpi": 0.0,
-        "roadway_type": "Parking Lot",
-        "precrash_speed_mph": 2,
-        "precrash_movement": "Backing"
+        "roadway_type": "Street",
+        "precrash_speed_mph": 4,
+        "precrash_movement": "Proceeding Straight"
       },
       {
         "incident_number": 36,
@@ -1090,6 +1104,20 @@
         "cumulative_miles": 23115,
         "cumulative_incidents": 37,
         "cumulative_mpi": 624.7297297297297,
+        "roadway_type": "Street",
+        "precrash_speed_mph": 0,
+        "precrash_movement": "Stopped"
+      },
+      {
+        "incident_number": 38,
+        "incident_date": "2026-04-01",
+        "days_since_previous": 31,
+        "miles_since_previous": 30015,
+        "mpi_since_previous": 30015,
+        "avg_fleet_size": 8.15625,
+        "cumulative_miles": 53130,
+        "cumulative_incidents": 38,
+        "cumulative_mpi": 1398.157894736842,
         "roadway_type": "Street",
         "precrash_speed_mph": 0,
         "precrash_movement": "Stopped"
@@ -1121,10 +1149,10 @@
       }
     },
     "summary": {
-      "average_mpi": 624.7297297297297,
-      "latest_mpi": 920,
-      "cumulative_mpi": 624.7297297297297,
-      "total_miles": 23115,
+      "average_mpi": 1398.157894736842,
+      "latest_mpi": 30015,
+      "cumulative_mpi": 1398.157894736842,
+      "total_miles": 53130,
       "total_excluded_days": 2
     }
   },
