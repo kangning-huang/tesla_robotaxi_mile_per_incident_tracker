@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "scraped_at": "2026-06-24T07:29:44.952336",
+    "scraped_at": "2026-06-25T07:30:08.198980",
     "source": "https://robotaxitracker.com",
     "scraper_version": "2.0.0"
   },
@@ -2227,6 +2227,12 @@
     },
     {
       "date": "2026-06-24",
+      "bayarea": 0,
+      "austin": 28,
+      "total": 39
+    },
+    {
+      "date": "2026-06-25",
       "bayarea": 0,
       "austin": 28,
       "total": 39
