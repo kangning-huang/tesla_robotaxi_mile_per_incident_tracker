@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "scraped_at": "2026-07-28T08:52:04.171365",
+    "scraped_at": "2026-07-29T09:10:11.840685",
     "source": "https://robotaxitracker.com",
     "scraper_version": "2.0.0"
   },
@@ -12,7 +12,7 @@
     "bayarea_available": null
   },
   "active_fleet": {
-    "austin_active": 18,
+    "austin_active": 20,
     "bayarea_active": null,
     "total_active": null
   },
@@ -2431,6 +2431,12 @@
     },
     {
       "date": "2026-07-28",
+      "bayarea": 0,
+      "austin": 32,
+      "total": 46
+    },
+    {
+      "date": "2026-07-29",
       "bayarea": 0,
       "austin": 32,
       "total": 46
