@@ -181,7 +181,7 @@ const incidentDataActive = incidentDataActiveStationary;
 // Latest active fleet size (from fleet_data.json). Corrected from a bogus
 // scraped value (-94752) that came from a subtraction bug during a scrape
 // where Bay Area active vehicles were missing from the source.
-const latestActiveFleetSize = 154;
+const latestActiveFleetSize = 155;
 
 // Fleet mode toggle state: 'total' or 'active'
 let fleetMode = 'total';
@@ -349,6 +349,7 @@ const fleetData = [
     { date: '2026-08-20', size: 152 },
     { date: '2026-08-21', size: 153 },
     { date: '2026-08-22', size: 154 },
+    { date: '2026-08-23', size: 155 },
 ];
 
 // Compute exponential trend parameters via log-linear regression on incidentData
