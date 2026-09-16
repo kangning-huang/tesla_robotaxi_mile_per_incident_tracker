@@ -12,10 +12,11 @@
 // Base: no backing, no stationary (11 incidents)
 const incidentDataBase = [
     { date: '2025-07-15', days: 6, fleet: 11, miles: 16905, mpi: 2415, count: 7 },
-    { date: '2025-09-15', days: 62, fleet: 15, miles: 117300, mpi: 16757, count: 7 },
+    { date: '2025-09-15', days: 62, fleet: 14, miles: 103040, mpi: 14720, count: 7 },
     { date: '2025-10-15', days: 30, fleet: 17, miles: 62790, mpi: 20930, count: 3 },
     { date: '2025-12-10', days: 61, fleet: 26, miles: 171695, mpi: 85847, count: 2 },
     { date: '2026-01-10', days: 31, fleet: 32, miles: 115115, mpi: 28778, count: 4 },
+    { date: '2026-07-01', days: 181, fleet: 121, miles: 2470545, mpi: 1235272, count: 2 },
 ];
 
 // Stationary: no backing, WITH stationary (15 incidents) - previous default
@@ -30,16 +31,18 @@ const incidentDataStationary = [
     { date: '2026-04-01', days: 31, fleet: 90, miles: 320850, mpi: 320850, count: 1 },
     { date: '2026-05-01', days: 30, fleet: 94, miles: 324300, mpi: 324300, count: 1 },
     { date: '2026-06-01', days: 31, fleet: 112, miles: 399280, mpi: 399280, count: 1 },
+    { date: '2026-07-01', days: 30, fleet: 121, miles: 421475, mpi: 210737, count: 2 },
 ];
 
 // Backing: WITH backing, no stationary (13 incidents)
 const incidentDataBacking = [
     { date: '2025-07-15', days: 6, fleet: 11, miles: 16905, mpi: 2415, count: 7 },
-    { date: '2025-09-15', days: 62, fleet: 15, miles: 117300, mpi: 16757, count: 7 },
+    { date: '2025-09-15', days: 62, fleet: 14, miles: 103040, mpi: 14720, count: 7 },
     { date: '2025-10-15', days: 30, fleet: 17, miles: 62790, mpi: 20930, count: 3 },
     { date: '2025-12-10', days: 61, fleet: 26, miles: 171695, mpi: 85847, count: 2 },
     { date: '2026-01-10', days: 31, fleet: 33, miles: 130755, mpi: 16344, count: 8 },
     { date: '2026-06-01', days: 151, fleet: 105, miles: 1823325, mpi: 1823325, count: 1 },
+    { date: '2026-07-01', days: 30, fleet: 121, miles: 421475, mpi: 210737, count: 2 },
 ];
 
 // All: WITH backing, WITH stationary (17 incidents)
@@ -54,6 +57,7 @@ const incidentDataAll = [
     { date: '2026-04-01', days: 31, fleet: 90, miles: 320850, mpi: 320850, count: 1 },
     { date: '2026-05-01', days: 30, fleet: 94, miles: 324300, mpi: 324300, count: 1 },
     { date: '2026-06-01', days: 31, fleet: 108, miles: 387205, mpi: 193602, count: 2 },
+    { date: '2026-07-01', days: 30, fleet: 121, miles: 421475, mpi: 210737, count: 2 },
 ];
 
 // ===== Active Fleet Data (all filter combinations) =====
@@ -64,6 +68,7 @@ const incidentDataActiveBase = [
     { date: '2025-10-15', days: 30, fleet: 0, miles: 0, mpi: 0, count: 3 },
     { date: '2025-12-10', days: 61, fleet: 0, miles: 0, mpi: 0, count: 2 },
     { date: '2026-01-10', days: 31, fleet: 0, miles: 0, mpi: 0, count: 4 },
+    { date: '2026-07-01', days: 181, fleet: 80, miles: 1488100, mpi: 744050, count: 2 },
 ];
 
 // Stationary: no backing, WITH stationary
@@ -78,6 +83,7 @@ const incidentDataActiveStationary = [
     { date: '2026-04-01', days: 31, fleet: 8, miles: 28520, mpi: 28520, count: 1 },
     { date: '2026-05-01', days: 30, fleet: 12, miles: 41400, mpi: 41400, count: 1 },
     { date: '2026-06-01', days: 31, fleet: 53, miles: 188945, mpi: 188945, count: 1 },
+    { date: '2026-07-01', days: 30, fleet: 80, miles: 255185, mpi: 127592, count: 2 },
 ];
 
 // Backing: WITH backing, no stationary
@@ -88,6 +94,7 @@ const incidentDataActiveBacking = [
     { date: '2025-12-10', days: 61, fleet: 0, miles: 0, mpi: 0, count: 2 },
     { date: '2026-01-10', days: 31, fleet: 0, miles: 0, mpi: 0, count: 8 },
     { date: '2026-06-01', days: 151, fleet: 35, miles: 607775, mpi: 607775, count: 1 },
+    { date: '2026-07-01', days: 30, fleet: 80, miles: 255185, mpi: 127592, count: 2 },
 ];
 
 // All: WITH backing, WITH stationary
@@ -102,6 +109,7 @@ const incidentDataActiveAll = [
     { date: '2026-04-01', days: 31, fleet: 8, miles: 28520, mpi: 28520, count: 1 },
     { date: '2026-05-01', days: 30, fleet: 12, miles: 41400, mpi: 41400, count: 1 },
     { date: '2026-06-01', days: 31, fleet: 44, miles: 130870, mpi: 65435, count: 2 },
+    { date: '2026-07-01', days: 30, fleet: 80, miles: 255185, mpi: 127592, count: 2 },
 ];
 
 // ===== NHTSA Release-Window Datasets =====
@@ -366,6 +374,7 @@ const fleetData = [
     { date: '2026-09-12', size: 194 },
     { date: '2026-09-13', size: 194 },
     { date: '2026-09-14', size: 197 },
+    { date: '2026-09-15', size: 197 },
 ];
 
 // Compute exponential trend parameters via log-linear regression on incidentData
