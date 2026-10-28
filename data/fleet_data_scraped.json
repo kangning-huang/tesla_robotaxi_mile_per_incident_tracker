@@ -1,18 +1,18 @@
 {
   "metadata": {
-    "scraped_at": "2026-10-27T12:11:33.504133",
+    "scraped_at": "2026-10-28T12:54:50.053430",
     "source": "https://robotaxitracker.com",
     "scraper_version": "2.0.0"
   },
   "current_fleet": {
-    "austin_vehicles": 410,
+    "austin_vehicles": 415,
     "bayarea_vehicles": null,
     "total_vehicles": null,
     "austin_available": null,
     "bayarea_available": null
   },
   "active_fleet": {
-    "austin_active": 410,
+    "austin_active": 415,
     "bayarea_active": null,
     "total_active": null
   },
